@@ -81,40 +81,25 @@
               <span class="nav-main-link-name">{{ trans('page.overview.title') }}</span>
             </a>
           </li>
-          {{--
-          @canany(['majors.index', 'subjects.index', 'students.index'])
-          <li class="nav-main-heading">{{ trans('Masters') }}</li>
 
-          <li class="nav-main-item {{ Request::is('masters*') ? 'open' : '' }}">
-            <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="{{ Request::is('masters*') ? 'true' : 'false' }}" href="#">
-              <i class="nav-main-link-icon fa fa-bookmark"></i>
-              <span class="nav-main-link-name">{{ trans('Main') }}</span>
+          @canany(['majors.index'])
+          <li class="nav-main-heading">{{ trans('Akademik') }}</li>
+          <li class="nav-main-item {{ Request::is('academics*') ? 'open' : '' }}">
+            <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="{{ Request::is('academics*') ? 'true' : 'false' }}" href="#">
+              <i class="nav-main-link-icon fa fa-graduation-cap"></i>
+              <span class="nav-main-link-name">{{ trans('Akademik') }}</span>
             </a>
             <ul class="nav-main-submenu">
               @can('majors.index')
               <li class="nav-main-item">
-                <a class="nav-main-link {{ Request::is('masters/majors*') ? 'active' : '' }}" href="{{ route('majors.index') }}">
+                <a class="nav-main-link {{ Request::is('academics/majors*') ? 'active' : '' }}" href="{{ route('majors.index') }}">
                   <span class="nav-main-link-name">{{ trans('page.majors.title') }}</span>
-                </a>
-              </li>
-              @endcan
-              @can('subjects.index')
-              <li class="nav-main-item">
-                <a class="nav-main-link {{ Request::is('masters/subjects*') ? 'active' : '' }}" href="{{ route('subjects.index') }}">
-                  <span class="nav-main-link-name">{{ trans('page.subjects.title') }}</span>
-                </a>
-              </li>
-              @endcan
-              @can('students.index')
-              <li class="nav-main-item">
-                <a class="nav-main-link {{ Request::is('masters/students*') ? 'active' : '' }}" href="{{ route('students.index') }}">
-                  <span class="nav-main-link-name">{{ trans('page.students.title') }}</span>
                 </a>
               </li>
               @endcan
             </ul>
           </li>
-          @endcan --}}
+          @endcan
 
           @canany(['roles.index', 'users.index'])
           <li class="nav-main-heading">{{ trans('Management') }}</li>

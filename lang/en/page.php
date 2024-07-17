@@ -27,4 +27,13 @@ return [
     'show' => 'Detail Role & Permission',
     'delete' => 'Hapus Role & Permission',
   ],
+
+  'majors' => [
+    'title' => 'Program Studi',
+    'index' => 'Daftar Program Studi',
+    'create' => 'Tambah Program Studi',
+    'edit' => 'Ubah Program Studi',
+    'show' => 'Detail Program Studi',
+    'delete' => 'Hapus Program Studi',
+  ],
 ];

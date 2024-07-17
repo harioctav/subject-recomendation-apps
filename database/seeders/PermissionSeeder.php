@@ -33,12 +33,22 @@ class PermissionSeeder extends Seeder
       'roles.edit',
       'roles.update',
       'roles.destroy',
+
+      // Halaman Jurusan
+      'majors.index',
+      'majors.create',
+      'majors.store',
+      'majors.edit',
+      'majors.update',
+      'majors.import',
+      'majors.destroy',
     ];
 
     $guardName = 'web';
     $permissionCategoryId = [
       'users' => 1,
       'roles' => 2,
+      'majors' => 3,
     ];
 
     foreach ($permissions as $permission) :

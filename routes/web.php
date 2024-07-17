@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\UserController;
+use App\Http\Controllers\Academics\MajorController;
 use App\Http\Controllers\Settings\PasswordController;
 
 /*
@@ -44,4 +45,10 @@ Route::middleware([
   Route::get('users/password/{user}', [PasswordController::class, 'showChangePasswordForm'])->name('users.password');
   Route::post('users/password', [PasswordController::class, 'store']);
   Route::get('users/show/{user}', [UserController::class, 'show'])->name('users.show');
+
+  Route::prefix('academics')->group(function () {
+    // Major management
+    Route::post('majors/import', [MajorController::class, 'import'])->name('majors.import');
+    Route::resource('majors', MajorController::class);
+  });
 });

@@ -26,4 +26,18 @@ return [
     'delete' => 'Hapus Permanen Peran yang sudah Terhapus dari penyimpanan',
     'restore' => 'Restore Data Peran yang ditentukan dari penyimpanan yang sudah dihapus',
   ],
+
+  'majors' => [
+    'name' => 'Management Jurusan',
+    'index' => 'Menampilkan daftar Jurusan',
+    'create' => 'Tampilkan formulir untuk membuat Jurusan baru',
+    'store' => 'Simpan Jurusan yang baru dibuat di penyimpanan',
+    'show' => 'Menampilkan Detail Jurusan yang ditentukan',
+    'edit' => 'Tampilkan formulir untuk mengedit Jurusan yang ditentukan',
+    'update' => 'Perbarui Jurusan yang ditentukan dalam penyimpanan',
+    'import' => 'Import Jurusan yang ditentukan dalam penyimpanan',
+    'destroy' => 'Hapus Jurusan yang ditentukan dari penyimpanan',
+    'delete' => 'Hapus Permanen Jurusan yang sudah Terhapus dari penyimpanan',
+    'restore' => 'Restore Data Jurusan yang ditentukan dari penyimpanan yang sudah dihapus',
+  ],
 ];
