@@ -1,0 +1,115 @@
+.img-profile-center {
+    display: block !important;
+    margin-left: auto;
+    margin-right: auto;
+    width: 30%;
+    border-radius: 50%;
+}
+
+.img-placeholder-center {
+    display: block !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.img-square-center {
+    display: block !important;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+#submit-button.loading {
+    cursor: default;
+    pointer-events: none;
+}
+
+#submit-button.loading::after {
+    content: "";
+    display: inline-block;
+    width: 0.8em;
+    height: 0.8em;
+    margin-left: 0.3em;
+    vertical-align: middle;
+    border-radius: 50%;
+    border: 0.2em solid currentColor;
+    border-right-color: transparent;
+    animation: button-loading 1s ease-in-out infinite;
+}
+
+#loading-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.loading-spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes button-loading {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.form-floating {
+    position: relative;
+}
+
+.icon {
+    position: absolute;
+    top: calc(50%);
+    right: 1.25rem;
+}
+
+.form-floating label,
+.form-floating .form-control {
+    right: 0.5rem;
+    padding-right: 3.5rem;
+}
+
+.toggle-password:hover {
+    cursor: pointer;
+}
+
+.divider-container {
+    display: flex;
+    align-items: center;
+}
+
+.divider-line {
+    flex-grow: 1;
+    height: 1px;
+    background-color: #000;
+}
+
+.divider-text {
+    margin: 0 16px;
+}
