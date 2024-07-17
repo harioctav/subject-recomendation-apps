@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Locations\LocationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,5 +16,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+  return $request->user();
+});
+
+Route::prefix('locations')->group(function () {
+  Route::get('provinces', [LocationController::class, 'provinces'])->name('locations.provinces');
+  Route::get('regencies/{province_id}', [LocationController::class, 'regencies'])->name('locations.regencies');
+  Route::get('districts/{regency_id}', [LocationController::class, 'districts'])->name('locations.districts');
+  Route::get('villages/{disctrict_id}', [LocationController::class, 'villages'])->name('locations.villages');
+  Route::get('villages/post_code/{village_id}', [LocationController::class, 'postCode'])->name('locations.postCodes');
 });

@@ -19,7 +19,7 @@ use App\Http\Controllers\Settings\PasswordController;
 */
 
 Route::get('/', function () {
-  return view('welcome');
+  return redirect(route('home'));
 });
 
 Auth::routes();
