@@ -54,4 +54,18 @@ return [
     'delete' => 'Hapus Permanen Matakuliah yang sudah Terhapus dari penyimpanan',
     'restore' => 'Restore Data Matakuliah yang ditentukan dari penyimpanan yang sudah dihapus',
   ],
+
+  'students' => [
+    'name' => 'Management Mahasiswa',
+    'index' => 'Menampilkan daftar Mahasiswa',
+    'create' => 'Tampilkan formulir untuk membuat Mahasiswa baru',
+    'store' => 'Simpan Mahasiswa yang baru dibuat di penyimpanan',
+    'show' => 'Menampilkan Detail Mahasiswa yang ditentukan',
+    'edit' => 'Tampilkan formulir untuk mengedit Mahasiswa yang ditentukan',
+    'update' => 'Perbarui Mahasiswa yang ditentukan dalam penyimpanan',
+    'import' => 'Import Mahasiswa yang ditentukan dalam penyimpanan',
+    'destroy' => 'Hapus Mahasiswa yang ditentukan dari penyimpanan',
+    'delete' => 'Hapus Permanen Mahasiswa yang sudah Terhapus dari penyimpanan',
+    'restore' => 'Restore Data Mahasiswa yang ditentukan dari penyimpanan yang sudah dihapus',
+  ],
 ];

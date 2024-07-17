@@ -45,4 +45,13 @@ return [
     'show' => 'Detail Matakuliah',
     'delete' => 'Hapus Matakuliah',
   ],
+
+  'students' => [
+    'title' => 'Mahasiswa',
+    'index' => 'Daftar Mahasiswa',
+    'create' => 'Tambah Mahasiswa',
+    'edit' => 'Ubah Mahasiswa',
+    'show' => 'Detail Mahasiswa',
+    'delete' => 'Hapus Mahasiswa',
+  ],
 ];
