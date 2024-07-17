@@ -36,4 +36,13 @@ return [
     'show' => 'Detail Program Studi',
     'delete' => 'Hapus Program Studi',
   ],
+
+  'subjects' => [
+    'title' => 'Matakuliah',
+    'index' => 'Daftar Matakuliah',
+    'create' => 'Tambah Matakuliah',
+    'edit' => 'Ubah Matakuliah',
+    'show' => 'Detail Matakuliah',
+    'delete' => 'Hapus Matakuliah',
+  ],
 ];

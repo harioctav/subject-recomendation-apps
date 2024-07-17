@@ -97,6 +97,13 @@
                 </a>
               </li>
               @endcan
+              @can('subjects.index')
+              <li class="nav-main-item">
+                <a class="nav-main-link {{ Request::is('academics/subjects*') ? 'active' : '' }}" href="{{ route('subjects.index') }}">
+                  <span class="nav-main-link-name">{{ trans('page.subjects.title') }}</span>
+                </a>
+              </li>
+              @endcan
             </ul>
           </li>
           @endcan

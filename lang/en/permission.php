@@ -40,4 +40,18 @@ return [
     'delete' => 'Hapus Permanen Jurusan yang sudah Terhapus dari penyimpanan',
     'restore' => 'Restore Data Jurusan yang ditentukan dari penyimpanan yang sudah dihapus',
   ],
+
+  'subjects' => [
+    'name' => 'Management Matakuliah',
+    'index' => 'Menampilkan daftar Matakuliah',
+    'create' => 'Tampilkan formulir untuk membuat Matakuliah baru',
+    'store' => 'Simpan Matakuliah yang baru dibuat di penyimpanan',
+    'show' => 'Menampilkan Detail Matakuliah yang ditentukan',
+    'edit' => 'Tampilkan formulir untuk mengedit Matakuliah yang ditentukan',
+    'update' => 'Perbarui Matakuliah yang ditentukan dalam penyimpanan',
+    'import' => 'Import Matakuliah yang ditentukan dalam penyimpanan',
+    'destroy' => 'Hapus Matakuliah yang ditentukan dari penyimpanan',
+    'delete' => 'Hapus Permanen Matakuliah yang sudah Terhapus dari penyimpanan',
+    'restore' => 'Restore Data Matakuliah yang ditentukan dari penyimpanan yang sudah dihapus',
+  ],
 ];

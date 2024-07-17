@@ -1,14 +1,14 @@
-<h5 class="mb-0">{{ trans('Keterangan') }}</h5>
+<h6 class="mb-0">{{ trans('Keterangan') }}</h6>
 <ul>
-  <li>T (Tutorial tatap muka, mata kuliah sulit)</li>
-  <li>P (Praktik)</li>
-  <li>Pr (Praktikum)</li>
-  <li>E (Ujian essai)</li>
-  <li>Bw (Menuntut bimbingan wajib)</li>
-  <li>PS (pilih salah satu)</li>
-  <li>Bpr (Berpraktik / berpraktikum)</li>
-  <li>Pro (Bimbingan praktik online)</li>
-  <li>Tw (Tutorial webinar)</li>
-  <li>Bpro (Berpraktik online)</li>
-  <li>L (Menuntut laporan)</li>
+  <li class="text-muted"><small>T (Tutorial tatap muka, mata kuliah sulit)</small></li>
+  <li class="text-muted"><small>P (Praktik)</small></li>
+  <li class="text-muted"><small>Pr (Praktikum)</small></li>
+  <li class="text-muted"><small>E (Ujian essai)</small></li>
+  <li class="text-muted"><small>Bw (Menuntut bimbingan wajib)</small></li>
+  <li class="text-muted"><small>PS (pilih salah satu)</small></li>
+  <li class="text-muted"><small>Bpr (Berpraktik / berpraktikum)</small></li>
+  <li class="text-muted"><small>Pro (Bimbingan praktik online)</small></li>
+  <li class="text-muted"><small>Tw (Tutorial webinar)</small></li>
+  <li class="text-muted"><small>Bpro (Berpraktik online)</small></li>
+  <li class="text-muted"><small>L (Menuntut laporan)</small></li>
 </ul>
