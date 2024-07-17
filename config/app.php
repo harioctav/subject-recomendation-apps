@@ -188,6 +188,8 @@ return [
     'Alert' => RealRashid\SweetAlert\Facades\Alert::class,
     'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     'RoleType' => App\Helpers\Enums\RoleType::class,
+    'Helper' => App\Helpers\Helper::class,
+    'AccountStatus' => App\Helpers\Enums\AccountStatusType::class,
   ])->toArray(),
 
 ];

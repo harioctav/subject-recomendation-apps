@@ -2,65 +2,123 @@
 
 namespace App\Http\Controllers\Settings;
 
-use App\Http\Controllers\Controller;
+use App\DataTables\Scopes\RoleFilter;
+use App\DataTables\Scopes\UserStatusFilter;
+use App\DataTables\Settings\UserDataTable;
+use App\Helpers\Enums\AccountStatusType;
+use App\Helpers\Enums\RoleType;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Services\Role\RoleService;
+use App\Services\User\UserService;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Settings\UserRequest;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+  /**
+   * Create a new controller instance.
+   *
+   * @return void
+   */
+  public function __construct(
+    protected UserService $userService,
+    protected RoleService $roleService,
+  ) {
+    // 
+  }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+  /**
+   * Display a listing of the resource.
+   */
+  public function index(UserDataTable $dataTable, Request $request)
+  {
+    $status = AccountStatusType::toArray();
+    $roleTypes = $this->roleService->getQuery()->pluck('name')->reject(function ($role) {
+      return $role === RoleType::ADMINISTRATOR->value;
+    });
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+    return $dataTable->addScopes([
+      new RoleFilter($request),
+      new UserStatusFilter($request),
+    ])->render('settings.users.index', compact('status', 'roleTypes'));
+  }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user)
-    {
-        //
-    }
+  /**
+   * Show the form for creating a new resource.
+   */
+  public function create()
+  {
+    $roles = $this->roleService->getWhere(
+      wheres: [
+        'name' => RoleType::ADMINISTRATOR->value
+      ],
+      comparisons: '!='
+    )->get();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user)
-    {
-        //
-    }
+    return view('settings.users.create', compact('roles'));
+  }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, User $user)
-    {
-        //
-    }
+  /**
+   * Store a newly created resource in storage.
+   */
+  public function store(UserRequest $request)
+  {
+    $this->userService->handleStoreData($request);
+    return redirect(route('users.index'))->withSuccess(trans('session.create'));
+  }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(User $user)
-    {
-        //
-    }
+  /**
+   * Display the specified resource.
+   */
+  public function show(User $user)
+  {
+    return view('settings.users.show', compact('user'));
+  }
+
+  /**
+   * Show the form for editing the specified resource.
+   */
+  public function edit(User $user)
+  {
+    $roles = $this->roleService->getWhere(
+      wheres: [
+        'name' => RoleType::ADMINISTRATOR->value
+      ],
+      comparisons: '!='
+    )->get();
+
+    return view('settings.users.edit', compact('roles', 'user'));
+  }
+
+  /**
+   * Update the specified resource in storage.
+   */
+  public function update(UserRequest $request, User $user)
+  {
+    $this->userService->handleUpdateData($request, $user->id);
+    return redirect(route('users.index'))->withSuccess(trans('session.update'));
+  }
+
+  /**
+   * Remove the specified resource from storage.
+   */
+  public function destroy(User $user)
+  {
+    $this->userService->handleDeleteData($user->id);
+    return response()->json([
+      'message' => trans('session.delete'),
+    ]);
+  }
+
+  /**
+   * Update the specified status account data from storage.
+   */
+  public function status(User $user)
+  {
+    $this->userService->handleChangeStatus($user->id);
+    return response()->json([
+      'message' => trans('session.status'),
+    ]);
+  }
 }
