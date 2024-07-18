@@ -73,7 +73,7 @@
           <i class="fa fa-graduation-cap fa-2x opacity-25"></i>
         </div>
         <div>
-          <div class="fs-3 fw-semibold">44</div>
+          <div class="fs-3 fw-semibold">{{ $data['students'] }}</div>
           <div class="fs-sm fw-semibold text-uppercase text-muted">
             {{ trans('page.students.title') }}
           </div>

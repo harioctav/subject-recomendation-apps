@@ -5,9 +5,6 @@ namespace App\Http\Controllers\Academics;
 use App\Models\Major;
 use App\Models\Subject;
 use App\Traits\ChacesData;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Services\Major\MajorService;
 use App\Helpers\Enums\SemesterLevelType;
@@ -31,14 +28,6 @@ class MajorSubjectController extends Controller
   }
 
   /**
-   * Display a listing of the resource.
-   */
-  public function index()
-  {
-    //
-  }
-
-  /**
    * Show the form for creating a new resource.
    */
   public function create(Major $major)
@@ -59,30 +48,6 @@ class MajorSubjectController extends Controller
   {
     $this->majorService->handleStoreSubjectToMajorData($request, $major);
     return redirect(route('majors.show', $major))->withSuccess(trans('session.create'));
-  }
-
-  /**
-   * Display the specified resource.
-   */
-  public function show(Major $major)
-  {
-    //
-  }
-
-  /**
-   * Show the form for editing the specified resource.
-   */
-  public function edit(Major $major)
-  {
-    //
-  }
-
-  /**
-   * Update the specified resource in storage.
-   */
-  public function update(Request $request, Major $major)
-  {
-    //
   }
 
   /**

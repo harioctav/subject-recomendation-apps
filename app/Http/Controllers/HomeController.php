@@ -7,6 +7,7 @@ use Illuminate\Support\Carbon;
 use App\Services\User\UserService;
 use App\Helpers\Enums\GreetingType;
 use App\Services\Major\MajorService;
+use App\Services\Student\StudentService;
 use App\Services\Subject\SubjectService;
 
 class HomeController extends Controller
@@ -20,6 +21,7 @@ class HomeController extends Controller
     protected UserService $userService,
     protected MajorService $majorService,
     protected SubjectService $subjectService,
+    protected StudentService $studentService,
   ) {
     $this->middleware('auth');
   }
@@ -46,6 +48,7 @@ class HomeController extends Controller
       'users' => $this->userService->getQuery()->count(),
       'majors' => $this->majorService->getQuery()->count(),
       'subjects' => $this->subjectService->getQuery()->count(),
+      'students' => $this->studentService->getQuery()->count(),
     ];
 
     return view('home', compact('data', 'greeting'));

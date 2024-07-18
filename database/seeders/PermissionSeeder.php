@@ -57,6 +57,15 @@ class PermissionSeeder extends Seeder
       'majors.subjects.create',
       'majors.subjects.store',
       'majors.subjects.destroy',
+
+      // Halaman Student
+      'students.index',
+      'students.create',
+      'students.store',
+      'students.show',
+      'students.edit',
+      'students.update',
+      'students.destroy',
     ];
 
     $guardName = 'web';
@@ -65,6 +74,7 @@ class PermissionSeeder extends Seeder
       'roles' => 2,
       'majors' => 3,
       'subjects' => 4,
+      'students' => 5,
     ];
 
     foreach ($permissions as $permission) :

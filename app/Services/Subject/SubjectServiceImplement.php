@@ -25,11 +25,8 @@ class SubjectServiceImplement extends Service implements SubjectService
   public function getQuery()
   {
     try {
-      DB::beginTransaction();
       return $this->mainRepository->getQuery();
-      DB::commit();
     } catch (\Exception $e) {
-      DB::rollBack();
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
     }
@@ -47,7 +44,6 @@ class SubjectServiceImplement extends Service implements SubjectService
     $orderByType = null
   ) {
     try {
-      DB::beginTransaction();
       return $this->mainRepository->getWhere(
         wheres: $wheres,
         columns: $columns,
@@ -55,9 +51,7 @@ class SubjectServiceImplement extends Service implements SubjectService
         orderBy: $orderBy,
         orderByType: $orderByType
       );
-      DB::commit();
     } catch (\Exception $e) {
-      DB::rollBack();
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
     }

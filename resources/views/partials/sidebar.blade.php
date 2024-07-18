@@ -90,6 +90,13 @@
               <span class="nav-main-link-name">{{ trans('Akademik') }}</span>
             </a>
             <ul class="nav-main-submenu">
+              @can('students.index')
+              <li class="nav-main-item">
+                <a class="nav-main-link {{ Request::is('academics/students*') ? 'active' : '' }}" href="{{ route('students.index') }}">
+                  <span class="nav-main-link-name">{{ trans('page.students.title') }}</span>
+                </a>
+              </li>
+              @endcan
               @can('majors.index')
               <li class="nav-main-item">
                 <a class="nav-main-link {{ Request::is('academics/majors*') ? 'active' : '' }}" href="{{ route('majors.index') }}">

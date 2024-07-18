@@ -13,6 +13,7 @@ use App\Services\Subject\SubjectService;
 use App\DataTables\Academics\MajorDataTable;
 use App\Http\Requests\Imports\ImportRequest;
 use App\Http\Requests\Academics\MajorRequest;
+use Illuminate\View\View;
 
 class MajorController extends Controller
 {

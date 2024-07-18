@@ -7,6 +7,7 @@ use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\UserController;
 use App\Http\Controllers\Academics\MajorController;
 use App\Http\Controllers\Academics\MajorSubjectController;
+use App\Http\Controllers\Academics\StudentController;
 use App\Http\Controllers\Academics\SubjectController;
 use App\Http\Controllers\Settings\PasswordController;
 
@@ -65,5 +66,8 @@ Route::middleware([
     // Subject management
     Route::post('subjects/import', [SubjectController::class, 'import'])->name('subjects.import');
     Route::resource('subjects', SubjectController::class);
+
+    // Student management
+    Route::resource('students', StudentController::class);
   });
 });

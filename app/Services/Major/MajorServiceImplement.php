@@ -26,11 +26,8 @@ class MajorServiceImplement extends Service implements MajorService
   public function getQuery()
   {
     try {
-      DB::beginTransaction();
       return $this->mainRepository->getQuery();
-      DB::commit();
     } catch (\Exception $e) {
-      DB::rollBack();
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
     }
@@ -48,7 +45,6 @@ class MajorServiceImplement extends Service implements MajorService
     $orderByType = null
   ) {
     try {
-      DB::beginTransaction();
       return $this->mainRepository->getWhere(
         wheres: $wheres,
         columns: $columns,
@@ -56,9 +52,7 @@ class MajorServiceImplement extends Service implements MajorService
         orderBy: $orderBy,
         orderByType: $orderByType
       );
-      DB::commit();
     } catch (\Exception $e) {
-      DB::rollBack();
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
     }

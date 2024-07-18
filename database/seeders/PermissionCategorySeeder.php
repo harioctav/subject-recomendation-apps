@@ -18,6 +18,7 @@ class PermissionCategorySeeder extends Seeder
       'roles.name',
       'majors.name',
       'subjects.name',
+      'students.name',
     ];
 
     foreach ($categories as $name) :

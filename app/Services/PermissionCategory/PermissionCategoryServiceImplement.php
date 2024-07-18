@@ -23,11 +23,8 @@ class PermissionCategoryServiceImplement extends Service implements PermissionCa
   public function query()
   {
     try {
-      DB::beginTransaction();
       return $this->mainRepository->query();
-      DB::commit();
     } catch (\Exception $e) {
-      DB::rollBack();
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
     }
@@ -40,11 +37,8 @@ class PermissionCategoryServiceImplement extends Service implements PermissionCa
   public function with(array $with = [])
   {
     try {
-      DB::beginTransaction();
       return $this->mainRepository->with($with);
-      DB::commit();
     } catch (\Exception $e) {
-      DB::rollBack();
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
     }
