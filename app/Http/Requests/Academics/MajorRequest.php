@@ -36,7 +36,6 @@ class MajorRequest extends FormRequest
         Rule::unique('majors', 'name')->ignore($this->major),
       ],
       'degree' => "required|{$levelValidated}",
-      'total_course_credit' => 'nullable|numeric',
     ];
   }
 

@@ -44,7 +44,6 @@
 </div>
 
 @includeIf('academics.majors.import')
-@includeIf('academics.majors.show')
 @endsection
 @push('javascript')
 {{ $dataTable->scripts() }}

@@ -38,6 +38,7 @@ class PermissionSeeder extends Seeder
       'majors.index',
       'majors.create',
       'majors.store',
+      'majors.show',
       'majors.edit',
       'majors.update',
       'majors.import',
@@ -51,6 +52,11 @@ class PermissionSeeder extends Seeder
       'subjects.update',
       'subjects.import',
       'subjects.destroy',
+
+      // Halaman Menambahkan Data Matakuliah ke Jurusan
+      'majors.subjects.create',
+      'majors.subjects.store',
+      'majors.subjects.destroy',
     ];
 
     $guardName = 'web';

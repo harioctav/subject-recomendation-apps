@@ -39,6 +39,14 @@ return [
     'destroy' => 'Hapus Jurusan yang ditentukan dari penyimpanan',
     'delete' => 'Hapus Permanen Jurusan yang sudah Terhapus dari penyimpanan',
     'restore' => 'Restore Data Jurusan yang ditentukan dari penyimpanan yang sudah dihapus',
+
+    'subjects' => [
+      'create' => 'Tampilkan formulir untuk membuat Matakuliah Jurusan baru',
+      'store' => 'Simpan Matakuliah Jurusan yang baru dibuat di penyimpanan',
+      'edit' => 'Tampilkan formulir untuk mengedit Matakuliah Jurusan yang ditentukan',
+      'update' => 'Perbarui Matakuliah Jurusan yang ditentukan dalam penyimpanan',
+      'destroy' => 'Hapus Matakuliah Jurusan yang ditentukan dari penyimpanan',
+    ],
   ],
 
   'subjects' => [

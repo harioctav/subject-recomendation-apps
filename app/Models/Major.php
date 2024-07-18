@@ -6,6 +6,7 @@ use App\Helpers\Enums\DegreeType;
 use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Major extends Model
 {
@@ -37,7 +38,7 @@ class Major extends Model
    *
    * @return void
    */
-  public function getFormattedLevelAttribute()
+  public function getFormattedDegreeAttribute()
   {
     $replacements = [
       DegreeType::STRATA_ONE->value => 'S1',
@@ -46,6 +47,23 @@ class Major extends Model
       DegreeType::DIPLOMA_FOUR->value => 'D4',
     ];
 
-    return $replacements[$this->level] ?? $this->level;
+    return $replacements[$this->degree] ?? $this->degree;
+  }
+
+  /**
+   * get all subjects
+   *
+   * @return BelongsToMany
+   */
+  public function subjects(): BelongsToMany
+  {
+    return $this->belongsToMany(Subject::class);
+  }
+
+  public function updateTotalCourseCredit()
+  {
+    $totalCredits = $this->subjects()->sum('course_credit');
+    $this->total_course_credit = $totalCredits;
+    $this->save();
   }
 }

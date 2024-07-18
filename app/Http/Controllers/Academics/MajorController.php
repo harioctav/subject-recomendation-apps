@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Academics;
 
+use App\DataTables\Academics\MajorSubjectDataTable;
 use App\Models\Major;
 use Illuminate\Http\Request;
 use App\Helpers\Enums\DegreeType;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Services\Major\MajorService;
+use App\Services\Subject\SubjectService;
 use App\DataTables\Academics\MajorDataTable;
 use App\Http\Requests\Imports\ImportRequest;
 use App\Http\Requests\Academics\MajorRequest;
@@ -20,6 +23,7 @@ class MajorController extends Controller
    */
   public function __construct(
     protected MajorService $majorService,
+    protected SubjectService $subjectService,
   ) {
     // 
   }
@@ -55,7 +59,8 @@ class MajorController extends Controller
    */
   public function show(Major $major)
   {
-    return response()->json($major);
+    $dataTable = new MajorSubjectDataTable($major->id);
+    return $dataTable->render('academics.majors.show', compact('major', 'dataTable'));
   }
 
   /**

@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\UserController;
 use App\Http\Controllers\Academics\MajorController;
+use App\Http\Controllers\Academics\MajorSubjectController;
 use App\Http\Controllers\Academics\SubjectController;
 use App\Http\Controllers\Settings\PasswordController;
 
@@ -50,6 +51,15 @@ Route::middleware([
   Route::prefix('academics')->group(function () {
     // Major management
     Route::post('majors/import', [MajorController::class, 'import'])->name('majors.import');
+
+    // Major to Subject Management
+    Route::prefix('majors/{major}/subjects')->name('majors.subjects.')->group(function () {
+      Route::get('create', [MajorSubjectController::class, 'create'])->name('create');
+      Route::post('/', [MajorSubjectController::class, 'store'])->name('store');
+      Route::delete('{subject}', [MajorSubjectController::class, 'destroy'])->name('destroy');
+    });
+
+    // Major
     Route::resource('majors', MajorController::class);
 
     // Subject management

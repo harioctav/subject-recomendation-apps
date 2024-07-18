@@ -35,6 +35,10 @@ return [
     'edit' => 'Ubah Program Studi',
     'show' => 'Detail Program Studi',
     'delete' => 'Hapus Program Studi',
+    'subjects' => [
+      'create' => 'Tambah Matakuliah ke Program Studi',
+      'destroy' => 'Hapus Matakuliah di Program Studi',
+    ],
   ],
 
   'subjects' => [
@@ -54,4 +58,13 @@ return [
     'show' => 'Detail Mahasiswa',
     'delete' => 'Hapus Mahasiswa',
   ],
+
+  'major-subjects' => [
+    'title' => 'Matakuliah Jurusan',
+    'index' => 'Daftar Matakuliah Jurusan',
+    'create' => 'Tambah Matakuliah Jurusan',
+    'edit' => 'Ubah Matakuliah Jurusan',
+    'show' => 'Detail Matakuliah Jurusan',
+    'delete' => 'Hapus Matakuliah Jurusan',
+  ]
 ];

@@ -66,17 +66,6 @@
           </div>
           {{-- Jenjang --}}
 
-          {{-- SKS ditempuh --}}
-          <div class="mb-4">
-            <label for="total_course_credit" class="form-label">{{ trans('Total SKS Yang Harus Ditempuh') }}</label>
-            <span class="text-muted"><small><em>Opsional</em></small></span>
-            <input type="number" step="1" name="total_course_credit" id="total_course_credit" value="{{ old('total_course_credit') }}" class="form-control @error('total_course_credit') is-invalid @enderror" placeholder="{{ trans('Jumlah Total SKS Yang Harus Ditempuh') }}" onkeypress="return onlyNumber(event)">
-            @error('total_course_credit')
-            <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-          </div>
-          {{-- SKS ditempuh --}}
-
           <div class="mb-4">
             <button type="submit" class="btn btn-primary w-100" id="submit-button">
               <i class="fa fa-fw fa-circle-check me-1"></i>
