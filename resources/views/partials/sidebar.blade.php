@@ -82,7 +82,26 @@
             </a>
           </li>
 
-          @canany(['majors.index'])
+          @canany(['recommendations.index'])
+          <li class="nav-main-heading">{{ trans('Evaluations') }}</li>
+          <li class="nav-main-item {{ Request::is('grades*') ? 'open' : '' }}">
+            <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="{{ Request::is('grades*') ? 'true' : 'false' }}" href="#">
+              <i class="nav-main-link-icon fa fa-check"></i>
+              <span class="nav-main-link-name">{{ trans('Penilaian') }}</span>
+            </a>
+            <ul class="nav-main-submenu">
+              @can('recommendations.index')
+              <li class="nav-main-item">
+                <a class="nav-main-link {{ Request::is('grades/recommendations*') ? 'active' : '' }}" href="{{ route('recommendations.index') }}">
+                  <span class="nav-main-link-name">{{ trans('page.recommendations.title') }}</span>
+                </a>
+              </li>
+              @endcan
+            </ul>
+          </li>
+          @endcanany
+
+          @canany(['majors.index', 'students.index', 'subjects.index'])
           <li class="nav-main-heading">{{ trans('Akademik') }}</li>
           <li class="nav-main-item {{ Request::is('academics*') ? 'open' : '' }}">
             <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="{{ Request::is('academics*') ? 'true' : 'false' }}" href="#">

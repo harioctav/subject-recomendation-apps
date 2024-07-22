@@ -6,8 +6,10 @@ use App\Traits\Uuid;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Student extends Model
 {
@@ -23,6 +25,7 @@ class Student extends Model
     'major_id',
     'village_id',
     'nim',
+    'nik',
     'name',
     'email',
     'birth_date',
@@ -35,6 +38,8 @@ class Student extends Model
     'address',
     'note',
     'avatar',
+    'parent_name',
+    'parent_phone_number',
   ];
 
   /**
@@ -77,6 +82,21 @@ class Student extends Model
   public function village(): BelongsTo
   {
     return $this->belongsTo(Village::class, 'village_id');
+  }
+
+  public function subjects(): BelongsToMany
+  {
+    return $this->belongsToMany(Subject::class, 'student_grades');
+  }
+
+  /**
+   * Relation to Student Model
+   *
+   * @return HasMany
+   */
+  public function recommendations(): HasMany
+  {
+    return $this->hasMany(Recommendation::class);
   }
 
   /**

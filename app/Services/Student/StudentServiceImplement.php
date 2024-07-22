@@ -81,6 +81,7 @@ class StudentServiceImplement extends Service implements StudentService
       $payload['avatar'] = $avatar;
       $payload['village_id'] = $village->id;
       $payload['birth_place'] = strtoupper($payload['birth_place']);
+      $payload['parent_name'] = strtoupper($payload['parent_name']);
 
       // Menghilangkan province, regency, district, dan post_code menggunakan array_except()
       $create = Arr::except($payload, ['province', 'regency', 'district', 'village', 'post_code']);
@@ -111,6 +112,7 @@ class StudentServiceImplement extends Service implements StudentService
       $payload['avatar'] = $avatar;
       $payload['village_id'] = $village->id;
       $payload['birth_place'] = strtoupper($payload['birth_place']);
+      $payload['parent_name'] = strtoupper($payload['parent_name']);
 
       // Menghilangkan province, regency, district, dan post_code menggunakan array_except()
       $update = Arr::except($payload, ['province', 'regency', 'district', 'village', 'post_code']);

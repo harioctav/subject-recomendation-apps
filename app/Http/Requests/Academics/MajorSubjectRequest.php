@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Academics;
 
-use App\Helpers\Enums\SemesterLevelType;
 use Illuminate\Foundation\Http\FormRequest;
 
 class MajorSubjectRequest extends FormRequest
@@ -22,12 +21,10 @@ class MajorSubjectRequest extends FormRequest
    */
   public function rules(): array
   {
-    $semesterValidation = SemesterLevelType::toValidation();
-
     return [
       'subjects' => 'required|array|min:1',
       'subjects.*' => 'exists:subjects,id',
-      'semester' => "required|string|{$semesterValidation}",
+      'semester' => 'required|integer|between:1,8',
     ];
   }
 
@@ -45,7 +42,8 @@ class MajorSubjectRequest extends FormRequest
       '*.integer' => ':attribute harus berupa angka',
       '*.in' => ':attribute tidak sesuai dengan data kami',
       '*.exists' => ':attribute tidak ditemukan di storage kami',
-      '*.regex' => ':attribute harus dalam format angka.angka, misalnya 1.1 atau 2.5 dst'
+      '*.regex' => ':attribute harus dalam format angka.angka, misalnya 1.1 atau 2.5 dst',
+      '*.between' => ':attribute harus berada diantara tahun :min sampai :max',
     ];
   }
 

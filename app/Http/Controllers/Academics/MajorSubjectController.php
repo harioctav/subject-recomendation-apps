@@ -10,6 +10,7 @@ use App\Services\Major\MajorService;
 use App\Helpers\Enums\SemesterLevelType;
 use App\Services\Subject\SubjectService;
 use App\Http\Requests\Academics\MajorSubjectRequest;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MajorSubjectController extends Controller
 {

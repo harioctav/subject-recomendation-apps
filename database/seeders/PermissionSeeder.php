@@ -66,6 +66,15 @@ class PermissionSeeder extends Seeder
       'students.edit',
       'students.update',
       'students.destroy',
+
+      // Halaman Rekomendasi
+      'recommendations.index',
+      'recommendations.create',
+      'recommendations.store',
+      'recommendations.show',
+      'recommendations.edit',
+      'recommendations.update',
+      'recommendations.destroy',
     ];
 
     $guardName = 'web';
@@ -75,6 +84,7 @@ class PermissionSeeder extends Seeder
       'majors' => 3,
       'subjects' => 4,
       'students' => 5,
+      'recommendations' => 6,
     ];
 
     foreach ($permissions as $permission) :

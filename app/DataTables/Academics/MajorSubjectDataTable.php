@@ -26,6 +26,12 @@ class MajorSubjectDataTable extends DataTable
   {
     return (new EloquentDataTable($query))
       ->addIndexColumn()
+      ->filterColumn('subject_code', function ($query, $keyword) {
+        $query->where('subjects.code', 'LIKE', "%{$keyword}%");
+      })
+      ->filterColumn('subject_name', function ($query, $keyword) {
+        $query->where('subjects.name', 'LIKE', "%{$keyword}%");
+      })
       ->addColumn('action', 'academics.major_subjects.action')
       ->rawColumns([
         'action'
@@ -49,7 +55,8 @@ class MajorSubjectDataTable extends DataTable
         'major_subject.semester',
         'subjects.name as subject_name',
         'subjects.code as subject_code'
-      ]);
+      ])
+      ->orderBy('major_subject.semester');
   }
 
   public function html(): HtmlBuilder
@@ -80,8 +87,7 @@ class MajorSubjectDataTable extends DataTable
   public function getColumns(): array
   {
     $visibility = Helper::checkPermissions([
-      'majors.edit',
-      'majors.destroy',
+      'majors.subjects.destroy',
     ]);
 
     return [

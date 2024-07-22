@@ -103,6 +103,22 @@
 
         <div class="py-1 my-0 mb-1">
           <p class="fs-sm text-uppercase text-primary fw-bold mb-1">
+            {{ trans('Informasi Orang Tua') }}
+          </p>
+        </div>
+        <ul class="list-group push">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ trans('Nama Ibu Kandung') }}
+            <span class="fw-semibold">{{ $student->parent_name }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ trans('No. Handphone') }}
+            <span class="fw-semibold">{{ $student->parent_phone_number }}</span>
+          </li>
+        </ul>
+
+        <div class="py-1 my-0 mb-1">
+          <p class="fs-sm text-uppercase text-primary fw-bold mb-1">
             {{ trans('Informasi Alamat') }}
           </p>
         </div>

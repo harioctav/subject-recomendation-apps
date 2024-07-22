@@ -19,6 +19,7 @@ return new class extends Migration
       $table->foreignId('major_id')->constrained('majors')->onDelete('cascade');
       $table->foreignId('village_id')->constrained('villages')->onDelete('cascade');
       $table->string('nim')->unique();
+      $table->string('nik')->unique();
       $table->string('name');
       $table->string('email')->unique();
       $table->date('birth_date');
@@ -31,6 +32,8 @@ return new class extends Migration
       $table->text('address')->nullable();
       $table->text('note')->nullable();
       $table->longText('avatar')->nullable();
+      $table->string('parent_name');
+      $table->string('parent_phone_number')->unique();
       $table->timestamps();
     });
   }

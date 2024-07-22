@@ -29,6 +29,10 @@ class StudentRequest extends FormRequest
         'required', 'numeric',
         Rule::unique('students', 'nim')->ignore($this->student),
       ],
+      'nik' => [
+        'required', 'numeric', 'digits:16',
+        Rule::unique('students', 'nik')->ignore($this->student),
+      ],
       'name' => 'required|string|max:100',
       'email' => [
         'required', 'email:dns', 'max:100',
@@ -51,6 +55,8 @@ class StudentRequest extends FormRequest
       'address' => 'required|string',
       'file' => 'nullable|mimes:jpg,png|max:3048',
       'initial_registration_period' => 'required|digits:4|integer|between:2019,2024',
+      'parent_name' => 'required|string|max:100',
+      'parent_phone_number' => 'required|numeric',
     ];
   }
 
@@ -84,6 +90,7 @@ class StudentRequest extends FormRequest
   {
     return [
       'nim' => 'Nomor Induk Mahasiswa',
+      'nik' => 'Nomor Induk Kependudukan',
       'name' => 'Nama Lengkap',
       'email' => 'Email',
       'birth_place' => 'Tempat Lahir',
@@ -100,6 +107,8 @@ class StudentRequest extends FormRequest
       'address' => 'Alamat Lengkap',
       'file' => 'Pas Foto',
       'initial_registration_period' => 'Tahun Masuk',
+      'parent_name' => 'Nama Orang Tua',
+      'parent_phone_number' => 'No. Telepon Orang Tua',
     ];
   }
 }

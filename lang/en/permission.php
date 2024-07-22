@@ -40,6 +40,7 @@ return [
       'create' => 'Buka formulir tambah Matakuliah untuk Prodi',
       'store' => 'Simpan data Matakuliah untuk Prodi',
       'show' => 'Menampilkan Detail Matakuliah di Prodi',
+      'import' => 'Import data Matakuliah dari excel ke Prodi',
       'edit' => 'Buka formulir ubah Matakuliah di Prodi',
       'update' => 'Simpan perubahan data Matakuliah di Prodi',
       'destroy' => 'Hapus data Matakuliah dari Prodi',
@@ -68,5 +69,17 @@ return [
     'update' => 'Simpan perubahan data Mahasiswa',
     'import' => 'Import data Mahasiswa dari excel',
     'destroy' => 'Hapus data Mahasiswa',
+  ],
+
+  'recommendations' => [
+    'name' => 'Management Rekomendasi',
+    'index' => 'Menampilkan daftar Rekomendasi',
+    'create' => 'Buka formulir tambah Rekomendasi',
+    'store' => 'Simpan data Rekomendasi baru',
+    'show' => 'Menampilkan Detail Rekomendasi',
+    'edit' => 'Buka formulir ubah Rekomendasi',
+    'update' => 'Simpan perubahan data Rekomendasi',
+    'import' => 'Import data Rekomendasi dari excel',
+    'destroy' => 'Hapus data Rekomendasi',
   ],
 ];

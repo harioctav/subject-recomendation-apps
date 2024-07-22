@@ -66,5 +66,14 @@ return [
     'edit' => 'Ubah Matakuliah Jurusan',
     'show' => 'Detail Matakuliah Jurusan',
     'delete' => 'Hapus Matakuliah Jurusan',
-  ]
+  ],
+
+  'recommendations' => [
+    'title' => 'Rekomendasi',
+    'index' => 'Daftar Rekomendasi',
+    'create' => 'Tambah Rekomendasi',
+    'edit' => 'Ubah Rekomendasi',
+    'show' => 'Detail Rekomendasi',
+    'delete' => 'Hapus Rekomendasi',
+  ],
 ];

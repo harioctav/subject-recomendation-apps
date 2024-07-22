@@ -9,6 +9,7 @@ use App\Http\Controllers\Academics\MajorController;
 use App\Http\Controllers\Academics\MajorSubjectController;
 use App\Http\Controllers\Academics\StudentController;
 use App\Http\Controllers\Academics\SubjectController;
+use App\Http\Controllers\Grades\RecommendationController;
 use App\Http\Controllers\Settings\PasswordController;
 
 /*
@@ -69,5 +70,11 @@ Route::middleware([
 
     // Student management
     Route::resource('students', StudentController::class);
+  });
+
+  Route::prefix('grades')->group(function () {
+
+    // Recommendations
+    Route::resource('recommendations', RecommendationController::class);
   });
 });

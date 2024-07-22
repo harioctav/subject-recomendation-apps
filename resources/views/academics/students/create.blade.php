@@ -47,6 +47,15 @@
           </div>
 
           <div class="mb-4">
+            <label for="nik" class="form-label">{{ trans('NIK') }}</label>
+            <span class="text-danger">*</span>
+            <input type="text" name="nik" id="nik" value="{{ old('nik') }}" class="form-control @error('nik') is-invalid @enderror" placeholder="{{ trans('Masukkan Nomor Induk Kependudukan') }}" onkeypress="return onlyNumber(event)">
+            @error('nik')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="mb-4">
             <label for="name" class="form-label">{{ trans('Nama Lengkap') }}</label>
             <span class="text-danger">*</span>
             <input type="text" name="name" id="name" value="{{ old('name') }}" class="form-control @error('name') is-invalid @enderror" placeholder="{{ trans('Masukkan Nama Lengkap') }}" onkeypress="return onlyLetter(event)">
@@ -231,6 +240,30 @@
             <label class="form-label" for="address">{{ trans('Alamat Lengkap') }}</label>
             <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address" rows="4" placeholder="{{ trans('Masukkan Alamat lengkap') }}">{{ old('address') }}</textarea>
             @error('address')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="py-1 mb-1">
+            <p class="fs-sm text-uppercase text-primary fw-bold mb-1">
+              {{ trans('Informasi Tambahan') }}
+            </p>
+          </div>
+
+          <div class="mb-4">
+            <label for="parent_name" class="form-label">{{ trans('Nama Ibu Kandung') }}</label>
+            <span class="text-danger">*</span>
+            <input type="text" name="parent_name" id="parent_name" value="{{ old('parent_name') }}" class="form-control @error('parent_name') is-invalid @enderror" placeholder="{{ trans('Masukkan Nama Ibu Kandung') }}" onkeypress="return onlyLetter(event)">
+            @error('parent_name')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="mb-4">
+            <label for="parent_phone_number" class="form-label">{{ trans('No. Orang Tua') }}</label>
+            <span class="text-danger">*</span>
+            <input type="text" name="parent_phone_number" id="parent_phone_number" value="{{ old('parent_phone_number') }}" class="form-control @error('parent_phone_number') is-invalid @enderror" placeholder="{{ trans('Masukkan Nomor Aktif') }}" onkeypress="return onlyNumber(event)">
+            @error('parent_phone_number')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror
           </div>

@@ -56,32 +56,41 @@
             @enderror
           </div>
 
-          <div class="mb-4">
+          {{-- <div class="mb-4">
             <label for="semester" class="form-label">{{ trans('Semester') }}</label>
-            <span class="text-danger">*</span>
-            <select name="semester" id="semester" class="js-select2 form-select @error('semester') is-invalid @enderror" data-placeholder="{{ trans('Semester Matakuliah berada') }}" style="width: 100%;">
-              <option></option>
-              @foreach ($semesters as $value)
-              <option value="{{ $value }}" @if (old('semester')==$value) selected @endif>{{ $value }}</option>
-              @endforeach
-            </select>
-            @error('semester')
-            <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-          </div>
+          <span class="text-danger">*</span>
+          <select name="semester" id="semester" class="js-select2 form-select @error('semester') is-invalid @enderror" data-placeholder="{{ trans('Semester Matakuliah berada') }}" style="width: 100%;">
+            <option></option>
+            @foreach ($semesters as $value)
+            <option value="{{ $value }}" @if (old('semester')==$value) selected @endif>{{ $value }}</option>
+            @endforeach
+          </select>
+          @error('semester')
+          <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
+        </div> --}}
 
-          <div class="mb-4">
-            <button type="submit" class="btn btn-alt-primary w-100" id="submit-button">
-              <i class="fa fa-fw fa-circle-check me-1"></i>
-              {{ trans('button.create') }}
-            </button>
-          </div>
-
+        <div class="mb-4">
+          <label for="semester" class="form-label">{{ trans('Semester') }}</label>
+          <span class="text-danger">*</span>
+          <input type="number" max="8" min="1" step="1" name="semester" id="semester" value="{{ old('semester') }}" class="form-control @error('semester') is-invalid @enderror" placeholder="{{ trans('Masukkan Semester') }}" onkeypress="return onlyNumber(event)">
+          @error('semester')
+          <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
         </div>
-      </div>
 
-    </form>
+        <div class="mb-4">
+          <button type="submit" class="btn btn-alt-primary w-100" id="submit-button">
+            <i class="fa fa-fw fa-circle-check me-1"></i>
+            {{ trans('button.create') }}
+          </button>
+        </div>
+
+      </div>
   </div>
+
+  </form>
+</div>
 </div>
 
 

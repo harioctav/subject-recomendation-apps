@@ -1,20 +1,20 @@
 <?php
 
-namespace App\DataTables\Academics;
+namespace App\DataTables\Grades;
 
 use App\Helpers\Helper;
-use App\Models\Subject;
+use App\Models\Recommendation;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
-use App\Services\Subject\SubjectService;
 use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
+use App\Services\Recommendation\RecommendationService;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
-class SubjectDataTable extends DataTable
+class RecommendationDataTable extends DataTable
 {
   /**
    * Create a new datatables instance.
@@ -22,7 +22,7 @@ class SubjectDataTable extends DataTable
    * @return void
    */
   public function __construct(
-    protected SubjectService $subjectService,
+    protected RecommendationService $recommendationService,
   ) {
     // 
   }
@@ -34,22 +34,37 @@ class SubjectDataTable extends DataTable
    */
   public function dataTable(QueryBuilder $query): EloquentDataTable
   {
+    $query = $query->with([
+      'student',
+      'subject'
+    ]);
+
     return (new EloquentDataTable($query))
       ->addIndexColumn()
-      ->addColumn('exam_time', fn ($row) => $row->exam_time ?: '--')
-      ->addColumn('course_credit', fn ($row) => $row->course_credit ?: '--')
-      ->addColumn('action', 'academics.subjects.action')
+      ->editColumn('student_id', fn ($row) => $row->student->name)
+      ->editColumn('subject_id', fn ($row) => $row->subject->name)
+      ->filterColumn('student_id', function ($query, $keyword) {
+        $query->whereHas('student', function ($query) use ($keyword) {
+          $query->where('name', 'LIKE', "%{$keyword}%");
+        });
+      })
+      ->filterColumn('subject_id', function ($query, $keyword) {
+        $query->whereHas('subject', function ($query) use ($keyword) {
+          $query->where('name', 'LIKE', "%{$keyword}%");
+        });
+      })
+      ->addColumn('action', 'grades.recommendations.action')
       ->rawColumns([
-        'action'
+        'action',
       ]);
   }
 
   /**
    * Get the query source of dataTable.
    */
-  public function query(Subject $model): QueryBuilder
+  public function query(Recommendation $model): QueryBuilder
   {
-    return $this->subjectService->getQuery()->oldest('code');
+    return $this->recommendationService->getQuery();
   }
 
   /**
@@ -58,7 +73,7 @@ class SubjectDataTable extends DataTable
   public function html(): HtmlBuilder
   {
     return $this->builder()
-      ->setTableId('subject-table')
+      ->setTableId('recommendation-table')
       ->columns($this->getColumns())
       ->minifiedAjax()
       //->dom('Bfrtip')
@@ -88,8 +103,8 @@ class SubjectDataTable extends DataTable
   {
     // Check Visibility of Action Row
     $visibility = Helper::checkPermissions([
-      'subjects.edit',
-      'subjects.destroy',
+      'recommendations.edit',
+      'recommendations.destroy',
     ]);
 
     return [
@@ -99,17 +114,14 @@ class SubjectDataTable extends DataTable
         ->searchable(false)
         ->width('5%')
         ->addClass('text-center'),
-      Column::make('code')
-        ->title(trans('Kode'))
+      Column::make('student_id')
+        ->title(trans('Mahasiswa'))
         ->addClass('text-center'),
-      Column::make('name')
-        ->title(trans('Nama'))
+      Column::make('subject_id')
+        ->title(trans('Matakuliah'))
         ->addClass('text-center'),
-      Column::make('course_credit')
-        ->title(trans('SKS'))
-        ->addClass('text-center'),
-      Column::make('exam_time')
-        ->title(trans('Waktu Ujian'))
+      Column::make('semester')
+        ->title(trans('Semester'))
         ->addClass('text-center'),
       Column::computed('action')
         ->exportable(false)
@@ -125,6 +137,6 @@ class SubjectDataTable extends DataTable
    */
   protected function filename(): string
   {
-    return 'Subject_' . date('YmdHis');
+    return 'Recommendation_' . date('YmdHis');
   }
 }

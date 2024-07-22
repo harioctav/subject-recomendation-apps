@@ -7,8 +7,10 @@ use Illuminate\Support\Carbon;
 use App\Services\User\UserService;
 use App\Helpers\Enums\GreetingType;
 use App\Services\Major\MajorService;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Services\Student\StudentService;
 use App\Services\Subject\SubjectService;
+use App\Imports\MajorSubjectImport;
 
 class HomeController extends Controller
 {
@@ -33,6 +35,7 @@ class HomeController extends Controller
    */
   public function index()
   {
+
     // Greetings
     $current = Carbon::now()->format('H');
 

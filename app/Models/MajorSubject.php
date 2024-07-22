@@ -52,4 +52,21 @@ class MajorSubject extends Model
       $majorSubject->major->updateTotalCourseCredit();
     });
   }
+
+  // Accessor untuk kolom semester
+  public function getSemesterAttribute($value)
+  {
+    $semesters = [
+      1 => 'Semester Satu',
+      2 => 'Semester Dua',
+      3 => 'Semester Tiga',
+      4 => 'Semester Empat',
+      5 => 'Semester Lima',
+      6 => 'Semester Enam',
+      7 => 'Semester Tujuh',
+      8 => 'Semester Delapan',
+    ];
+
+    return $semesters[$value] ?? 'Unknown Semester';
+  }
 }

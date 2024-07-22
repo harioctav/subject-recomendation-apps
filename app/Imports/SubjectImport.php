@@ -21,7 +21,7 @@ class SubjectImport implements ToCollection
       $exam_time = $row[4] ?? '';
       $note = $row[5] ?? '';
 
-      if (!Subject::where('code', $code)->where('name', $name)->exists()) :
+      if (!Subject::where('code', $code)->exists()) :
         Subject::create([
           'code' => $code,
           'name' => $name,

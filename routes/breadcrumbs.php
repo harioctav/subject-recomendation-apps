@@ -118,3 +118,25 @@ Breadcrumbs::for('students.show', function (BreadcrumbTrail $trail, $student) {
   $trail->push(trans('page.students.show'), route('students.show', $student->uuid));
 });
 // Subjects Breadcrumbs
+
+// Recommendations Breadcrumbs
+Breadcrumbs::for('recommendations.index', function (BreadcrumbTrail $trail) {
+  $trail->parent('home');
+  $trail->push(trans('page.recommendations.index'), route('recommendations.index'));
+});
+
+Breadcrumbs::for('recommendations.create', function (BreadcrumbTrail $trail) {
+  $trail->parent('recommendations.index');
+  $trail->push(trans('page.recommendations.create'), route('recommendations.create'));
+});
+
+Breadcrumbs::for('recommendations.edit', function (BreadcrumbTrail $trail, $recommendation) {
+  $trail->parent('recommendations.index');
+  $trail->push(trans('page.recommendations.edit'), route('recommendations.edit', $recommendation->uuid));
+});
+
+Breadcrumbs::for('recommendations.show', function (BreadcrumbTrail $trail, $recommendation) {
+  $trail->parent('recommendations.index');
+  $trail->push(trans('page.recommendations.show'), route('recommendations.show', $recommendation->uuid));
+});
+// Recommendations Breadcrumbs
