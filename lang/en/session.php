@@ -8,6 +8,7 @@ return [
   'create' => 'Melakukan Penambahan Data Berhasil',
   'update' => 'Melakukan Perubahan Data Berhasil',
   'delete' => 'Melakukan Penghapusan Data Berhasil',
+  'delete_error' => 'Tidak dapat menghapus Data karena mempunyai Keterkaitan dengan data lainnya',
   'status' => 'Melakukan Perubahan Status Berhasil',
   'password' => 'Melakukan Perubahan Kata Sandi Berhasil',
   'image' => 'Melakukan Penghapusan Avatar Berhasil',

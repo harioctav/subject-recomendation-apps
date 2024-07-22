@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Helpers\Helper;
 use App\Imports\MajorSubjectImport;
 use App\Models\MajorSubject;
 use Illuminate\Database\Seeder;
@@ -16,7 +17,8 @@ class MajorSubjectSeeder extends Seeder
    */
   public function run(): void
   {
-    $path = public_path('assets/excels/major_subjects.xlsx');
-    Excel::import(new MajorSubjectImport(), $path);
+    $filePath = public_path('assets/excels/major_subjects.xlsx'); // Path to your Excel file
+
+    Excel::import(new MajorSubjectImport, $filePath);
   }
 }

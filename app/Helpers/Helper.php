@@ -4,6 +4,8 @@ namespace App\Helpers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 
 class Helper
@@ -46,5 +48,30 @@ class Helper
     } else {
       return null;
     }
+  }
+
+  public static function convertFormulas($file)
+  {
+    // Load the spreadsheet
+    $spreadsheet = IOFactory::load($file);
+
+    // Get the active sheet (modify as necessary)
+    $sheet = $spreadsheet->getActiveSheet();
+
+    // Iterate over all cells with formulas
+    foreach ($sheet->getCoordinates() as $coordinate) {
+      $cell = $sheet->getCell($coordinate);
+      if ($cell->isFormula()) {
+        // Replace formula with its calculated value
+        $cell->setValue($cell->getCalculatedValue());
+      }
+    }
+
+    // Save the modified spreadsheet
+    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+    $newFilePath = 'path_to_save_converted_file.xlsx';
+    $writer->save($newFilePath);
+
+    return $newFilePath;
   }
 }

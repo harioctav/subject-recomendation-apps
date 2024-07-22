@@ -57,7 +57,7 @@
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Program Studi') }}
-            <span class="fw-semibold">{{ $student->major->name }} - {{ $student->major->formatted_level }}</span>
+            <span class="fw-semibold">{{ $student->major->name }} - {{ $student->major->formatted_degree }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Tahun Masuk') }}
