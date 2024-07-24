@@ -38,7 +38,7 @@
           <ul class="list-group push">
             <li class="list-group-item d-flex justify-content-between align-items-center">
               {{ trans('Nama Program Studi') }}
-              <span class="fw-semibold">{{ $grade->student->major->name }}</span>
+              <span class="fw-semibold text-end" style="min-width: 0; flex: 1;">{{ $grade->student->major->name }}</span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
               {{ trans('Matakuliah') }}
@@ -68,7 +68,7 @@
           <div class="mb-4">
             <label for="grade" class="form-label">{{ trans('Nilai') }}</label>
             <span class="text-danger">*</span>
-            <input type="number" max="100" min="1" step="1" name="grade" id="grade" value="{{ old('grade', $grade->grade) }}" class="form-control @error('grade') is-invalid @enderror" placeholder="{{ trans('Masukkan Nilai') }}" onkeypress="return onlyNumber(event)">
+            <input type="text" name="grade" id="grade" value="{{ old('grade', $grade->grade) }}" class="form-control @error('grade') is-invalid @enderror" placeholder="{{ trans('Masukkan Nilai') }}">
             @error('grade')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror

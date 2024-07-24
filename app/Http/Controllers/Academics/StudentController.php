@@ -32,6 +32,22 @@ class StudentController extends Controller
     // 
   }
 
+  protected function majors()
+  {
+    return $this->majorService->getWhere(
+      orderBy: 'name',
+      orderByType: 'asc',
+    )->get();
+  }
+
+  protected function provinces()
+  {
+    return $this->provinceService->getWhere(
+      orderBy: 'id',
+      orderByType: 'ASC'
+    )->get();
+  }
+
   /**
    * Display a listing of the resource.
    */
@@ -45,19 +61,8 @@ class StudentController extends Controller
    */
   public function create()
   {
-    $majors = Cache::remember("majors", 60 * 60, function () {
-      return $this->majorService->getWhere(
-        orderBy: 'name',
-        orderByType: 'asc',
-      )->get();
-    });
-
-    $provinces = Cache::remember("provinces", 60 * 60, function () {
-      return $this->provinceService->getWhere(
-        orderBy: 'id',
-        orderByType: 'ASC'
-      )->get();
-    });
+    $majors = $this->majors();
+    $provinces = $this->provinces();
 
     $genders = $this->cacheData('genders', fn () => GenderType::toArray());
     $religions = $this->cacheData('religions', fn () => ReligionType::toArray());
@@ -87,19 +92,8 @@ class StudentController extends Controller
    */
   public function edit(Student $student)
   {
-    $majors = Cache::remember("majors", 60 * 60, function () {
-      return $this->majorService->getWhere(
-        orderBy: 'name',
-        orderByType: 'asc',
-      )->get();
-    });
-
-    $provinces = Cache::remember("provinces", 60 * 60, function () {
-      return $this->provinceService->getWhere(
-        orderBy: 'name',
-        orderByType: 'asc',
-      )->get();
-    });
+    $majors = $this->majors();
+    $provinces = $this->provinces();
 
     $genders = $this->cacheData('genders', fn () => GenderType::toArray());
     $religions = $this->cacheData('religions', fn () => ReligionType::toArray());

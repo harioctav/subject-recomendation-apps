@@ -28,51 +28,43 @@ class LocationController extends Controller
 
   public function provinces()
   {
-    $provinces = Cache::remember("provinces", 60 * 60, function () {
-      return $this->provinceService->getWhere(
-        orderBy: 'id',
-        orderByType: 'ASC'
-      )->get();
-    });
+    $provinces = $this->provinceService->getWhere(
+      orderBy: 'id',
+      orderByType: 'ASC'
+    )->get();
 
     return response()->json($provinces);
   }
 
   public function regencies($province_id)
   {
-    $regencies = Cache::remember("regencies_{$province_id}", 60 * 60, function () use ($province_id) {
-      return $this->regencyService->getWhere(
-        wheres: [
-          'province_id' => $province_id
-        ]
-      )->get();
-    });
+    $regencies = $this->regencyService->getWhere(
+      wheres: [
+        'province_id' => $province_id
+      ]
+    )->get();
 
     return response()->json($regencies);
   }
 
   public function districts($regency_id)
   {
-    $districts = Cache::remember("districts_{$regency_id}", 60 * 60, function () use ($regency_id) {
-      return $this->districtService->getWhere(
-        wheres: [
-          'regency_id' => $regency_id
-        ]
-      )->get();
-    });
+    $districts = $this->districtService->getWhere(
+      wheres: [
+        'regency_id' => $regency_id
+      ]
+    )->get();
 
     return response()->json($districts);
   }
 
   public function villages($district_id)
   {
-    $villages = Cache::remember("districts_{$district_id}", 60 * 60, function () use ($district_id) {
-      return $this->villageService->getWhere(
-        wheres: [
-          'district_id' => $district_id
-        ]
-      )->get();
-    });
+    $villages = $this->villageService->getWhere(
+      wheres: [
+        'district_id' => $district_id
+      ]
+    )->get();
 
     return response()->json($villages);
   }

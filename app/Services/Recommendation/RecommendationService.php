@@ -2,6 +2,7 @@
 
 namespace App\Services\Recommendation;
 
+use Illuminate\Http\Request;
 use LaravelEasyRepository\BaseService;
 
 interface RecommendationService extends BaseService
@@ -14,4 +15,5 @@ interface RecommendationService extends BaseService
     $orderBy = null,
     $orderByType = null
   );
+  public function handleStoreData(Request $request);
 }

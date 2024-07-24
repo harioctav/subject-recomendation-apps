@@ -1,144 +1,83 @@
 $(() => {
-    // Papulate function
-    function populateStudentDropdown(selector, options, placeholder) {
+    function populateDropdown(selector, groups, placeholder) {
         const dropdown = $(selector);
         dropdown.empty().append(`<option value="">${placeholder}</option>`);
 
-        $.each(options, function (key, value) {
-            dropdown.append(
-                `<option value="${value.id}" data-uuid="${value.uuid}">${value.name}</option>`
-            );
-        });
-    }
-
-    function populateSubjectDropdown(selector, groupedOptions, placeholder) {
-        const dropdown = $(selector);
-        dropdown.empty().append(`<option value="">${placeholder}</option>`);
-
-        $.each(groupedOptions, function (semester, subjects) {
+        $.each(groups, function (key, group) {
             const optgroup = $("<optgroup>").attr(
                 "label",
-                `Semester ${semester}`
+                "Semester " + group.semester
             );
-
-            $.each(subjects, function (key, subject) {
+            $.each(group.subjects, function (key, subject) {
                 optgroup.append(
                     `<option value="${subject.id}" data-uuid="${subject.uuid}">${subject.name}</option>`
                 );
             });
-
             dropdown.append(optgroup);
         });
+
+        const oldSubjectId = dropdown.data("old");
+        if (oldSubjectId) {
+            dropdown.val(oldSubjectId).trigger("change");
+        }
     }
 
-    // loadValues();
-
-    // function loadValues() {
-    //     const oldMajorId = $("#major_id").data("old");
-    //     const oldStudentId = $("#student_id").data("old");
-    //     const oldSubjectId = $("#subject_id").data("old");
-
-    //     // Menyimpan UUID dari major yang sudah terpilih
-    //     const majorOption = $("#major_id").find(
-    //         `option[value="${oldMajorId}"]`
-    //     );
-    //     const oldMajorUuid = majorOption.data("uuid");
-
-    //     // Memperbarui dropdown major_id
-    //     if (oldMajorId) {
-    //         $("#major_id").val(oldMajorId).trigger("change");
-
-    //         // Memuat data mahasiswa jika ada major yang sudah terpilih
-    //         if (oldMajorUuid) {
-    //             const url = studentURL.replace(":major", oldMajorUuid);
-    //             $.ajax({
-    //                 url: url,
-    //                 type: "GET",
-    //                 dataType: "json",
-    //                 success: function (response) {
-    //                     populateStudentDropdown(
-    //                         "#student_id",
-    //                         response,
-    //                         "Pilih Mahasiswa"
-    //                     );
-
-    //                     // Memilih student_id jika ada
-    //                     if (oldStudentId) {
-    //                         $("#student_id")
-    //                             .val(oldStudentId)
-    //                             .trigger("change");
-    //                     }
-    //                 },
-    //                 error: function () {
-    //                     populateStudentDropdown(
-    //                         "#student_id",
-    //                         [],
-    //                         "Pilih Mahasiswa"
-    //                     );
-    //                 },
-    //             });
-    //         }
-    //     }
-    // }
-
-    $("#major_id").on("change", function () {
-        const majorId = $(this).val();
-
-        if (majorId) {
-            const url = studentURL.replace(":major_id", majorId);
-
-            $.ajax({
-                url: url,
-                type: "GET",
-                dataType: "json",
-                success: function (response) {
-                    populateStudentDropdown(
-                        "#student_id",
-                        response,
-                        "Pilih Mahasiswa"
-                    );
-                },
-                error: function () {
-                    populateStudentDropdown(
-                        "#student_id",
-                        [],
-                        "Pilih Mahasiswa"
-                    );
-                },
-            });
-        } else {
-            populateStudentDropdown("#student_id", [], "Pilih Mahasiswa");
-        }
-    });
-
-    $("#student_id").on("change", function () {
-        const selectedOption = $(this).find("option:selected");
-        const uuid = selectedOption.data("uuid");
-
+    function loadStudentData(uuid) {
         if (uuid) {
-            const url = subjectURL.replace(":student", uuid);
-
+            let url = studentURL.replace(":student", uuid);
             $.ajax({
                 url: url,
                 type: "GET",
-                dataType: "json",
-                success: function (response) {
-                    populateSubjectDropdown(
+                success: function (data) {
+                    $("#student-nim").text(data.student.nim);
+                    $("#student-major").text(data.student.major);
+
+                    var subjectsGroupedBySemester = data.subjects.map(function (
+                        group
+                    ) {
+                        return {
+                            semester: group.semester,
+                            subjects: group.subjects,
+                        };
+                    });
+
+                    populateDropdown(
                         "#subject_id",
-                        response, // Data yang dikelompokkan berdasarkan semester
+                        subjectsGroupedBySemester,
                         "Pilih Matakuliah"
                     );
+
+                    // Setel nilai subject_id jika ada nilai lama
+                    const oldSubjectId = $("#subject_id").data("old");
+                    if (oldSubjectId) {
+                        $("#subject_id").val(oldSubjectId).trigger("change");
+                    }
                 },
-                error: function () {
-                    populateSubjectDropdown(
-                        "#subject_id",
-                        {},
-                        "Pilih Matakuliah"
-                    );
+                error: function (xhr) {
+                    $("#student-nim").text("--");
+                    $("#student-major").text("--");
+                    $("#subject_id").empty().append("<option></option>");
                 },
             });
         } else {
-            populateSubjectDropdown("#subject_id", {}, "Pilih Matakuliah");
+            $("#student-nim").text("--");
+            $("#student-major").text("--");
+            $("#subject_id").empty().append("<option></option>");
         }
+    }
+
+    // Ketika halaman dimuat, tangani mahasiswa yang dipilih sebelumnya
+    const oldStudentId = $("#student_id").data("old");
+    if (oldStudentId) {
+        $("#student_id").val(oldStudentId).trigger("change");
+        const selectedUuid = $("#student_id option:selected").data("uuid");
+        loadStudentData(selectedUuid);
+    }
+
+    // Tangani perubahan mahasiswa
+    $("#student_id").on("change", function () {
+        var selectedOption = $(this).find("option:selected");
+        var uuid = selectedOption.data("uuid");
+        loadStudentData(uuid);
     });
 });

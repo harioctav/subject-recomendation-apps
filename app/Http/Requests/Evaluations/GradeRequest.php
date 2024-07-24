@@ -22,10 +22,19 @@ class GradeRequest extends FormRequest
   public function rules()
   {
     return [
-      'major_id' => 'required|exists:majors,id',
       'student_id' => 'required|exists:students,id',
       'subject_id' => 'required|exists:subjects,id',
-      'grade' => 'required|numeric|between:1,101',
+      'grade' => [
+        'required',
+        'string',
+        'regex:/^[ABCDE][+-]?$/',
+        function ($attribute, $value, $fail) {
+          $validGrades = ['A+', 'A-', 'A', 'B+', 'B-', 'B', 'C+', 'C-', 'C', 'D+', 'D-', 'D', 'E'];
+          if (!in_array($value, $validGrades)) {
+            $fail('Nilai yang dimasukkan tidak valid.');
+          }
+        },
+      ],
     ];
   }
 
@@ -43,6 +52,7 @@ class GradeRequest extends FormRequest
       '*.numeric' => ':attribute input tidak valid atau harus berupa angka',
       '*.image' => ':attribute tidak valid, pastikan memilih gambar',
       '*.mimes' => ':attribute tidak valid, masukkan gambar dengan format jpg atau png',
+      '*.regex' => ':attribute dimasukkan tidak valid',
       '*.max' => ':attribute terlalu besar, maksimal :max karakter',
       '*.date' => ':attribute harus berupa tanggal',
       '*.digits' => ':attribute harus memiliki :digits angka',
@@ -58,7 +68,6 @@ class GradeRequest extends FormRequest
   public function attributes(): array
   {
     return [
-      'major_id' => 'Program Studi',
       'student_id' => 'Mahasiswa',
       'subject_id' => 'Matakuliah',
       'grade' => 'Nilai Mahasiswa',

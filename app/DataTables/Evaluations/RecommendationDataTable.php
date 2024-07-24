@@ -64,7 +64,7 @@ class RecommendationDataTable extends DataTable
    */
   public function query(Recommendation $model): QueryBuilder
   {
-    return $this->recommendationService->getQuery();
+    return $this->recommendationService->getQuery()->latest();
   }
 
   /**
@@ -123,12 +123,12 @@ class RecommendationDataTable extends DataTable
       Column::make('semester')
         ->title(trans('Semester'))
         ->addClass('text-center'),
-      Column::computed('action')
-        ->exportable(false)
-        ->printable(false)
-        ->visible($visibility)
-        ->width('10%')
-        ->addClass('text-center'),
+      // Column::computed('action')
+      //   ->exportable(false)
+      //   ->printable(false)
+      //   ->visible($visibility)
+      //   ->width('10%')
+      //   ->addClass('text-center'),
     ];
   }
 

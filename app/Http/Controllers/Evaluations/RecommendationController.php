@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Evaluations;
 use Illuminate\Http\Request;
 use App\Models\Recommendation;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Cache;
+use App\Services\Student\StudentService;
 use App\Services\Recommendation\RecommendationService;
 use App\DataTables\Evaluations\RecommendationDataTable;
+use App\Http\Requests\Evaluations\RecommendationRequest;
 
 class RecommendationController extends Controller
 {
@@ -16,9 +19,20 @@ class RecommendationController extends Controller
    * @return void
    */
   public function __construct(
+    protected StudentService $studentService,
     protected RecommendationService $recommendationService,
   ) {
     // 
+  }
+
+  protected function students()
+  {
+    $students = $this->studentService->getWhere(
+      orderBy: 'name',
+      orderByType: 'asc',
+    )->get();
+
+    return $students;
   }
 
   /**
@@ -34,15 +48,17 @@ class RecommendationController extends Controller
    */
   public function create()
   {
-    //
+    $students = $this->students();
+    return view('evaluations.recommendations.create', compact('students'));
   }
 
   /**
    * Store a newly created resource in storage.
    */
-  public function store(Request $request)
+  public function store(RecommendationRequest $request)
   {
-    //
+    $this->recommendationService->handleStoreData($request);
+    return redirect(route('recommendations.index'))->withSuccess(trans('session.create'));
   }
 
   /**

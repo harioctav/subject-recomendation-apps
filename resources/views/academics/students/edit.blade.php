@@ -281,7 +281,7 @@
 </div>
 @endsection
 @push('javascript')
-@vite('resources/js/masters/students/input.js')
+@vite('resources/js/academics/students/input.js')
 
 <script>
   var regencies_url = "{{ route('locations.regencies', ':province_id') }}"

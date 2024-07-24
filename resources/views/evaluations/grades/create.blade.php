@@ -27,41 +27,45 @@
     <form action="{{ route('grades.store') }}" method="POST" onsubmit="return disableSubmitButton()">
       @csrf
 
-      <div class="row justify-content-center">
-        <div class="col-md-6">
+      <div class="row items-push">
+        <div class="col-lg-3">
+          <p class="text-muted">
+            {{ trans('Untuk menambahkan nilai Mahasiswa silahkan mengecek kembali pada halaman Rekomendasi, apakah sudah di rekomendasikan atau belum agar Matakuliah muncul dan bisa diberi nilai.') }}
+          </p>
+        </div>
+        <div class="col-lg-7 offset-1">
 
           <div class="mb-4">
-            <label for="major_id" class="form-label">{{ trans('Program Studi') }}</label>
+            <label for="student_id" class="form-label">{{ trans('Mahasiswa') }}</label>
             <span class="text-danger">*</span>
-            <select name="major_id" id="major_id" class="js-select2 form-select @error('major_id') is-invalid @enderror" data-placeholder="{{ trans('Pilih Program Studi') }}" style="width: 100%;" data-old="{{ old('major_id') }}">
+            <select name="student_id" id="student_id" class="js-select2 form-select @error('student_id') is-invalid @enderror" data-placeholder="{{ trans('Pilih Mahasiswa') }}" style="width: 100%;" data-old="{{ old('student_id') }}">
               <option></option>
-              @foreach ($majors as $item)
-              <option value="{{ $item->id }}" data-uuid="{{ $item->uuid }}" @if (old('major_id')==$item->id) selected @endif>{{ $item->name }}</option>
+              @foreach ($students as $item)
+              <option value="{{ $item->id }}" data-uuid="{{ $item->uuid }}" @if (old('student_id')==$item->id) selected @endif>{{ $item->name }}</option>
               @endforeach
-            </select>
-            @error('major_id')
-            <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-          </div>
-
-          <div class="mb-4">
-            <label for="student_id" class="form-label">{{ trans('Pilih Mahasiswa') }}</label>
-            <span class="text-danger">*</span>
-            <select name="student_id" id="student_id" class="js-select2 form-select @error('student_id') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('student_id') }}">
-              <option></option>
-
             </select>
             @error('student_id')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror
           </div>
 
+          <ul class="list-group push">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ trans('NIM') }}
+              <span id="student-nim" class="fw-semibold">--</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ trans('Program Studi') }}
+              <span id="student-major" class="fw-semibold text-end" style="min-width: 0; flex: 1;">--</span>
+            </li>
+          </ul>
+
           <div class="mb-4">
             <label for="subject_id" class="form-label">{{ trans('Pilih Matakuliah') }}</label>
             <span class="text-danger">*</span>
             <select name="subject_id" id="subject_id" class="js-select2 form-select @error('subject_id') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('subject_id') }}">
               <option></option>
-
+              <!-- Subjects will be populated by JavaScript -->
             </select>
             @error('subject_id')
             <div class="invalid-feedback">{{ $message }}</div>
@@ -71,7 +75,7 @@
           <div class="mb-4">
             <label for="grade" class="form-label">{{ trans('Nilai') }}</label>
             <span class="text-danger">*</span>
-            <input type="number" min="1" step="1" name="grade" id="grade" value="{{ old('grade') }}" class="form-control @error('grade') is-invalid @enderror" placeholder="{{ trans('Masukkan Nilai') }}" onkeypress="return onlyNumber(event)">
+            <input type="text" min="1" step="1" name="grade" id="grade" value="{{ old('grade') }}" class="form-control @error('grade') is-invalid @enderror" placeholder="{{ trans('Masukkan Nilai') }}">
             @error('grade')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -95,8 +99,13 @@
 @vite('resources/js/evaluations/grades/input.js')
 
 <script>
-  var studentURL = "{{ route('api.students.index', ['major_id' => ':major_id']) }}"
-  var subjectURL = "{{ route('api.subjects.index', ['student' => ':student']) }}"
+  var studentURL = "{{ route('api.students.index', ['student' => ':student']) }}"
+
+  // Simpan data NIM dan Program Studi jika ada error validasi
+  @if(old('student_id'))
+  $("#student-nim").text("{{ old('student_nim', '--') }}");
+  $("#student-major").text("{{ old('student_major', '--') }}");
+  @endif
 
 </script>
 @endpush

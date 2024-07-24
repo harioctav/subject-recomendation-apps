@@ -22,6 +22,7 @@ class Grade extends Model
     'subject_id',
     'grade',
     'exam_period',
+    'note',
   ];
 
   /**

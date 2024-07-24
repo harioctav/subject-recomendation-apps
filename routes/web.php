@@ -57,8 +57,8 @@ Route::middleware([
 
     // Major to Subject Management
     Route::prefix('majors/{major}/subjects')->name('majors.subjects.')->group(function () {
-      Route::get('create', [MajorSubjectController::class, 'create'])->name('create');
       Route::post('/', [MajorSubjectController::class, 'store'])->name('store');
+      Route::get('create', [MajorSubjectController::class, 'create'])->name('create');
       Route::delete('{subject}', [MajorSubjectController::class, 'destroy'])->name('destroy');
     });
 

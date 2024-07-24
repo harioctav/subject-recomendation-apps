@@ -31,7 +31,9 @@ Route::prefix('locations')->group(function () {
 
 Route::name('api.')->group(function () {
   Route::prefix('students')->group(function () {
-    Route::get('{major_id}', [StudentController::class, 'index'])->name('students.index');
+    Route::get('{student_id}/detail', [StudentController::class, 'show'])->name('students.show');
+    Route::get('{student_id}', [StudentController::class, 'courses'])->name('students.courses');
+    Route::get('recommendations/{student}', [StudentController::class, 'index'])->name('students.index');
   });
 
   Route::prefix('subjects')->group(function () {

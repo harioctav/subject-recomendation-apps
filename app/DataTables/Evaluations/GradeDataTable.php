@@ -68,7 +68,7 @@ class GradeDataTable extends DataTable
    */
   public function query(Grade $model): QueryBuilder
   {
-    return $this->gradeService->getQuery();
+    return $this->gradeService->getQuery()->latest();
   }
 
   /**
