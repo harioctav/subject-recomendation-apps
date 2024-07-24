@@ -82,4 +82,16 @@ return [
     'import' => 'Import data Rekomendasi dari excel',
     'destroy' => 'Hapus data Rekomendasi',
   ],
+
+  'grades' => [
+    'name' => 'Management Nilai',
+    'index' => 'Menampilkan daftar Nilai',
+    'create' => 'Buka formulir tambah Nilai',
+    'store' => 'Simpan data Nilai baru',
+    'show' => 'Menampilkan Detail Nilai',
+    'edit' => 'Buka formulir ubah Nilai',
+    'update' => 'Simpan perubahan data Nilai',
+    'import' => 'Import data Nilai dari excel',
+    'destroy' => 'Hapus data Nilai',
+  ],
 ];

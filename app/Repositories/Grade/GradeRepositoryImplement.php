@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Repositories\Recommendation;
+namespace App\Repositories\Grade;
 
 use LaravelEasyRepository\Implementations\Eloquent;
-use App\Models\Recommendation;
+use App\Models\Grade;
 
-class RecommendationRepositoryImplement extends Eloquent implements RecommendationRepository
+class GradeRepositoryImplement extends Eloquent implements GradeRepository
 {
   public function __construct(
-    protected Recommendation $model
+    protected Grade $model
   ) {
     // 
   }

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Grades;
+namespace App\Http\Controllers\Evaluations;
 
-use App\DataTables\Grades\RecommendationDataTable;
-use App\Http\Controllers\Controller;
-use App\Models\Recommendation;
-use App\Services\Recommendation\RecommendationService;
 use Illuminate\Http\Request;
+use App\Models\Recommendation;
+use App\Http\Controllers\Controller;
+use App\Services\Recommendation\RecommendationService;
+use App\DataTables\Evaluations\RecommendationDataTable;
 
 class RecommendationController extends Controller
 {
@@ -26,7 +26,7 @@ class RecommendationController extends Controller
    */
   public function index(RecommendationDataTable $dataTable)
   {
-    return $dataTable->render('grades.recommendations.index');
+    return $dataTable->render('evaluations.recommendations.index');
   }
 
   /**

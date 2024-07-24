@@ -47,7 +47,16 @@
         </ul>
       </div>
     </div>
+  </div>
+</div>
 
+<div class="block block-rounded">
+  <div class="block-header block-header-default">
+    <h3 class="block-title">
+      {{ trans('Daftar Matakuliah') }}
+    </h3>
+  </div>
+  <div class="block-content">
     <div class="mb-4">
       @can('majors.subjects.create')
       <a href="{{ route('majors.subjects.create', $major->uuid) }}" class="btn btn-sm btn-primary">
@@ -57,15 +66,9 @@
       @endcan
     </div>
 
-    <div>
-      <h3 class="block-title mb-3">
-        {{ trans('Matakuliah di Program Studi') }} {{ $major->name }}
-      </h3>
-      <div class="my-3">
-        {{ $dataTable->table() }}
-      </div>
+    <div class="my-3">
+      {{ $dataTable->table() }}
     </div>
-
   </div>
 </div>
 @endsection

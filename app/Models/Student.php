@@ -100,6 +100,16 @@ class Student extends Model
   }
 
   /**
+   * Relation to Student Model
+   *
+   * @return HasMany
+   */
+  public function grades(): HasMany
+  {
+    return $this->hasMany(Grade::class);
+  }
+
+  /**
    * Get brith day formatted attribute
    */
   public function getFormattedBirthDateAttribute(): string

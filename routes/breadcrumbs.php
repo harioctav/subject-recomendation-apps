@@ -140,3 +140,25 @@ Breadcrumbs::for('recommendations.show', function (BreadcrumbTrail $trail, $reco
   $trail->push(trans('page.recommendations.show'), route('recommendations.show', $recommendation->uuid));
 });
 // Recommendations Breadcrumbs
+
+// grades Breadcrumbs
+Breadcrumbs::for('grades.index', function (BreadcrumbTrail $trail) {
+  $trail->parent('home');
+  $trail->push(trans('page.grades.index'), route('grades.index'));
+});
+
+Breadcrumbs::for('grades.create', function (BreadcrumbTrail $trail) {
+  $trail->parent('grades.index');
+  $trail->push(trans('page.grades.create'), route('grades.create'));
+});
+
+Breadcrumbs::for('grades.edit', function (BreadcrumbTrail $trail, $grade) {
+  $trail->parent('grades.index');
+  $trail->push(trans('page.grades.edit'), route('grades.edit', $grade->uuid));
+});
+
+Breadcrumbs::for('grades.show', function (BreadcrumbTrail $trail, $grade) {
+  $trail->parent('grades.index');
+  $trail->push(trans('page.grades.show'), route('grades.show', $grade->uuid));
+});
+// grades Breadcrumbs

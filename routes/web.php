@@ -6,11 +6,12 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\UserController;
 use App\Http\Controllers\Academics\MajorController;
-use App\Http\Controllers\Academics\MajorSubjectController;
 use App\Http\Controllers\Academics\StudentController;
 use App\Http\Controllers\Academics\SubjectController;
-use App\Http\Controllers\Grades\RecommendationController;
 use App\Http\Controllers\Settings\PasswordController;
+use App\Http\Controllers\Academics\MajorSubjectController;
+use App\Http\Controllers\Evaluations\GradeController;
+use App\Http\Controllers\Evaluations\RecommendationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -72,9 +73,12 @@ Route::middleware([
     Route::resource('students', StudentController::class);
   });
 
-  Route::prefix('grades')->group(function () {
+  Route::prefix('evaluations')->group(function () {
 
     // Recommendations
     Route::resource('recommendations', RecommendationController::class);
+
+    // Grades
+    Route::resource('grades', GradeController::class)->except('show');
   });
 });

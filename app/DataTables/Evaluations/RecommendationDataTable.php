@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DataTables\Grades;
+namespace App\DataTables\Evaluations;
 
 use App\Helpers\Helper;
 use App\Models\Recommendation;
@@ -53,7 +53,7 @@ class RecommendationDataTable extends DataTable
           $query->where('name', 'LIKE', "%{$keyword}%");
         });
       })
-      ->addColumn('action', 'grades.recommendations.action')
+      ->addColumn('action', 'evaluations.recommendations.action')
       ->rawColumns([
         'action',
       ]);

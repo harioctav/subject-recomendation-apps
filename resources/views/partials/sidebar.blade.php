@@ -84,15 +84,22 @@
 
           @canany(['recommendations.index'])
           <li class="nav-main-heading">{{ trans('Evaluations') }}</li>
-          <li class="nav-main-item {{ Request::is('grades*') ? 'open' : '' }}">
-            <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="{{ Request::is('grades*') ? 'true' : 'false' }}" href="#">
+          <li class="nav-main-item {{ Request::is('evaluations*') ? 'open' : '' }}">
+            <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="{{ Request::is('evaluations*') ? 'true' : 'false' }}" href="#">
               <i class="nav-main-link-icon fa fa-check"></i>
               <span class="nav-main-link-name">{{ trans('Penilaian') }}</span>
             </a>
             <ul class="nav-main-submenu">
+              @can('grades.index')
+              <li class="nav-main-item">
+                <a class="nav-main-link {{ Request::is('evaluations/grades*') ? 'active' : '' }}" href="{{ route('grades.index') }}">
+                  <span class="nav-main-link-name">{{ trans('page.grades.title') }}</span>
+                </a>
+              </li>
+              @endcan
               @can('recommendations.index')
               <li class="nav-main-item">
-                <a class="nav-main-link {{ Request::is('grades/recommendations*') ? 'active' : '' }}" href="{{ route('recommendations.index') }}">
+                <a class="nav-main-link {{ Request::is('evaluations/recommendations*') ? 'active' : '' }}" href="{{ route('recommendations.index') }}">
                   <span class="nav-main-link-name">{{ trans('page.recommendations.title') }}</span>
                 </a>
               </li>

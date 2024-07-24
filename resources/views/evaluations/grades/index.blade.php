@@ -1,11 +1,11 @@
 @extends('layouts.app')
-@section('title', trans('page.recommendations.title'))
+@section('title', trans('page.grades.title'))
 @section('hero')
 <div class="content content-full">
   <h2 class="content-heading">
-    {{ trans('page.recommendations.title') }}
+    {{ trans('page.grades.title') }}
     <nav class="breadcrumb push my-0">
-      {{ Breadcrumbs::render('recommendations.index') }}
+      {{ Breadcrumbs::render('grades.index') }}
     </nav>
   </h2>
 </div>
@@ -14,16 +14,16 @@
 <div class="block block-rounded">
   <div class="block-header block-header-default">
     <h3 class="block-title">
-      {{ trans('page.recommendations.index') }}
+      {{ trans('page.grades.index') }}
     </h3>
   </div>
   <div class="block-content">
 
-    @can('recommendations.create')
+    @can('grades.create')
     <div class="mb-4">
-      <a href="{{ route('recommendations.create') }}" class="btn btn-sm btn-primary">
+      <a href="{{ route('grades.create') }}" class="btn btn-sm btn-primary">
         <i class="fa fa-plus fa-sm me-1"></i>
-        {{ trans('page.recommendations.create') }}
+        {{ trans('page.grades.create') }}
       </a>
     </div>
     @endcan
@@ -37,9 +37,9 @@
 @endsection
 @push('javascript')
 {{ $dataTable->scripts() }}
-@vite('resources/js/grades/recommendations/index.js')
+@vite('resources/js/evaluations/grades/index.js')
 <script>
-  var urlDestroy = "{{ route('recommendations.destroy', ':uuid') }}"
+  var urlDestroy = "{{ route('grades.destroy', ':uuid') }}"
 
 </script>
 @endpush

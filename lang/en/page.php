@@ -76,4 +76,13 @@ return [
     'show' => 'Detail Rekomendasi',
     'delete' => 'Hapus Rekomendasi',
   ],
+
+  'grades' => [
+    'title' => 'Nilai',
+    'index' => 'Daftar Nilai',
+    'create' => 'Tambah Nilai',
+    'edit' => 'Ubah Nilai',
+    'show' => 'Detail Nilai',
+    'delete' => 'Hapus Nilai',
+  ],
 ];

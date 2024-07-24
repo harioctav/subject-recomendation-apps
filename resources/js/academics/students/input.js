@@ -113,8 +113,6 @@ $(() => {
     // Call the function to load old values
     loadOldValues();
 
-    console.log(loadOldValues());
-
     // Event handlers for dropdown changes
     $("#province").on("change", function () {
         var province_id = $(this).val();

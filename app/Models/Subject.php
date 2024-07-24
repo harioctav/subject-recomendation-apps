@@ -42,7 +42,7 @@ class Subject extends Model
    */
   public function majors(): BelongsToMany
   {
-    return $this->belongsToMany(Major::class);
+    return $this->belongsToMany(Major::class)->withPivot('semester');
   }
 
   /**
@@ -53,5 +53,15 @@ class Subject extends Model
   public function recommendations(): HasMany
   {
     return $this->hasMany(Recommendation::class);
+  }
+
+  /**
+   * Relation to Student Model
+   *
+   * @return HasMany
+   */
+  public function grades(): HasMany
+  {
+    return $this->hasMany(Grade::class);
   }
 }

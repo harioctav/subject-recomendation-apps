@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Grades;
+namespace App\Http\Requests\Evaluations;
 
 use Illuminate\Foundation\Http\FormRequest;
 
