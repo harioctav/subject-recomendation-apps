@@ -53,16 +53,43 @@
           <ul class="list-group push">
             <li class="list-group-item d-flex justify-content-between align-items-center">
               {{ trans('NIM') }}
-              <span class="fw-semibold">--</span>
+              <span id="student-nim" class="fw-semibold">--</span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
               {{ trans('Program Studi') }}
-              <span class="fw-semibold">--</span>
+              <span id="student-major" class="fw-semibold">--</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ trans('Total SKS Yang WAJIB Ditempuh') }}
+              <span id="student-total-course-credit" class="fw-semibold">--</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ trans('Total SKS Yang SUDAH Ditempuh') }}
+              <span id="student-total-course-credit-done" class="fw-semibold">--</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ trans('Sisa SKS Yang Belum Ditempuh') }}
+              <span id="student-total-course-credit-remainder" class="fw-semibold">--</span>
             </li>
           </ul>
 
           <div class="loading-indicator" style="display: none;">Loading...</div>
-          <div class="card-container" style="display: none;"></div>
+          <div class="select-box-container" style="display: none;">
+            <div class="mb-4">
+              <label for="example-select2-multiple" class="form-label">Pilih Mata Kuliah</label>
+              <select class="js-select2 form-select" id="example-select2-multiple" name="subjects[]" style="width: 100%;" data-placeholder="Pilih mata kuliah.." multiple>
+                <!-- Options akan diisi oleh JavaScript -->
+              </select>
+            </div>
+            <div class="mb-4">
+              <label for="sks" class="form-label">{{ trans('Jumlah SKS') }}</label>
+              <span class="text-danger">*</span>
+              <input type="text" name="sks" id="sks" value="{{ old('sks') }}" class="form-control @error('sks') is-invalid @enderror" placeholder="{{ trans('Masukkan Jumlah SKS') }}" readonly disabled>
+              @error('sks')
+              <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
+            </div>
+          </div>
 
           <div class="mb-4">
             <button type="submit" class="btn btn-alt-primary w-100">

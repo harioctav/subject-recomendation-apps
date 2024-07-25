@@ -10,6 +10,7 @@ return [
     'edit' => 'Buka formulir ubah Pengguna',
     'update' => 'Simpan perubahan data Pengguna',
     'import' => 'Import data Pengguna dari excel',
+    'password' => 'Mengubah kata sandi akun Pengguna',
     'destroy' => 'Hapus data Pengguna',
   ],
 

@@ -1,60 +1,33 @@
 $(document).ready(function () {
-    function updateCardContent(semesterData) {
-        $(".card-container").empty();
+    function updateSelectBoxContent(semestersData) {
+        const selectBox = $("#example-select2-multiple");
+        selectBox.empty();
 
-        if (
-            !semesterData ||
-            !semesterData.subjects ||
-            semesterData.subjects.length === 0
-        ) {
-            $(".card-container").append(
-                "<p>Tidak ada mata kuliah yang tersedia untuk direkomendasikan saat ini.</p>"
+        if (!semestersData || semestersData.length === 0) {
+            selectBox.append(
+                "<option>Tidak ada mata kuliah yang tersedia untuk direkomendasikan saat ini.</option>"
             );
             return;
         }
 
-        let cardHtml = `
-      <div class="col-lg-12">
-          <div class="card push">
-              <div class="card-header border-bottom-0">
-                  <h3 class="block-title">
-                      Semester ${semesterData.semester}
-                  </h3>
-              </div>
-              <div class="card-body">
-                  <div class="">
-                      <div class="form-check">
-                          <input class="form-check-input select-all" type="checkbox" id="select-all-${semesterData.semester}">
-                          <label class="form-check-label" for="select-all-${semesterData.semester}">Pilih Semua</label>
-                      </div>
-      `;
+        semestersData.forEach(function (semesterData) {
+            const optgroup = $("<optgroup>").attr(
+                "label",
+                `Semester ${semesterData.semester}`
+            );
 
-        semesterData.subjects.forEach(function (subject) {
-            cardHtml += `
-          <div class="form-check">
-              <input class="form-check-input subject-checkbox" type="checkbox" id="checkbox-${subject.id}" name="subjects[]" value="${subject.id}">
-              <label class="form-check-label" for="checkbox-${subject.id}">${subject.subject_name}</label>
-          </div>
-          `;
+            semesterData.subjects.forEach(function (subject) {
+                const option = $("<option>")
+                    .val(subject.id)
+                    .attr("data-sks", subject.sks)
+                    .text(subject.subject_name);
+                optgroup.append(option);
+            });
+
+            selectBox.append(optgroup);
         });
 
-        cardHtml += `
-                  </div>
-              </div>
-          </div>
-      </div>
-      `;
-
-        $(".card-container").append(cardHtml);
-
-        // Implementasi "Pilih Semua" untuk semester
-        $(".select-all").on("change", function () {
-            let checked = $(this).prop("checked");
-            $(this)
-                .closest(".card")
-                .find(".subject-checkbox")
-                .prop("checked", checked);
-        });
+        selectBox.trigger("change");
     }
 
     function updateStudentDetails(studentId) {
@@ -63,19 +36,31 @@ $(document).ready(function () {
             url: url,
             method: "GET",
             success: function (data) {
-                $("li:contains('NIM') span").text(data.nim);
-                $("li:contains('Program Studi') span").text(data.major_name);
+                $("#student-nim").text(data.nim);
+                $("#student-major").text(data.major_name);
+                $("#student-total-course-credit").text(
+                    data.total_course_credit
+                );
+                $("#student-total-course-credit-done").text(
+                    data.total_course_credit_done
+                );
+                $("#student-total-course-credit-remainder").text(
+                    data.total_course_credit_remainder
+                );
             },
             error: function () {
-                $("li:contains('NIM') span").text("--");
-                $("li:contains('Program Studi') span").text("--");
+                $("#student-nim").text("--");
+                $("#student-major").text("--");
+                $("#student-total-course-credit").text("--");
+                $("#student-total-course-credit-done").text("--");
+                $("#student-total-course-credit-remainder").text("--");
             },
         });
     }
 
-    function toggleCardVisibility(studentId) {
+    function toggleSelectBoxVisibility(studentId) {
         if (studentId) {
-            $(".card-container").show();
+            $(".select-box-container").show();
             $(".loading-indicator").show();
             updateStudentDetails(studentId);
 
@@ -85,15 +70,15 @@ $(document).ready(function () {
                 url: url,
                 method: "GET",
                 success: function (data) {
-                    updateCardContent(data);
+                    updateSelectBoxContent(data);
                 },
                 error: function (xhr) {
                     if (xhr.status === 404) {
-                        $(".card-container").html(
+                        $(".select-box-container").html(
                             "<p>Tidak ada mata kuliah yang tersedia untuk direkomendasikan saat ini.</p>"
                         );
                     } else {
-                        $(".card-container").html(
+                        $(".select-box-container").html(
                             "<p>Terjadi kesalahan. Silakan coba lagi.</p>"
                         );
                     }
@@ -103,21 +88,39 @@ $(document).ready(function () {
                 },
             });
         } else {
-            $(".card-container").hide();
-            $("li:contains('NIM') span").text("--");
-            $("li:contains('Program Studi') span").text("--");
+            $(".select-box-container").hide();
+            $("#student-nim").text("--");
+            $("#student-major").text("--");
+            $("#student-total-course-credit").text("--");
+            $("#student-total-course-credit-done").text("--");
+            $("#student-total-course-credit-remainder").text("--");
         }
+    }
+
+    function updateTotalSKS() {
+        let totalSKS = 0;
+        $("#example-select2-multiple option:selected").each(function () {
+            let sks = $(this).data("sks");
+            if (!isNaN(sks)) {
+                totalSKS += parseInt(sks, 10);
+            }
+        });
+        $("#sks").val(totalSKS);
     }
 
     $("#student_id").on("change", function () {
         let studentId = $(this).val();
-        toggleCardVisibility(studentId);
+        toggleSelectBoxVisibility(studentId);
     });
 
-    toggleCardVisibility($("#student_id").val());
+    $("#example-select2-multiple").on("change", function () {
+        updateTotalSKS();
+    });
+
+    toggleSelectBoxVisibility($("#student_id").val());
 
     $("form").on("submit", function (e) {
-        if ($("input[name='subjects[]']:checked").length === 0) {
+        if ($("#example-select2-multiple option:selected").length === 0) {
             e.preventDefault();
             alert("Pilih setidaknya satu mata kuliah");
         }

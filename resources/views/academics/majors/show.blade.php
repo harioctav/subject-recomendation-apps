@@ -41,7 +41,7 @@
             <span class="fw-semibold">{{ $major->degree }} ({{ $major->formatted_degree }})</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ trans('Total SKS Ditempuh') }}
+            {{ trans('Total SKS Yang WAJIB Ditempuh') }}
             <span class="fw-semibold">{{ $major->total_course_credit ?: '---' }}</span>
           </li>
         </ul>

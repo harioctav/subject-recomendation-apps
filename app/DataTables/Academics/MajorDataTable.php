@@ -48,7 +48,7 @@ class MajorDataTable extends DataTable
    */
   public function query(Major $model): QueryBuilder
   {
-    return $this->majorService->getQuery()->oldest('name');
+    return $this->majorService->getQuery()->latest();
   }
 
   /**

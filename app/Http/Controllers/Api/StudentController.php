@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Grade;
 use App\Models\Major;
 use App\Models\Student;
 use App\Models\Subject;
@@ -11,9 +12,9 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Services\Grade\GradeService;
 use App\Services\Major\MajorService;
-use App\Services\Recommendation\RecommendationService;
 use Illuminate\Support\Facades\Cache;
 use App\Services\Student\StudentService;
+use App\Services\Recommendation\RecommendationService;
 
 class StudentController extends Controller
 {
@@ -76,9 +77,31 @@ class StudentController extends Controller
   public function show($student_id)
   {
     $student = $this->studentService->findOrFail($student_id);
+
+    // Hitung total SKS yang sudah ditempuh
+    $recommendedSubjects = $this->recommendationService->getWhere(
+      wheres: [
+        'student_id' => $student->id
+      ]
+    )->pluck('subject_id');
+
+    // Ambil ID mata kuliah yang dinilai dengan nilai bukan 'E'
+    $passedSubjects = Grade::where('student_id', $student_id)
+      ->whereIn('subject_id', $recommendedSubjects)
+      ->where('grade', '!=', 'E')
+      ->pluck('subject_id');
+
+    // Hitung total SKS dari mata kuliah yang lulus
+    $totalCompletedCourseCredit = Subject::whereIn('id', $passedSubjects)->sum('course_credit');
+
+    $totalCourseCredit = $student->major->total_course_credit;
+
     $details = [
       'nim' => $student->nim,
       'major_name' => $student->major->name,
+      'total_course_credit' => $totalCourseCredit,
+      'total_course_credit_done' => $totalCompletedCourseCredit,
+      'total_course_credit_remainder' => $totalCourseCredit - $totalCompletedCourseCredit
     ];
 
     return response()->json($details);
@@ -96,7 +119,14 @@ class StudentController extends Controller
 
     $recommendedSubjectIds = $recommendedSubjects->pluck('subject_id')->toArray();
 
-    // Query untuk mengambil semua matakuliah berdasarkan major_id
+    // Ambil ID mata kuliah dengan nilai 'E' yang sudah direkomendasikan
+    $subjectIdsWithEGrade = Grade::where('student_id', $student_id)
+      ->whereIn('subject_id', $recommendedSubjectIds)
+      ->where('grade', 'E')
+      ->pluck('subject_id')
+      ->toArray();
+
+    // Query untuk mengambil semua mata kuliah berdasarkan major_id
     $subjects = Subject::whereHas('majors', function ($query) use ($major_id) {
       $query->where('majors.id', $major_id);
     })
@@ -105,40 +135,39 @@ class StudentController extends Controller
       }])
       ->get();
 
-    // Mengelompokkan matakuliah berdasarkan semester
+    // Mengelompokkan mata kuliah berdasarkan semester
     $subjectsBySemester = $subjects->groupBy(function ($subject) {
       return $subject->majors->first()->pivot->semester;
     })->sortKeys();
 
-    // Cari semester terendah yang memiliki mata kuliah yang belum direkomendasikan
-    $targetSemester = null;
+    $formattedSubjectsBySemester = [];
+
     foreach ($subjectsBySemester as $semester => $semesterSubjects) {
-      $unrecommendedSubjects = $semesterSubjects->whereNotIn('id', $recommendedSubjectIds);
-      if ($unrecommendedSubjects->isNotEmpty()) {
-        $targetSemester = $semester;
-        break;
+      $filteredSubjects = $semesterSubjects->filter(function ($subject) use ($recommendedSubjectIds, $subjectIdsWithEGrade) {
+        return !in_array($subject->id, $recommendedSubjectIds) || in_array($subject->id, $subjectIdsWithEGrade);
+      });
+
+      if ($filteredSubjects->isNotEmpty()) {
+        $formattedSubjectsBySemester[] = [
+          'semester' => $semester,
+          'subjects' => $filteredSubjects->map(function ($subject) {
+            return [
+              'id' => $subject->id,
+              'subject_name' => $subject->name,
+              'sks' => $subject->course_credit
+            ];
+          })->values()
+        ];
       }
     }
 
-    if ($targetSemester === null) {
+    if (empty($formattedSubjectsBySemester)) {
       return response()->json([
         'status' => 'not_found',
-        'message' => 'Data Not Found: Semua matakuliah sudah direkomendasikan'
+        'message' => 'Data Not Found: Semua mata kuliah sudah direkomendasikan'
       ]);
     }
 
-    $formattedSubjects = [
-      'semester' => $targetSemester,
-      'subjects' => $subjectsBySemester[$targetSemester]
-        ->whereNotIn('id', $recommendedSubjectIds)
-        ->map(function ($subject) {
-          return [
-            'id' => $subject->id,
-            'subject_name' => $subject->name,
-          ];
-        })->values()
-    ];
-
-    return response()->json($formattedSubjects);
+    return response()->json($formattedSubjectsBySemester);
   }
 }
