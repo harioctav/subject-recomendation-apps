@@ -2,9 +2,15 @@
 
 namespace App\Services\Recommendation;
 
+use App\Helpers\Enums\GradeType;
+use App\Models\Grade;
+use App\Models\Subject;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use App\Models\Recommendation;
+use App\Repositories\Grade\GradeRepository;
+use App\Repositories\Major\MajorRepository;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use LaravelEasyRepository\Service;
 use Illuminate\Support\Facades\Log;
@@ -18,6 +24,8 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
     protected SubjectRepository $subjectRepository,
     protected StudentRepository $studentRepository,
     protected RecommendationRepository $mainRepository,
+    protected MajorRepository $majorRepository,
+    protected GradeRepository $gradeRepository
   ) {
     // 
   }
@@ -73,9 +81,6 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
       $student = $this->studentRepository->findOrFail($payload['student_id']);
       $major_id = $student->major->id;
 
-      // Prepare data for recommendations
-      // $recommendations = [];
-
       // Store to database
       foreach ($payload['subjects'] as $subject_id) :
         // Get the semester from the pivot table
@@ -85,13 +90,7 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
           ->value('semester');
 
         // Prepare recommendation data
-        // $recommendations[] = [
-        //   'uuid' => Str::uuid(),
-        //   'student_id' => $student->id,
-        //   'subject_id' => (int) $subject_id,
-        //   'semester' => $semester,
-        // ];
-
+        // Store recommendations
         $this->mainRepository->create([
           'student_id' => $student->id,
           'subject_id' => (int) $subject_id,
@@ -99,10 +98,71 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
         ]);
       endforeach;
 
-      // Store recommendations
-      // Recommendation::insert($recommendations);
-
       DB::commit();
+    } catch (\Exception $e) {
+      Log::info($e->getMessage());
+      throw new InvalidArgumentException(trans('session.log.error'));
+    }
+  }
+
+  public function handleExportData($request)
+  {
+    // Get Payload
+    $payload = $request->validated();
+
+    try {
+      // Find student data
+      $student = $this->studentRepository->findOrFail($payload['student_id']);
+
+      // Ambil mata kuliah yang direkomendasikan untuk mahasiswa
+      $recommendedSubjects = $student->recommendations
+        ->groupBy('semester')
+        ->map(function ($recommendations, $semester) use ($student) {
+          $subjects = $recommendations->map(function ($recommendation) use ($student) {
+            $subject = $recommendation->subject;
+            $grade = $student->grades->firstWhere('subject_id', $subject->id);
+            $kelulusan = $grade && $grade->grade !== 'E' ? 'L' : 'BL';
+
+            return [
+              'id' => $subject->id,
+              'code' => $subject->code,
+              'name' => $subject->name,
+              'grade' => $grade ? $grade->grade : '--',
+              'sks' => $subject->course_credit,
+              'kelulusan' => $kelulusan,
+              'waktu_ujian' => $subject->exam_time,
+              'status' => $subject->status,
+              'note' => $subject->note
+            ];
+          });
+
+          return [
+            'semester' => $semester,
+            'subjects' => $subjects->values()
+          ];
+        })
+        ->filter(function ($semesterData) {
+          return $semesterData['subjects']->isNotEmpty();
+        })
+        ->values();
+
+      // Hitung total SKS yang sudah ditempuh (hanya untuk mata kuliah dengan nilai selain 'E')
+      $totalCompletedCourseCredit = $student->grades->filter(function ($grade) {
+        return $grade->grade !== 'E';
+      })->sum('subject.course_credit');
+
+      $totalCourseCredit = $student->major->total_course_credit;
+
+      $data = [
+        'student' => $student,
+        'total_course_credit' => $totalCourseCredit,
+        'total_course_credit_done' => $totalCompletedCourseCredit,
+        'total_course_credit_remainder' => $totalCourseCredit - $totalCompletedCourseCredit,
+        'recommended_subjects' => $recommendedSubjects,
+      ];
+
+      $pdf = Pdf::loadView('exports.recommendation', $data);
+      return $pdf->stream('recommendation.pdf');
     } catch (\Exception $e) {
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));

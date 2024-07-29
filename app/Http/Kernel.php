@@ -69,5 +69,6 @@ class Kernel extends HttpKernel
     'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
     'permission' => \App\Http\Middleware\Permission::class,
     'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+    'extend.execution' => \App\Http\Middleware\ExtendExecutionTime::class,
   ];
 }

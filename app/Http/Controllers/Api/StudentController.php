@@ -129,11 +129,9 @@ class StudentController extends Controller
     // Query untuk mengambil semua mata kuliah berdasarkan major_id
     $subjects = Subject::whereHas('majors', function ($query) use ($major_id) {
       $query->where('majors.id', $major_id);
-    })
-      ->with(['majors' => function ($query) use ($major_id) {
-        $query->where('majors.id', $major_id);
-      }])
-      ->get();
+    })->with(['majors' => function ($query) use ($major_id) {
+      $query->where('majors.id', $major_id);
+    }])->get();
 
     // Mengelompokkan mata kuliah berdasarkan semester
     $subjectsBySemester = $subjects->groupBy(function ($subject) {

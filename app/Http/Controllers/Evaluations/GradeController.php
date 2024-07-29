@@ -9,6 +9,7 @@ use App\Services\Major\MajorService;
 use Illuminate\Support\Facades\Cache;
 use App\Services\Student\StudentService;
 use App\DataTables\Evaluations\GradeDataTable;
+use App\Helpers\Enums\GradeType;
 use App\Http\Requests\Evaluations\GradeRequest;
 
 class GradeController extends Controller
@@ -58,7 +59,9 @@ class GradeController extends Controller
   public function create()
   {
     $students = $this->students();
-    return view('evaluations.grades.create', compact('students'));
+    $grades = GradeType::toArray();
+
+    return view('evaluations.grades.create', compact('students', 'grades'));
   }
 
   /**
@@ -75,7 +78,8 @@ class GradeController extends Controller
    */
   public function edit(Grade $grade)
   {
-    return view('evaluations.grades.edit', compact('grade'));
+    $grades = GradeType::toArray();
+    return view('evaluations.grades.edit', compact('grade', 'grades'));
   }
 
   /**

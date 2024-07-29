@@ -7,6 +7,7 @@ use App\Models\Student;
 use Illuminate\Support\Carbon;
 use App\Helpers\Enums\GenderType;
 use App\Helpers\Enums\ReligionType;
+use App\Models\Village;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -36,25 +37,24 @@ class StudentFactory extends Factory
     $majorIds = Major::pluck('id');
     $majorId = $majorIds->isEmpty() ? null : $majorIds->random();
 
+    $villageIds = Village::pluck('id');
+    $villageId = $villageIds->isEmpty() ? null : $villageIds->random();
+
     // Email
     $email = strtolower($first) . "@gmail.com";
 
     $datas = [
       'major_id' => $majorId,
-      'village_id' => 69556,
+      'village_id' => $villageId,
       'nim' => fake()->randomNumber(9, true),
-      'nik' => fake()->unique()->nik(),
       'name' => $name,
       'email' => $email,
-      'birth_place' => fake()->city(),
+      'birth_place' => strtoupper(fake()->city()),
       'birth_date' => fake()->dateTimeBetween($minDate, $maxDate)->format('Y-m-d'),
       'gender' => fake()->randomElement(GenderType::toArray()),
       'phone' => fake()->unique()->e164PhoneNumber(),
       'religion' => fake()->randomElement(ReligionType::toArray()),
-      'initial_registration_period' => fake()->numberBetween(2020, 2024),
       'address' => fake()->address(),
-      'parent_name' => $name,
-      'parent_phone_number' => fake()->unique()->e164PhoneNumber(),
     ];
 
     return $datas;

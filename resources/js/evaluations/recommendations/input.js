@@ -1,3 +1,5 @@
+import { showSwalWarning, showSwalError } from "@/utils/helper.js";
+
 $(document).ready(function () {
     function updateSelectBoxContent(semestersData) {
         const selectBox = $("#example-select2-multiple");
@@ -97,6 +99,19 @@ $(document).ready(function () {
         }
     }
 
+    function checkSKSLimit(totalSKS) {
+        const maxSKS = 24;
+        if (totalSKS > maxSKS) {
+            showSwalWarning(
+                "Peringatan",
+                "Diharapkan tidak memilih SKS dengan total lebih dari 24 SKS. Silahkan hapus salah satu Matakuliah untuk mengurangi jumlah SKS!!"
+            );
+            $('button[type="submit"]').prop("disabled", true);
+        } else {
+            $('button[type="submit"]').prop("disabled", false);
+        }
+    }
+
     function updateTotalSKS() {
         let totalSKS = 0;
         $("#example-select2-multiple option:selected").each(function () {
@@ -106,6 +121,7 @@ $(document).ready(function () {
             }
         });
         $("#sks").val(totalSKS);
+        checkSKSLimit(totalSKS);
     }
 
     $("#student_id").on("change", function () {
@@ -120,9 +136,16 @@ $(document).ready(function () {
     toggleSelectBoxVisibility($("#student_id").val());
 
     $("form").on("submit", function (e) {
+        let totalSKS = parseInt($("#sks").val(), 10);
         if ($("#example-select2-multiple option:selected").length === 0) {
             e.preventDefault();
-            alert("Pilih setidaknya satu mata kuliah");
+            showSwalError("Pilih Setidaknya Satu Matakuliah");
+        } else if (totalSKS > 24) {
+            e.preventDefault();
+            showSwalWarning(
+                "Peringatan",
+                "Diharapkan tidak memilih SKS dengan total lebih dari 24 SKS. Silahkan hapus salah satu Matakuliah untuk mengurangi jumlah SKS!!"
+            );
         }
     });
 });

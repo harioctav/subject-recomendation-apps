@@ -36,9 +36,9 @@
             <div class="fs-sm text-muted">{{ $student->nim }}</div>
           </div>
           <div class="block-content block-content-full block-content-sm bg-body-light mb-3">
-            <span class="fw-semibold fs-sm text-elegance">{{ $student->email }}</span>
+            <span class="fw-semibold fs-sm text-elegance">{{ $student->email ?: '--' }}</span>
           </div>
-          <a href="javascript:void(0)" class="btn btn-sm btn-primary text-center">
+          <a href="javascript:void(0)" class="btn btn-sm btn-primary text-center mb-1">
             <i class="fa fa-print fa-sm me-1"></i>
             {{ trans('Cetak Biodata Mahasiswa') }}
           </a>
@@ -53,15 +53,15 @@
         <ul class="list-group push">
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('UPBJJ') }}
-            <span class="fw-semibold">{{ $student->upbjj ?: '---' }}</span>
+            <span class="fw-semibold">{{ $student->upbjj ?: '--' }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Program Studi') }}
             <span class="fw-semibold">{{ $student->major->name }} - {{ $student->major->formatted_degree }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ trans('Tahun Masuk') }}
-            <span class="fw-semibold">{{ $student->initial_registration_period }}</span>
+            {{ trans('Registrasi Awal') }}
+            <span class="fw-semibold">{{ $student->initial_registration_period ?: "--" }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Jenis Kelamin') }}
@@ -81,7 +81,7 @@
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Agama') }}
-            <span class="fw-semibold">{{ ucfirst($student->religion) }}</span>
+            <span class="fw-semibold">{{ ucfirst($student->religion) ?: "--" }}</span>
           </li>
         </ul>
 
@@ -97,7 +97,7 @@
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Email Pribadi') }}
-            <span class="fw-semibold">{{ $student->email }}</span>
+            <span class="fw-semibold">{{ $student->email ?: "--" }}</span>
           </li>
         </ul>
 
@@ -109,11 +109,11 @@
         <ul class="list-group push">
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Nama Ibu Kandung') }}
-            <span class="fw-semibold">{{ $student->parent_name }}</span>
+            <span class="fw-semibold">{{ $student->parent_name ?: "--" }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('No. Handphone') }}
-            <span class="fw-semibold">{{ $student->parent_phone_number }}</span>
+            <span class="fw-semibold">{{ $student->parent_phone_number ?: "--" }}</span>
           </li>
         </ul>
 

@@ -68,7 +68,12 @@
           <div class="mb-4">
             <label for="grade" class="form-label">{{ trans('Nilai') }}</label>
             <span class="text-danger">*</span>
-            <input type="text" name="grade" id="grade" value="{{ old('grade', $grade->grade) }}" class="form-control @error('grade') is-invalid @enderror" placeholder="{{ trans('Masukkan Nilai') }}">
+            <select name="grade" id="grade" class="js-select2 form-select @error('grade') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;">
+              <option></option>
+              @foreach ($grades as $value)
+              <option value="{{ $value }}" @if (old('grade', $grade->grade)==$value) selected @endif>{{ ucfirst(trans($value)) }}</option>
+              @endforeach
+            </select>
             @error('grade')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror

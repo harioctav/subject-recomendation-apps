@@ -30,18 +30,18 @@ class StudentRequest extends FormRequest
         Rule::unique('students', 'nim')->ignore($this->student),
       ],
       'nik' => [
-        'required', 'numeric', 'digits:16',
+        'nullable', 'numeric', 'digits:16',
         Rule::unique('students', 'nik')->ignore($this->student),
       ],
       'name' => 'required|string|max:100',
       'email' => [
-        'required', 'email:dns', 'max:100',
+        'nullable', 'email:dns', 'max:100',
         Rule::unique('students', 'email')->ignore($this->student),
       ],
       'birth_place' => 'required|string|max:50',
       'birth_date' => 'required|date',
       'gender' => "required|string|" . GenderType::toValidation(),
-      'religion' => "required|string|" . ReligionType::toValidation(),
+      'religion' => "nullable|string|" . ReligionType::toValidation(),
       'phone' => [
         'required', 'numeric',
         Rule::unique('students', 'phone')->ignore($this->student),
@@ -54,9 +54,10 @@ class StudentRequest extends FormRequest
       'post_code' => 'required|numeric',
       'address' => 'required|string',
       'file' => 'nullable|mimes:jpg,png|max:3048',
-      'initial_registration_period' => 'required|digits:4|integer|between:2019,2024',
-      'parent_name' => 'required|string|max:100',
-      'parent_phone_number' => 'required|numeric',
+      'initial_registration_period' => 'nullable|string',
+      'origin_department' => 'nullable|string',
+      'parent_name' => 'nullable|string|max:100',
+      'parent_phone_number' => 'nullable|numeric',
     ];
   }
 

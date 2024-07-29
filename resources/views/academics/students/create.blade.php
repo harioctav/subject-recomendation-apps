@@ -28,8 +28,13 @@
     <form action="{{ route('students.store') }}" method="POST" enctype="multipart/form-data" onsubmit="return disableSubmitButton()">
       @csrf
 
-      <div class="row items-push justify-content-center">
-        <div class="col-md-6">
+      <div class="row items-push">
+        <div class="col-lg-3">
+          <span class="text-muted">
+            Isian wajib di isi untuk kolom yang memiliki tanda <span class="text-danger">*</span> (bintang). Dan untuk yang tidak memiliki tanda <span class="text-danger">*</span> (bintang), boleh dikosongkan.
+          </span>
+        </div>
+        <div class="col-lg-7 offset-1">
 
           <div class="py-1 mb-1">
             <p class="fs-sm text-uppercase text-primary fw-bold mb-1">
@@ -48,7 +53,6 @@
 
           <div class="mb-4">
             <label for="nik" class="form-label">{{ trans('NIK') }}</label>
-            <span class="text-danger">*</span>
             <input type="text" name="nik" id="nik" value="{{ old('nik') }}" class="form-control @error('nik') is-invalid @enderror" placeholder="{{ trans('Masukkan Nomor Induk Kependudukan') }}" onkeypress="return onlyNumber(event)">
             @error('nik')
             <div class="invalid-feedback">{{ $message }}</div>
@@ -66,7 +70,6 @@
 
           <div class="mb-4">
             <label for="email" class="form-label">{{ trans('Email') }}</label>
-            <span class="text-danger">*</span>
             <input type="email" name="email" id="email" value="{{ old('email') }}" class="form-control @error('email') is-invalid @enderror" placeholder="{{ trans('Masukkan Email Aktif') }}">
             @error('email')
             <div class="invalid-feedback">{{ $message }}</div>
@@ -112,7 +115,6 @@
 
           <div class="mb-4">
             <label for="religion" class="form-label">{{ trans('Agama') }}</label>
-            <span class="text-danger">*</span>
             <select name="religion" id="religion" class="js-select2 form-select @error('religion') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;">
               <option></option>
               @foreach ($religions as $value)
@@ -163,10 +165,17 @@
           </div>
 
           <div class="mb-4">
-            <label for="initial_registration_period" class="form-label">{{ trans('Tahun Masuk') }}</label>
-            <span class="text-danger">*</span>
-            <input type="text" name="initial_registration_period" id="initial_registration_period" value="{{ old('initial_registration_period') }}" class="form-control @error('initial_registration_period') is-invalid @enderror" placeholder="{{ trans('Masukkan Tahun Masuk') }}" onkeypress="return onlyNumber(event)">
+            <label for="initial_registration_period" class="form-label">{{ trans('Registrasi Awal') }}</label>
+            <input type="text" name="initial_registration_period" id="initial_registration_period" value="{{ old('initial_registration_period') }}" class="form-control @error('initial_registration_period') is-invalid @enderror" placeholder="{{ trans('Masukkan Registrasi Awal') }}">
             @error('initial_registration_period')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="mb-4">
+            <label for="origin_department" class="form-label">{{ trans('Jurusan Asal') }}</label>
+            <input type="text" name="origin_department" id="origin_department" value="{{ old('origin_department') }}" class="form-control @error('origin_department') is-invalid @enderror" placeholder="{{ trans('Masukkan Jurusan Asal') }}">
+            @error('origin_department')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror
           </div>
@@ -238,6 +247,7 @@
 
           <div class="mb-4">
             <label class="form-label" for="address">{{ trans('Alamat Lengkap') }}</label>
+            <span class="text-danger">*</span>
             <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address" rows="4" placeholder="{{ trans('Masukkan Alamat lengkap') }}">{{ old('address') }}</textarea>
             @error('address')
             <div class="invalid-feedback">{{ $message }}</div>
@@ -252,7 +262,6 @@
 
           <div class="mb-4">
             <label for="parent_name" class="form-label">{{ trans('Nama Ibu Kandung') }}</label>
-            <span class="text-danger">*</span>
             <input type="text" name="parent_name" id="parent_name" value="{{ old('parent_name') }}" class="form-control @error('parent_name') is-invalid @enderror" placeholder="{{ trans('Masukkan Nama Ibu Kandung') }}" onkeypress="return onlyLetter(event)">
             @error('parent_name')
             <div class="invalid-feedback">{{ $message }}</div>
@@ -261,7 +270,6 @@
 
           <div class="mb-4">
             <label for="parent_phone_number" class="form-label">{{ trans('No. Orang Tua') }}</label>
-            <span class="text-danger">*</span>
             <input type="text" name="parent_phone_number" id="parent_phone_number" value="{{ old('parent_phone_number') }}" class="form-control @error('parent_phone_number') is-invalid @enderror" placeholder="{{ trans('Masukkan Nomor Aktif') }}" onkeypress="return onlyNumber(event)">
             @error('parent_phone_number')
             <div class="invalid-feedback">{{ $message }}</div>

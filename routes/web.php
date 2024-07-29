@@ -76,6 +76,9 @@ Route::middleware([
   Route::prefix('evaluations')->group(function () {
 
     // Recommendations
+    Route::post('recommendations/export', [RecommendationController::class, 'export'])->name(
+      'recommendations.export'
+    );
     Route::resource('recommendations', RecommendationController::class);
 
     // Grades

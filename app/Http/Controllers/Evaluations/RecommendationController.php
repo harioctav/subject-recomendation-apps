@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Evaluations;
 use Illuminate\Http\Request;
 use App\Models\Recommendation;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Cache;
 use App\Services\Student\StudentService;
 use App\Services\Recommendation\RecommendationService;
 use App\DataTables\Evaluations\RecommendationDataTable;
 use App\Http\Requests\Evaluations\RecommendationRequest;
+use App\Http\Requests\Evaluations\RecommendationExportRequest;
 
 class RecommendationController extends Controller
 {
@@ -40,7 +40,8 @@ class RecommendationController extends Controller
    */
   public function index(RecommendationDataTable $dataTable)
   {
-    return $dataTable->render('evaluations.recommendations.index');
+    $students = $this->students();
+    return $dataTable->render('evaluations.recommendations.index', compact('students'));
   }
 
   /**
@@ -91,5 +92,10 @@ class RecommendationController extends Controller
   public function destroy(Recommendation $recommendation)
   {
     //
+  }
+
+  public function export(RecommendationExportRequest $request)
+  {
+    return $this->recommendationService->handleExportData($request);
   }
 }

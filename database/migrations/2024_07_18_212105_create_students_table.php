@@ -19,21 +19,22 @@ return new class extends Migration
       $table->foreignId('major_id')->constrained('majors')->onDelete('cascade');
       $table->foreignId('village_id')->constrained('villages')->onDelete('cascade');
       $table->string('nim')->unique();
-      $table->string('nik')->unique();
+      $table->string('nik')->unique()->nullable();
       $table->string('name');
-      $table->string('email')->unique();
+      $table->string('email')->unique()->nullable();
       $table->date('birth_date');
       $table->string('birth_place');
       $table->enum('gender', GenderType::toArray());
       $table->string('phone')->unique();
-      $table->enum('religion', ReligionType::toArray());
-      $table->string('initial_registration_period');
+      $table->enum('religion', ReligionType::toArray())->nullable();
+      $table->string('initial_registration_period')->nullable();
+      $table->string('origin_department')->nullable();
       $table->string('upbjj')->nullable();
       $table->text('address')->nullable();
       $table->text('note')->nullable();
       $table->longText('avatar')->nullable();
-      $table->string('parent_name');
-      $table->string('parent_phone_number')->unique();
+      $table->string('parent_name')->nullable();
+      $table->string('parent_phone_number')->unique()->nullable();
       $table->timestamps();
     });
   }

@@ -71,3 +71,30 @@ export function initializeFlatpickr(selector) {
         dateFormat: "Y-m-d",
     });
 }
+
+export const showSwalWarning = (title, text) => {
+    return Swal.fire({
+        icon: "warning",
+        title: title,
+        text: text,
+        confirmButtonText: "Mengerti",
+    });
+};
+
+export const showSwalError = (title, text) => {
+    return Swal.fire({
+        icon: "error",
+        title: title,
+        text: text,
+        confirmButtonText: "Mengerti",
+    });
+};
+
+export const showSwalSuccess = (title, text) => {
+    return Swal.fire({
+        icon: "success",
+        title: title,
+        text: text,
+        confirmButtonText: "Mengerti",
+    });
+};

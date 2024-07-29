@@ -34,6 +34,7 @@ class Student extends Model
     'phone',
     'religion',
     'initial_registration_period',
+    'origin_department',
     'upbjj',
     'address',
     'note',

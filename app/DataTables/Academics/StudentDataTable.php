@@ -39,6 +39,7 @@ class StudentDataTable extends DataTable
     return (new EloquentDataTable($query))
       ->addIndexColumn()
       ->editColumn('major_id', fn ($row) => $row->major->name)
+      ->editColumn('email', fn ($row) => $row->email ?? "--")
       ->filterColumn('major_id', function ($query, $keyword) {
         $query->whereHas('major', function ($query) use ($keyword) {
           $query->where('name', 'LIKE', "%{$keyword}%");
@@ -110,9 +111,6 @@ class StudentDataTable extends DataTable
         ->addClass('text-center'),
       Column::make('name')
         ->title(trans('Nama'))
-        ->addClass('text-center'),
-      Column::make('email')
-        ->title(trans('Email'))
         ->addClass('text-center'),
       Column::make('major_id')
         ->title(trans('Program Studi'))
