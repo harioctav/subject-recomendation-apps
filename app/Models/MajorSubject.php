@@ -57,14 +57,14 @@ class MajorSubject extends Model
   public function getSemesterAttribute($value)
   {
     $semesters = [
-      1 => 'Semester Satu',
-      2 => 'Semester Dua',
-      3 => 'Semester Tiga',
-      4 => 'Semester Empat',
-      5 => 'Semester Lima',
-      6 => 'Semester Enam',
-      7 => 'Semester Tujuh',
-      8 => 'Semester Delapan',
+      1 => 'Semester Pertama',
+      2 => 'Semester Kedua',
+      3 => 'Semester Ketiga',
+      4 => 'Semester Keempat',
+      5 => 'Semester Kelima',
+      6 => 'Semester Keenam',
+      7 => 'Semester Ketujuh',
+      8 => 'Semester Kedelapan',
     ];
 
     return $semesters[$value] ?? 'Unknown Semester';

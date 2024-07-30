@@ -5,12 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-  <title>Rekomendasi Matakuliah</title>
+  <title>HASIL REKOMENDASI MATAKULIAH</title>
 
-  <!-- CSRF Token -->
-  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <link rel="stylesheet" href="{{ public_path('assets/exports/export.css') }}">
 
-  <style>
+  {{-- <style>
     body {
       margin: 0;
       padding: 20px;
@@ -82,7 +81,7 @@
       margin-top: 20px;
     }
 
-  </style>
+  </style> --}}
 </head>
 <body>
   <div class="header">
@@ -94,28 +93,28 @@
       Telp. +62812-1015-7276<br>
       Link Universitas 1 | Link Universitas 2 | email: info@salut.ac.id
     </div>
-    <hr>
-    <div class="title">REKOMENDASI MATAKULIAH</div>
+    <div style="border-top: 1px solid #000000; margin: 1rem 0;"></div>
+    <div class="title">HASIL REKOMENDASI MATAKULIAH</div>
   </div>
 
   <div class="body">
 
-    <table>
+    <table class="no-border-table" style="margin-bottom: 20px">
       <tr>
-        <td>Nomor Induk Mahasiswa (NIM)</td>
+        <td>NIM</td>
         <td>{{ $student->nim }}</td>
       </tr>
       <tr>
         <td>Nama Mahasiswa</td>
-        <td>{{ $student->name }}</td>
+        <td>{{ strtoupper($student->name) }}</td>
       </tr>
       <tr>
         <td>Program Studi</td>
-        <td>{{ $student->major->name }}</td>
+        <td>{{ $student->major->code }}/{{ strtoupper($student->major->name) }} - {{ $student->major->formatted_degree }}</td>
       </tr>
     </table>
 
-    <table>
+    <table class="no-border-table">
       <tr>
         <td>Total SKS <strong>Wajib</strong> Tempuh</td>
         <td>{{ $total_course_credit }}</td>
@@ -131,16 +130,22 @@
     </table>
 
     @foreach($recommended_subjects as $semesterData)
-    <h3>Semester {{ $semesterData['semester'] }}</h3>
-    <table class="center-text">
+    <table class="border-table" style="margin-top: 30px; border-bottom: none;">
+      <thead>
+        <tr style="border-bottom: none;" class="semester-header" style="margin-bottom: 10px">
+          <th colspan="6" style="border-bottom: none;">SEMESTER {{ $semesterData['semester'] }}</th>
+        </tr>
+      </thead>
+    </table>
+    <table class="border-table">
       <thead>
         <tr>
           <th>Kode</th>
           <th>Matakuliah</th>
           <th>Nilai</th>
           <th>SKS</th>
-          <th>Kelulusan</th>
-          <th>Waktu Ujian</th>
+          <th>Kel.</th>
+          <th>WU</th>
           <th>Status</th>
           <th>Pr</th>
         </tr>

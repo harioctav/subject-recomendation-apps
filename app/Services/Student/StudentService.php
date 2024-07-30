@@ -8,6 +8,7 @@ use LaravelEasyRepository\BaseService;
 interface StudentService extends BaseService
 {
   public function getQuery();
+  public function with(array $with = []);
   public function getWhere(
     $wheres = [],
     $columns = '*',

@@ -81,6 +81,7 @@ return [
     'edit' => 'Buka formulir ubah Rekomendasi',
     'update' => 'Simpan perubahan data Rekomendasi',
     'import' => 'Import data Rekomendasi dari excel',
+    'export' => 'Export data Rekomendasi ke format PDF',
     'destroy' => 'Hapus data Rekomendasi',
   ],
 
@@ -93,6 +94,7 @@ return [
     'edit' => 'Buka formulir ubah Nilai',
     'update' => 'Simpan perubahan data Nilai',
     'import' => 'Import data Nilai dari excel',
+    'export' => 'Cetak Transkrip Nilai ke format PDF',
     'destroy' => 'Hapus data Nilai',
   ],
 ];

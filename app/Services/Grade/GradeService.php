@@ -16,4 +16,5 @@ interface GradeService extends BaseService
     $orderByType = null
   );
   public function handleStoreData(Request $request);
+  public function handleExportData(Request $request);
 }

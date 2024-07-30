@@ -63,35 +63,11 @@ class RecommendationController extends Controller
   }
 
   /**
-   * Display the specified resource.
-   */
-  public function show(Recommendation $recommendation)
-  {
-    //
-  }
-
-  /**
-   * Show the form for editing the specified resource.
-   */
-  public function edit(Recommendation $recommendation)
-  {
-    //
-  }
-
-  /**
-   * Update the specified resource in storage.
-   */
-  public function update(Request $request, Recommendation $recommendation)
-  {
-    //
-  }
-
-  /**
    * Remove the specified resource from storage.
    */
   public function destroy(Recommendation $recommendation)
   {
-    //
+    return $this->recommendationService->handleDestroyData($recommendation->id);
   }
 
   public function export(RecommendationExportRequest $request)

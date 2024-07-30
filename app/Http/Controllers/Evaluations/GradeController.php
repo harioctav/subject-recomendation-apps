@@ -11,6 +11,7 @@ use App\Services\Student\StudentService;
 use App\DataTables\Evaluations\GradeDataTable;
 use App\Helpers\Enums\GradeType;
 use App\Http\Requests\Evaluations\GradeRequest;
+use App\Http\Requests\Evaluations\RecommendationExportRequest;
 
 class GradeController extends Controller
 {
@@ -50,7 +51,8 @@ class GradeController extends Controller
    */
   public function index(GradeDataTable $dataTable)
   {
-    return $dataTable->render('evaluations.grades.index');
+    $students = $this->students();
+    return $dataTable->render('evaluations.grades.index', compact('students'));
   }
 
   /**
@@ -100,5 +102,10 @@ class GradeController extends Controller
     return response()->json([
       'message' => trans('session.delete'),
     ]);
+  }
+
+  public function export(RecommendationExportRequest $request)
+  {
+    return $this->gradeService->handleExportData($request);
   }
 }

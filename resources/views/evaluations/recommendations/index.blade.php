@@ -33,7 +33,6 @@
         {{ trans('Cetak Hasil Rekomendasi') }}
       </button>
       @endcan
-
     </div>
 
     <div class="my-3">

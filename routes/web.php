@@ -79,9 +79,10 @@ Route::middleware([
     Route::post('recommendations/export', [RecommendationController::class, 'export'])->name(
       'recommendations.export'
     );
-    Route::resource('recommendations', RecommendationController::class);
+    Route::resource('recommendations', RecommendationController::class)->except('edit', 'update', 'show');
 
     // Grades
+    Route::post('grades/export', [GradeController::class, 'export'])->name('grades.export');
     Route::resource('grades', GradeController::class)->except('show');
   });
 });

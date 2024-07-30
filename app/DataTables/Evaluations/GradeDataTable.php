@@ -134,13 +134,13 @@ class GradeDataTable extends DataTable
         ->title(trans('Nilai'))
         ->addClass('text-center'),
       Column::make('exam_period')
-        ->title(trans('Waktu Ujian'))
+        ->title(trans('WU'))
         ->addClass('text-center'),
       Column::computed('action')
         ->exportable(false)
         ->printable(false)
         ->visible($visibility)
-        ->width('10%')
+        ->width('5%')
         ->addClass('text-center'),
     ];
   }

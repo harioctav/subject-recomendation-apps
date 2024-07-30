@@ -11,6 +11,21 @@ class Recommendation extends Model
 {
   use HasFactory, Uuid;
 
+  public static function boot()
+  {
+    parent::boot();
+
+    static::deleting(function ($recommendation) {
+      $subjectHasGrade = Grade::where('subject_id', $recommendation->subject_id)
+        ->where('student_id', $recommendation->student_id)
+        ->exists();
+
+      if ($subjectHasGrade) {
+        throw new \Exception('Matakuliah ini sudah selesai dilakukan penilaian, tidak dapat menghapus data');
+      }
+    });
+  }
+
   /**
    * The attributes that are mass assignable.
    *

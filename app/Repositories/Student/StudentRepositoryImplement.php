@@ -51,4 +51,12 @@ class StudentRepositoryImplement extends Eloquent implements StudentRepository
 
     return $data;
   }
+
+  /**
+   * Get data in model Permission Category with relations
+   */
+  public function with(array $with = [])
+  {
+    return $this->model->with($with);
+  }
 }

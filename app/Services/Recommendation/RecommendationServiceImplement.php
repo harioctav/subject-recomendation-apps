@@ -3,11 +3,7 @@
 namespace App\Services\Recommendation;
 
 use App\Helpers\Enums\GradeType;
-use App\Models\Grade;
-use App\Models\Subject;
-use Illuminate\Support\Str;
 use InvalidArgumentException;
-use App\Models\Recommendation;
 use App\Repositories\Grade\GradeRepository;
 use App\Repositories\Major\MajorRepository;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -166,6 +162,20 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
     } catch (\Exception $e) {
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
+    }
+  }
+
+  public function handleDestroyData($id)
+  {
+    try {
+      // get recomend data
+      $recommendation = $this->mainRepository->findOrFail($id);
+      $recommendation->delete();
+      return response()->json([
+        'message' => trans('session.delete'),
+      ]);
+    } catch (\Exception $e) {
+      return response()->json(['message' => $e->getMessage()], 400);
     }
   }
 }

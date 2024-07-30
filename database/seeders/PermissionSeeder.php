@@ -71,9 +71,6 @@ class PermissionSeeder extends Seeder
       'recommendations.index',
       'recommendations.create',
       'recommendations.store',
-      'recommendations.show',
-      'recommendations.edit',
-      'recommendations.update',
       'recommendations.destroy',
       'recommendations.export',
 
@@ -81,10 +78,10 @@ class PermissionSeeder extends Seeder
       'grades.index',
       'grades.create',
       'grades.store',
-      'grades.show',
       'grades.edit',
       'grades.update',
       'grades.destroy',
+      'grades.export',
     ];
 
     $guardName = 'web';

@@ -20,7 +20,7 @@
 <div class="block block-rounded">
   <div class="block-header block-header-default">
     <h3 class="block-title">
-      {{ trans('page.grades.create') }} Step Kedua
+      {{ trans('page.grades.edit') }}
     </h3>
   </div>
   <div class="block-content">
@@ -33,9 +33,13 @@
       <input type="hidden" name="subject_id" value="{{ $grade->subject->id }}">
 
       <div class="row items-push justify-content-center">
-        <div class="col-lg-7">
+        <div class="col-lg-6">
           <h6 class="mb-3">{{ trans('Program Studi') }}</h6>
           <ul class="list-group push">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ trans('Mahasiswa') }}
+              <span class="fw-semibold text-end" style="min-width: 0; flex: 1;">{{ $grade->student->name }}</span>
+            </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
               {{ trans('Nama Program Studi') }}
               <span class="fw-semibold text-end" style="min-width: 0; flex: 1;">{{ $grade->student->major->name }}</span>
@@ -53,11 +57,6 @@
               <span class="fw-semibold flex-grow-1 text-end">{{ $grade->subject->exam_time }}</span>
             </li>
           </ul>
-        </div>
-      </div>
-
-      <div class="row justify-content-center">
-        <div class="col-md-6">
 
           <div class="py-1 mt-1 mt-lg-3 mb-1">
             <p class="fs-sm text-uppercase fw-bold mb-1">

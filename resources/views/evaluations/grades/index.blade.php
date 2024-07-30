@@ -19,14 +19,21 @@
   </div>
   <div class="block-content">
 
-    @can('grades.create')
     <div class="mb-4">
+      @can('grades.create')
       <a href="{{ route('grades.create') }}" class="btn btn-sm btn-primary">
         <i class="fa fa-plus fa-sm me-1"></i>
         {{ trans('page.grades.create') }}
       </a>
+      @endcan
+
+      @can('gardes.export')
+      <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modal-select-student">
+        <i class="fa fa-print fa-sm me-1"></i>
+        {{ trans('Cetak Transkrip Nilai') }}
+      </button>
+      @endcan
     </div>
-    @endcan
 
     <div class="my-3">
       {{ $dataTable->table() }}
@@ -34,6 +41,7 @@
 
   </div>
 </div>
+@includeIf('evaluations.grades.student')
 @endsection
 @push('javascript')
 {{ $dataTable->scripts() }}

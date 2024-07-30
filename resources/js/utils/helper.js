@@ -38,7 +38,9 @@ export function showConfirmationModal(
                     Swal.fire({
                         icon: "error",
                         // title: xhr.responseJSON.message,
-                        title: "Tidak bisa melakukan Aksi, Data tidak valid untuk aksi ini",
+                        title:
+                            xhr.responseJSON.message ||
+                            "Tidak bisa melakukan Aksi, Data tidak valid untuk aksi ini",
                         confirmButtonText: "Mengerti",
                     });
                     return;

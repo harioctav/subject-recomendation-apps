@@ -36,6 +36,20 @@ class StudentServiceImplement extends Service implements StudentService
   }
 
   /**
+   * Get data in model Permission Category with relations
+   *
+   */
+  public function with(array $with = [])
+  {
+    try {
+      return $this->mainRepository->with($with);
+    } catch (\Exception $e) {
+      Log::info($e->getMessage());
+      throw new InvalidArgumentException(trans('session.log.error'));
+    }
+  }
+
+  /**
    * Get data by row name use where or where in function
    *
    */
