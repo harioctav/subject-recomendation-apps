@@ -9,5 +9,5 @@ enum RoleType: string
   use EnumsToArray;
 
   case ADMINISTRATOR = 'Super Admin';
-  case ADMIN_REGISTER =  'Admin Pendaftaran';
+  case ADMIN_REGISTER =  'Tim Registrasi Matakuliah';
 }
