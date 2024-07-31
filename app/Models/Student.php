@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Helpers\Enums\StudentStatusType;
 use App\Traits\Uuid;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -37,7 +39,7 @@ class Student extends Model
     'origin_department',
     'upbjj',
     'address',
-    'note',
+    'status',
     'avatar',
     'parent_name',
     'parent_phone_number',
@@ -134,5 +136,17 @@ class Student extends Model
     }
 
     return null;
+  }
+
+  public function statusLabel(): Attribute
+  {
+    $statusLabel = [
+      StudentStatusType::RPL->value => "<span class='badge text-success'>" . StudentStatusType::RPL->value . "</span>",
+      StudentStatusType::NON_RPL->value => "<span class='badge text-primary'>" . StudentStatusType::NON_RPL->value . "</span>",
+    ];
+
+    return Attribute::make(
+      get: fn () => $statusLabel[$this->status] ?? 'Tidak Diketahui',
+    );
   }
 }

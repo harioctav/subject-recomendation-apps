@@ -7,6 +7,7 @@ use App\Models\Student;
 use Illuminate\Support\Carbon;
 use App\Helpers\Enums\GenderType;
 use App\Helpers\Enums\ReligionType;
+use App\Helpers\Enums\StudentStatusType;
 use App\Models\Village;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -54,6 +55,7 @@ class StudentFactory extends Factory
       'gender' => fake()->randomElement(GenderType::toArray()),
       'phone' => fake()->unique()->e164PhoneNumber(),
       'religion' => fake()->randomElement(ReligionType::toArray()),
+      'status' => fake()->randomElement(StudentStatusType::toArray()),
       'address' => fake()->address(),
     ];
 

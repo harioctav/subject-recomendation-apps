@@ -68,7 +68,7 @@
     </tr>
   </table>
 
-  @foreach($groupedSubjects as $semester => $subjects)
+  @forelse($groupedSubjects as $semester => $subjects)
   <table class="border-table" style="margin-top: 30px; border-bottom: none;">
     <thead>
       <tr style="border-bottom: none;" class="semester-header" style="margin-bottom: 10px">
@@ -116,7 +116,15 @@
       @endforeach
     </tbody>
   </table>
-  @endforeach
+  @empty
+  <table class="border-table" style="margin-top: 30px; border-bottom: none;">
+    <thead>
+      <tr style="border-bottom: none;" class="semester-header" style="margin-bottom: 10px">
+        <th colspan="6">BELUM ADA MATAKULIAH YANG SUDAH DILAKUKAN PENILAIAN</th>
+      </tr>
+    </thead>
+  </table>
+  @endforelse
 
   <ol>
     <li>Jumlah sks dalam Kurikulum yang ditempuh : </li>

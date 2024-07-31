@@ -49,13 +49,15 @@ $(document).ready(function () {
                 $("#student-total-course-credit-remainder").text(
                     data.total_course_credit_remainder
                 );
+                $("#student-status").text(data.status);
             },
             error: function () {
-                $("#student-nim").text("--");
-                $("#student-major").text("--");
-                $("#student-total-course-credit").text("--");
-                $("#student-total-course-credit-done").text("--");
-                $("#student-total-course-credit-remainder").text("--");
+                $("#student-nim").text("-");
+                $("#student-major").text("-");
+                $("#student-total-course-credit").text("-");
+                $("#student-total-course-credit-done").text("-");
+                $("#student-total-course-credit-remainder").text("-");
+                $("#student-status").text("-");
             },
         });
     }
@@ -91,11 +93,12 @@ $(document).ready(function () {
             });
         } else {
             $(".select-box-container").hide();
-            $("#student-nim").text("--");
-            $("#student-major").text("--");
-            $("#student-total-course-credit").text("--");
-            $("#student-total-course-credit-done").text("--");
-            $("#student-total-course-credit-remainder").text("--");
+            $("#student-nim").text("-");
+            $("#student-major").text("-");
+            $("#student-total-course-credit").text("-");
+            $("#student-total-course-credit-done").text("-");
+            $("#student-total-course-credit-remainder").text("-");
+            $("#student-status").text("-");
         }
     }
 

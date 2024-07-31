@@ -28,12 +28,38 @@
       @csrf
 
       <div class="row items-push">
-        <div class="col-lg-3">
+        <div class="col-lg-4">
           <p class="text-muted">
-            Pilih mahasiswa dan mata kuliah yang direkomendasikan.
+            Pilih mahasiswa dan mata kuliah yang direkomendasikan. Jika mahasiswa berstatus <strong>RPL</strong> silahkan cek Matakuliah terlebih dahulu untuk data Alih Kreditnya.
           </p>
+          <ul class="list-group push">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ trans('NIM') }}
+              <span id="student-nim" class="fw-semibold">--</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ trans('Program Studi') }}
+              <span id="student-major" class="fw-semibold text-end">--</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ trans('Total SKS WAJIB Ditempuh') }}
+              <span id="student-total-course-credit" class="fw-semibold">--</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ trans('Total SKS SUDAH Ditempuh') }}
+              <span id="student-total-course-credit-done" class="fw-semibold">--</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ trans('Sisa SKS Belum Ditempuh') }}
+              <span id="student-total-course-credit-remainder" class="fw-semibold">--</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ trans('Status Mahasiswa') }}
+              <span id="student-status" class="fw-semibold">--</span>
+            </li>
+          </ul>
         </div>
-        <div class="col-lg-7 offset-1">
+        <div class="col-lg-6 offset-1">
           <div class="mb-4">
             <label for="student_id" class="form-label">{{ trans('Mahasiswa') }}</label>
             <span class="text-danger">*</span>
@@ -49,29 +75,6 @@
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror
           </div>
-
-          <ul class="list-group push">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              {{ trans('NIM') }}
-              <span id="student-nim" class="fw-semibold">--</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              {{ trans('Program Studi') }}
-              <span id="student-major" class="fw-semibold text-end">--</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              {{ trans('Total SKS Yang WAJIB Ditempuh') }}
-              <span id="student-total-course-credit" class="fw-semibold">--</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              {{ trans('Total SKS Yang SUDAH Ditempuh') }}
-              <span id="student-total-course-credit-done" class="fw-semibold">--</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              {{ trans('Sisa SKS Yang Belum Ditempuh') }}
-              <span id="student-total-course-credit-remainder" class="fw-semibold">--</span>
-            </li>
-          </ul>
 
           <div class="loading-indicator" style="display: none;">Loading...</div>
           <div class="select-box-container" style="display: none;">

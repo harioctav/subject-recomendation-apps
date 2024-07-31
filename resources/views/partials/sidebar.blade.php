@@ -7,10 +7,12 @@
         <span class="smini-visible fw-bold tracking-wide fs-lg">
           U<span class="text-primary">T</span>
         </span>
-        <a class="link-fx fw-bold tracking-wide mx-auto" href="index.html">
+        <a class="link-fx fw-bold tracking-wide mx-auto" href="javascript:void(0)">
           <span class="smini-hidden">
-            <i class="fa fa-graduation-cap me-1"></i>
-            <span class="fs-4 text-dual">UT</span>
+            <img src="{{ asset('assets/images/logos/logo.png') }}" alt="Logo Universitas Terbuka" width="32">
+            <span class="fs-6 text-dual">
+              <small class="text-center">Universitas Terbuka</small>
+            </span>
           </span>
         </a>
       </div>

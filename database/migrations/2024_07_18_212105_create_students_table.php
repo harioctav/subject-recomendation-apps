@@ -2,6 +2,7 @@
 
 use App\Helpers\Enums\GenderType;
 use App\Helpers\Enums\ReligionType;
+use App\Helpers\Enums\StudentStatusType;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -31,7 +32,7 @@ return new class extends Migration
       $table->string('origin_department')->nullable();
       $table->string('upbjj')->nullable();
       $table->text('address')->nullable();
-      $table->text('note')->nullable();
+      $table->enum('status', StudentStatusType::toArray())->nullable();
       $table->longText('avatar')->nullable();
       $table->string('parent_name')->nullable();
       $table->string('parent_phone_number')->unique()->nullable();

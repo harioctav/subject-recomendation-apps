@@ -28,7 +28,7 @@ Route::get('/', function () {
   return redirect(route('home'));
 });
 
-Auth::routes();
+require __DIR__ . '/auth.php';
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
@@ -74,7 +74,6 @@ Route::middleware([
   });
 
   Route::prefix('evaluations')->group(function () {
-
     // Recommendations
     Route::post('recommendations/export', [RecommendationController::class, 'export'])->name(
       'recommendations.export'

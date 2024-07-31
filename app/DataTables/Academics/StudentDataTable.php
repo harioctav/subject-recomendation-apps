@@ -40,6 +40,7 @@ class StudentDataTable extends DataTable
       ->addIndexColumn()
       ->editColumn('major_id', fn ($row) => $row->major->name)
       ->editColumn('email', fn ($row) => $row->email ?? "--")
+      ->editColumn('status', fn ($row) => $row->statusLabel)
       ->filterColumn('major_id', function ($query, $keyword) {
         $query->whereHas('major', function ($query) use ($keyword) {
           $query->where('name', 'LIKE', "%{$keyword}%");
@@ -47,7 +48,8 @@ class StudentDataTable extends DataTable
       })
       ->addColumn('action', 'academics.students.action')
       ->rawColumns([
-        'action'
+        'action',
+        'status'
       ]);
   }
 
@@ -68,6 +70,14 @@ class StudentDataTable extends DataTable
       ->setTableId('student-table')
       ->columns($this->getColumns())
       ->minifiedAjax()
+      ->ajax([
+        'url' => route('students.index'),
+        'type' => 'GET',
+        'data' => "
+          function(data) {
+            data.status = $('select[name=status]').val();
+          }"
+      ])
       //->dom('Bfrtip')
       ->addTableClass([
         'table',
@@ -114,6 +124,9 @@ class StudentDataTable extends DataTable
         ->addClass('text-center'),
       Column::make('major_id')
         ->title(trans('Program Studi'))
+        ->addClass('text-center'),
+      Column::make('status')
+        ->title(trans('Status'))
         ->addClass('text-center'),
       Column::computed('action')
         ->exportable(false)

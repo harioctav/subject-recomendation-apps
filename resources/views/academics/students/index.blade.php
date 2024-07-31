@@ -19,6 +19,20 @@
   </div>
   <div class="block-content">
 
+    <div class="row">
+      <div class="col-md-4">
+        <div class="mb-4">
+          <label for="status" class="form-label">{{ trans('Filter Berdasarkan Status Mahasiswa') }}</label>
+          <select type="text" class="form-select" name="status" id="status">
+            <option value="{{ Helper::ALL }}">{{ Helper::ALL }}</option>
+            @foreach ($status as $item)
+            <option value="{{ $item }}">{{ $item }}</option>
+            @endforeach
+          </select>
+        </div>
+      </div>
+    </div>
+
     @can('students.create')
     <div class="mb-4">
       <a href="{{ route('students.create') }}" class="btn btn-sm btn-primary">

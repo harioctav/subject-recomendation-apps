@@ -2,14 +2,15 @@
 
 namespace App\Services\Recommendation;
 
-use App\Helpers\Enums\GradeType;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
-use App\Repositories\Grade\GradeRepository;
-use App\Repositories\Major\MajorRepository;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Helpers\Enums\GradeType;
 use Illuminate\Support\Facades\DB;
 use LaravelEasyRepository\Service;
 use Illuminate\Support\Facades\Log;
+use App\Repositories\Grade\GradeRepository;
+use App\Repositories\Major\MajorRepository;
 use App\Repositories\Student\StudentRepository;
 use App\Repositories\Subject\SubjectRepository;
 use App\Repositories\Recommendation\RecommendationRepository;
@@ -88,6 +89,7 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
         // Prepare recommendation data
         // Store recommendations
         $this->mainRepository->create([
+          'uuid' => Str::uuid(),
           'student_id' => $student->id,
           'subject_id' => (int) $subject_id,
           'semester' => $semester,
@@ -112,12 +114,13 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
 
       // Ambil mata kuliah yang direkomendasikan untuk mahasiswa
       $recommendedSubjects = $student->recommendations
+        ->unique('subject_id')
         ->groupBy('semester')
         ->map(function ($recommendations, $semester) use ($student) {
           $subjects = $recommendations->map(function ($recommendation) use ($student) {
             $subject = $recommendation->subject;
             $grade = $student->grades->firstWhere('subject_id', $subject->id);
-            $kelulusan = $grade && $grade->grade !== 'E' ? 'L' : 'BL';
+            $kelulusan = $grade && $grade->grade !== GradeType::E->value ? 'LL' : 'BL';
 
             return [
               'id' => $subject->id,
@@ -144,7 +147,7 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
 
       // Hitung total SKS yang sudah ditempuh (hanya untuk mata kuliah dengan nilai selain 'E')
       $totalCompletedCourseCredit = $student->grades->filter(function ($grade) {
-        return $grade->grade !== 'E';
+        return $grade->grade !== GradeType::E->value;
       })->sum('subject.course_credit');
 
       $totalCourseCredit = $student->major->total_course_credit;

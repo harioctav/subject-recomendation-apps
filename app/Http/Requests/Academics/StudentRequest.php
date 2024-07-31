@@ -5,6 +5,7 @@ namespace App\Http\Requests\Academics;
 use Illuminate\Validation\Rule;
 use App\Helpers\Enums\GenderType;
 use App\Helpers\Enums\ReligionType;
+use App\Helpers\Enums\StudentStatusType;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StudentRequest extends FormRequest
@@ -42,6 +43,7 @@ class StudentRequest extends FormRequest
       'birth_date' => 'required|date',
       'gender' => "required|string|" . GenderType::toValidation(),
       'religion' => "nullable|string|" . ReligionType::toValidation(),
+      'status' => "nullable|string|" . StudentStatusType::toValidation(),
       'phone' => [
         'required', 'numeric',
         Rule::unique('students', 'phone')->ignore($this->student),
@@ -54,8 +56,22 @@ class StudentRequest extends FormRequest
       'post_code' => 'required|numeric',
       'address' => 'required|string',
       'file' => 'nullable|mimes:jpg,png|max:3048',
-      'initial_registration_period' => 'nullable|string',
+      'initial_registration_period' => [
+        'nullable',
+        'string',
+        'regex:/^[0-9]{4}\.[1-2]$/',
+        function ($attribute, $value, $fail) {
+          $parts = explode('.', $value);
+          $year = (int)$parts[0];
+          $currentYear = date('Y');
+
+          if ($year < 1900 || $year > ($currentYear + 1)) {
+            $fail("$attribute harus berada diantara 1900 dan " . ($currentYear + 1) . ".");
+          }
+        },
+      ],
       'origin_department' => 'nullable|string',
+      'upbjj' => 'nullable|string',
       'parent_name' => 'nullable|string|max:100',
       'parent_phone_number' => 'nullable|numeric',
     ];
@@ -72,6 +88,7 @@ class StudentRequest extends FormRequest
       '*.in' => ':attribute harus salah satu dari jenis berikut: :values',
       '*.unique' => ':attribute sudah digunakan, silahkan pilih yang lain',
       '*.exists' => ':attribute tidak ditemukan atau tidak bisa diubah',
+      '*.regex' => ':attribute harus dalam format YYYY.N, di mana YYYY adalah tahun dan N adalah 1 atau 2.',
       '*.numeric' => ':attribute input tidak valid atau harus berupa angka',
       '*.image' => ':attribute tidak valid, pastikan memilih gambar',
       '*.mimes' => ':attribute tidak valid, masukkan gambar dengan format jpg atau png',
@@ -98,6 +115,7 @@ class StudentRequest extends FormRequest
       'birth_day' => 'Tanggal Lahir',
       'gender' => 'Jenis Kelamin',
       'religion' => 'Agama',
+      'status' => 'Status',
       'phone' => 'No. Whatsapp',
       'major_id' => 'Jurusan',
       'province' => 'Provinsi',
@@ -108,6 +126,8 @@ class StudentRequest extends FormRequest
       'address' => 'Alamat Lengkap',
       'file' => 'Pas Foto',
       'initial_registration_period' => 'Tahun Masuk',
+      'origin_department' => 'Jurusan Asal',
+      'upbjj' => 'UPBJJ',
       'parent_name' => 'Nama Orang Tua',
       'parent_phone_number' => 'No. Telepon Orang Tua',
     ];

@@ -1,5 +1,5 @@
 @extends('layouts.guest')
-
+@section('title', trans('Reset Kata Sandi'))
 @section('content')
 
 <!-- Page Content -->
@@ -8,12 +8,13 @@
     <!-- Header -->
     <div class="py-4 px-1 text-center mb-4">
       <a class="link-fx fw-bold" href="">
-        <i class="fa fa-graduation-cap me-1"></i>
+        <img src="{{ asset('assets/images/logos/logo.png') }}" alt="Logo Universitas Terbuka" width="70">
+        <br>
         <span class="fs-4 text-body-color">Universitas</span>
         <span class="fs-4">Terbuka</span>
       </a>
-      <h1 class="h3 fw-bold mt-5 mb-2">Reset Kata Sandi Anda</h1>
-      <h2 class="h5 fw-medium text-muted mb-0">Silakan masukkan kata sandi baru Anda</h2>
+      <h1 class="h3 fw-bold mt-5 mb-2">Selamat Datang Kembali</h1>
+      <h2 class="h5 fw-medium text-muted mb-0">Silahkan masuk ke aplikasi untuk melanjutkan</h2>
     </div>
     <!-- END Header -->
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\Enums\GradeType;
 use App\Models\Grade;
 use App\Models\Major;
 use App\Models\Student;
@@ -88,7 +89,7 @@ class StudentController extends Controller
     // Ambil ID mata kuliah yang dinilai dengan nilai bukan 'E'
     $passedSubjects = Grade::where('student_id', $student_id)
       ->whereIn('subject_id', $recommendedSubjects)
-      ->where('grade', '!=', 'E')
+      ->where('grade', '!=', GradeType::E->value)
       ->pluck('subject_id');
 
     // Hitung total SKS dari mata kuliah yang lulus
@@ -101,7 +102,8 @@ class StudentController extends Controller
       'major_name' => $student->major->name,
       'total_course_credit' => $totalCourseCredit,
       'total_course_credit_done' => $totalCompletedCourseCredit,
-      'total_course_credit_remainder' => $totalCourseCredit - $totalCompletedCourseCredit
+      'total_course_credit_remainder' => $totalCourseCredit - $totalCompletedCourseCredit,
+      'status' => $student->status
     ];
 
     return response()->json($details);

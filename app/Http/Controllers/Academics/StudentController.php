@@ -10,7 +10,9 @@ use App\Helpers\Enums\ReligionType;
 use App\Http\Controllers\Controller;
 use App\Services\Major\MajorService;
 use Illuminate\Support\Facades\Cache;
+use App\Helpers\Enums\StudentStatusType;
 use App\Services\Student\StudentService;
+use App\DataTables\Scopes\UserStatusFilter;
 use App\DataTables\Academics\StudentDataTable;
 use App\Http\Requests\Academics\StudentRequest;
 use App\Services\Locations\Province\ProvinceService;
@@ -51,9 +53,10 @@ class StudentController extends Controller
   /**
    * Display a listing of the resource.
    */
-  public function index(StudentDataTable $dataTable)
+  public function index(StudentDataTable $dataTable, Request $request)
   {
-    return $dataTable->render("academics.students.index");
+    $status = StudentStatusType::toArray();
+    return $dataTable->addScope(new UserStatusFilter($request))->render("academics.students.index", compact('status'));
   }
 
   /**
@@ -66,8 +69,9 @@ class StudentController extends Controller
 
     $genders = $this->cacheData('genders', fn () => GenderType::toArray());
     $religions = $this->cacheData('religions', fn () => ReligionType::toArray());
+    $status = $this->cacheData('status', fn () => StudentStatusType::toArray());
 
-    return view('academics.students.create', compact('majors', 'genders', 'religions', 'provinces'));
+    return view('academics.students.create', compact('majors', 'genders', 'religions', 'provinces', 'status'));
   }
 
   /**
@@ -97,8 +101,9 @@ class StudentController extends Controller
 
     $genders = $this->cacheData('genders', fn () => GenderType::toArray());
     $religions = $this->cacheData('religions', fn () => ReligionType::toArray());
+    $status = $this->cacheData('status', fn () => StudentStatusType::toArray());
 
-    return view('academics.students.edit', compact('majors', 'genders', 'religions', 'student', 'provinces'));
+    return view('academics.students.edit', compact('majors', 'genders', 'religions', 'student', 'provinces', 'status'));
   }
 
   /**

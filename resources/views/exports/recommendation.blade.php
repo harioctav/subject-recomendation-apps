@@ -129,7 +129,7 @@
       </tr>
     </table>
 
-    @foreach($recommended_subjects as $semesterData)
+    @forelse ($recommended_subjects as $semesterData)
     <table class="border-table" style="margin-top: 30px; border-bottom: none;">
       <thead>
         <tr style="border-bottom: none;" class="semester-header" style="margin-bottom: 10px">
@@ -165,7 +165,15 @@
         @endforeach
       </tbody>
     </table>
-    @endforeach
+    @empty
+    <table class="border-table" style="margin-top: 30px; border-bottom: none;">
+      <thead>
+        <tr style="border-bottom: none;" class="semester-header" style="margin-bottom: 10px">
+          <th colspan="6">BELUM ADA MATAKULIAH YANG DIREKOMENDASIKAN</th>
+        </tr>
+      </thead>
+    </table>
+    @endforelse
   </div>
 
   <div class="footer">

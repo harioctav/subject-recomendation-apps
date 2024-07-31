@@ -180,6 +180,28 @@
             @enderror
           </div>
 
+          <div class="mb-4">
+            <label for="status" class="form-label">{{ trans('Status Mahasiswa') }}</label>
+            <span class="text-danger">*</span>
+            <select name="status" id="status" class="js-select2 form-select @error('status') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;">
+              <option></option>
+              @foreach ($status as $value)
+              <option value="{{ $value }}" @if (old('status')==$value) selected @endif>{{ ucfirst(trans($value)) }}</option>
+              @endforeach
+            </select>
+            @error('status')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="mb-4">
+            <label for="upbjj" class="form-label">{{ trans('UPBJJ') }}</label>
+            <input type="text" name="upbjj" id="upbjj" value="{{ old('upbjj') }}" class="form-control @error('upbjj') is-invalid @enderror" placeholder="{{ trans('Masukkan UPBJJ') }}">
+            @error('upbjj')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+
           <div class="py-1 mb-1">
             <p class="fs-sm text-uppercase text-primary fw-bold mb-1">
               {{ trans('Informasi Tempat Tinggal') }}
