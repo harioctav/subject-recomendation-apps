@@ -79,15 +79,17 @@
           <div class="mb-4">
             <div class="row">
               <div class="col-md-8">
-                <label for="birth_place" class="form-label">{{ trans('Tempat Lahir') }}</label>
-                <span class="text-danger">*</span>
-                <input type="text" name="birth_place" id="birth_place" value="{{ old('birth_place') }}" class="form-control @error('birth_place') is-invalid @enderror" placeholder="{{ trans('Masukkan Tempat Lahir') }}" onkeypress="return onlyLetter(event)">
-                @error('birth_place')
-                <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+                <div class="mb-0">
+                  <label for="birth_place" class="form-label">{{ trans('Tempat Lahir') }}</label>
+                  <span class="text-danger">*</span>
+                  <input type="text" name="birth_place" id="birth_place" value="{{ old('birth_place') }}" class="form-control @error('birth_place') is-invalid @enderror" placeholder="{{ trans('Masukkan Tempat Lahir') }}" onkeypress="return onlyLetter(event)">
+                  @error('birth_place')
+                  <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+                </div>
               </div>
               <div class="col-md-4">
-                <div class="mb-1">
+                <div class="mb-0">
                   <label class="form-label" for="birth_date">{{ trans('Tanggal Lahir') }}</label>
                   <span class="text-danger">*</span>
                   <input type="text" class="js-flatpickr form-control @error('birth_date') is-invalid @enderror" id="birth_date" name="birth_date" value="{{ old('birth_date') }}" placeholder="Y-m-d" data-date-format="Y-m-d">
@@ -283,15 +285,15 @@
           </div>
 
           <div class="mb-4">
-            <label for="parent_name" class="form-label">{{ trans('Nama Ibu Kandung') }}</label>
-            <input type="text" name="parent_name" id="parent_name" value="{{ old('parent_name') }}" class="form-control @error('parent_name') is-invalid @enderror" placeholder="{{ trans('Masukkan Nama Ibu Kandung') }}" onkeypress="return onlyLetter(event)">
+            <label for="parent_name" class="form-label">{{ trans('Nama Wali') }}</label>
+            <input type="text" name="parent_name" id="parent_name" value="{{ old('parent_name') }}" class="form-control @error('parent_name') is-invalid @enderror" placeholder="{{ trans('Masukkan Nama Wali') }}" onkeypress="return onlyLetter(event)">
             @error('parent_name')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror
           </div>
 
           <div class="mb-4">
-            <label for="parent_phone_number" class="form-label">{{ trans('No. Orang Tua') }}</label>
+            <label for="parent_phone_number" class="form-label">{{ trans('No. Wali') }}</label>
             <input type="text" name="parent_phone_number" id="parent_phone_number" value="{{ old('parent_phone_number') }}" class="form-control @error('parent_phone_number') is-invalid @enderror" placeholder="{{ trans('Masukkan Nomor Aktif') }}" onkeypress="return onlyNumber(event)">
             @error('parent_phone_number')
             <div class="invalid-feedback">{{ $message }}</div>

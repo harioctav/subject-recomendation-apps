@@ -1,6 +1,6 @@
 $(() => {
     var today = new Date();
-    flatpickr("#brith_day", {
+    flatpickr("#birth_date", {
         dateFormat: "Y-m-d",
         maxDate: today,
     });
