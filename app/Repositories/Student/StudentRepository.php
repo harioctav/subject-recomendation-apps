@@ -15,4 +15,7 @@ interface StudentRepository extends Repository
     $orderBy = null,
     $orderByType = null
   );
+  public function getTrashed(int $id);
+  public function handleRestoreData(int $id);
+  public function handleForceDeleteData(int $id);
 }

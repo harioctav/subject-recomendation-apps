@@ -11,11 +11,12 @@ return [
   'delete_error' => 'Tidak dapat menghapus Data karena mempunyai Keterkaitan dengan data lainnya',
   'status' => 'Melakukan Perubahan Status Berhasil',
   'password' => 'Melakukan Perubahan Kata Sandi Berhasil',
+  'force-delete' => 'Melakukan Hapus Permanen Data Berhasil',
   'image' => 'Melakukan Penghapusan Avatar Berhasil',
   'log' => [
     'error' => 'Tidak dapat melakukan tindakan, Periksa kembali',
   ],
-  'restore' => 'Melakukan Pemulihan Data Berhasil',
+  'restore' => 'Pemulihan Data Berhasil Dilakukan',
   'is_null_roles' => 'Anda tidak bisa masuk ke halaman Aplikasi. Silahkan hubungi Administrator untuk info lebih lanjut',
   'banned' => "Mohon Maaf, Akun anda tidak aktif. \n Mohon hubungi {$admin} untuk mengaktifkan Akun Anda.",
 ];

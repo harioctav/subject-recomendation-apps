@@ -42,7 +42,7 @@ class StudentRequest extends FormRequest
       'birth_place' => 'required|string|max:50',
       'birth_date' => 'required|date',
       'gender' => "required|string|" . GenderType::toValidation(),
-      'religion' => "nullable|string|" . ReligionType::toValidation(),
+      'religion' => "required|string|" . ReligionType::toValidation(),
       'status' => "nullable|string|" . StudentStatusType::toValidation(),
       'phone' => [
         'required', 'numeric',
@@ -59,14 +59,23 @@ class StudentRequest extends FormRequest
       'initial_registration_period' => [
         'nullable',
         'string',
-        'regex:/^[0-9]{4}\.[1-2]$/',
+        'regex:/^[0-9]{4}\s(GANJIL|GENAP)$/',
         function ($attribute, $value, $fail) {
-          $parts = explode('.', $value);
+          if (!preg_match('/^[0-9]{4}\s(GANJIL|GENAP)$/', $value)) {
+            return $fail("$attribute harus dalam format 'YYYY GANJIL' atau 'YYYY GENAP'.");
+          }
+
+          $parts = explode(' ', $value);
           $year = (int)$parts[0];
+          $semester = $parts[1];
           $currentYear = date('Y');
 
-          if ($year < 1900 || $year > ($currentYear + 1)) {
-            $fail("$attribute harus berada diantara 1900 dan " . ($currentYear + 1) . ".");
+          if ($year < 2019 || $year > ($currentYear + 1)) {
+            return $fail("$attribute harus berada di antara 2019 dan " . ($currentYear + 1) . ".");
+          }
+
+          if (!in_array($semester, ['GANJIL', 'GENAP'])) {
+            return $fail("$attribute harus berupa 'GANJIL' atau 'GENAP'.");
           }
         },
       ],
@@ -75,6 +84,15 @@ class StudentRequest extends FormRequest
       'parent_name' => 'nullable|string|max:100',
       'parent_phone_number' => 'nullable|numeric',
     ];
+  }
+
+  public function prepareForValidation()
+  {
+    if ($this->has('initial_registration_period')) {
+      $this->merge([
+        'initial_registration_period' => strtoupper($this->initial_registration_period)
+      ]);
+    }
   }
 
   /**
@@ -88,7 +106,7 @@ class StudentRequest extends FormRequest
       '*.in' => ':attribute harus salah satu dari jenis berikut: :values',
       '*.unique' => ':attribute sudah digunakan, silahkan pilih yang lain',
       '*.exists' => ':attribute tidak ditemukan atau tidak bisa diubah',
-      '*.regex' => ':attribute harus dalam format YYYY.N, di mana YYYY adalah tahun dan N adalah 1 atau 2.',
+      '*.regex' => ":attribute harus dalam format 'YYYY GANJIL' atau 'YYYY GENAP'.",
       '*.numeric' => ':attribute input tidak valid atau harus berupa angka',
       '*.image' => ':attribute tidak valid, pastikan memilih gambar',
       '*.mimes' => ':attribute tidak valid, masukkan gambar dengan format jpg atau png',
@@ -112,7 +130,7 @@ class StudentRequest extends FormRequest
       'name' => 'Nama Lengkap',
       'email' => 'Email',
       'birth_place' => 'Tempat Lahir',
-      'birth_day' => 'Tanggal Lahir',
+      'birth_date' => 'Tanggal Lahir',
       'gender' => 'Jenis Kelamin',
       'religion' => 'Agama',
       'status' => 'Status',

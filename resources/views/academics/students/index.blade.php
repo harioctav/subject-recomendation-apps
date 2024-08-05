@@ -16,6 +16,18 @@
     <h3 class="block-title">
       {{ trans('page.students.index') }}
     </h3>
+    <div class="block-options d-flex flex-column flex-sm-row justify-content-between align-items-center">
+      <div class="mb-1 mb-sm-0">
+        <div class="space-y-2">
+          <div class="form-check form-switch">
+            <input class="form-check-input me-2" type="checkbox" value="false" id="isTrash-switch" name="isTrash">
+            <label class="form-check-label" style="cursor: pointer" for="isTrash-switch">
+              {{ trans('button.recycle') }}
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="block-content">
 
@@ -54,6 +66,8 @@
 @vite('resources/js/academics/students/index.js')
 <script>
   var urlDestroy = "{{ route('students.destroy', ':uuid') }}"
+  var urlRestore = "{{ route('students.restore', ':uuid') }}";
+  var urlForceDelete = "{{ route('students.delete', ':uuid') }}";
 
 </script>
 @endpush

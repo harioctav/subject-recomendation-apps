@@ -70,6 +70,8 @@ return [
     'update' => 'Simpan perubahan data Mahasiswa',
     'import' => 'Import data Mahasiswa dari excel',
     'destroy' => 'Hapus data Mahasiswa',
+    'delete' => 'Hapus Permanen data Mahasiswa',
+    'restore' => 'Pulihkan kembali data Mahasiswa',
   ],
 
   'recommendations' => [

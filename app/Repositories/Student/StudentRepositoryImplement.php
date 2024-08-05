@@ -59,4 +59,22 @@ class StudentRepositoryImplement extends Eloquent implements StudentRepository
   {
     return $this->model->with($with);
   }
+
+  /**
+   * Get data trashed
+   */
+  public function getTrashed($id)
+  {
+    return $this->model->withTrashed()->find($id);
+  }
+
+  public function handleRestoreData(int $id)
+  {
+    return $this->getTrashed($id)->restore();
+  }
+
+  public function handleForceDeleteData(int $id)
+  {
+    return $this->getTrashed($id)->forceDelete();
+  }
 }

@@ -149,14 +149,42 @@ class StudentServiceImplement extends Service implements StudentService
     try {
       DB::beginTransaction();
 
-      // Handle delete avatar
+      // Handle delete
       $student = $this->mainRepository->findOrFail($id);
+      $student->delete();
+
+      DB::commit();
+    } catch (\Exception $e) {
+      DB::rollBack();
+      Log::info($e->getMessage());
+      throw new InvalidArgumentException(trans('session.log.error'));
+    }
+  }
+
+  public function handleRestoreData($id)
+  {
+    try {
+      return $this->mainRepository->handleRestoreData($id);
+    } catch (\Exception $e) {
+      Log::info($e->getMessage());
+      throw new InvalidArgumentException(trans('session.log.error'));
+    }
+  }
+
+  public function handleForceDeleteData($id)
+  {
+    try {
+      DB::beginTransaction();
+
+      // Find Student
+      $student = $this->mainRepository->getTrashed($id);
 
       if ($student->avatar) :
         Storage::delete($student->avatar);
       endif;
 
-      $this->mainRepository->delete($student->id);
+      // Force Delete
+      $this->mainRepository->handleForceDeleteData($student->id);
 
       DB::commit();
     } catch (\Exception $e) {

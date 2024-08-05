@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Academics;
 
+use App\DataTables\Scopes\Deleted;
 use App\Models\Student;
 use App\Traits\ChacesData;
 use Illuminate\Http\Request;
@@ -56,7 +57,10 @@ class StudentController extends Controller
   public function index(StudentDataTable $dataTable, Request $request)
   {
     $status = StudentStatusType::toArray();
-    return $dataTable->addScope(new UserStatusFilter($request))->render("academics.students.index", compact('status'));
+    return $dataTable->addScopes([
+      new Deleted($request),
+      new UserStatusFilter($request),
+    ])->render("academics.students.index", compact('status'));
   }
 
   /**
@@ -123,6 +127,22 @@ class StudentController extends Controller
     $this->studentService->handleDeleteData($student->id);
     return response()->json([
       'message' => trans('session.delete'),
+    ]);
+  }
+
+  public function restore(Student $student)
+  {
+    $this->studentService->handleRestoreData($student->id);
+    return response()->json([
+      'message' => trans('session.restore'),
+    ]);
+  }
+
+  public function delete(Student $student)
+  {
+    $this->studentService->handleForceDeleteData($student->id);
+    return response()->json([
+      'message' => trans('session.force-delete'),
     ]);
   }
 }

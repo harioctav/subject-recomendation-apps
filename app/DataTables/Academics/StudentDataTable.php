@@ -58,7 +58,7 @@ class StudentDataTable extends DataTable
    */
   public function query(Student $model): QueryBuilder
   {
-    return $this->studentService->getQuery();
+    return $model->newQuery();
   }
 
   /**
@@ -76,6 +76,7 @@ class StudentDataTable extends DataTable
         'data' => "
           function(data) {
             data.status = $('select[name=status]').val();
+            data.deleted = $('#isTrash-switch').is(':checked');
           }"
       ])
       //->dom('Bfrtip')
@@ -107,6 +108,8 @@ class StudentDataTable extends DataTable
     $visibility = Helper::checkPermissions([
       'students.edit',
       'students.destroy',
+      'students.delete',
+      'students.restore',
     ]);
 
     return [

@@ -70,6 +70,10 @@ Route::middleware([
     Route::resource('subjects', SubjectController::class);
 
     // Student management
+    Route::prefix('students')->name('students.')->group(function () {
+      Route::put('{student}/restore', [StudentController::class, 'restore'])->name('restore')->withTrashed();
+      Route::delete('{student}/delete', [StudentController::class, 'delete'])->name('delete')->withTrashed();
+    });
     Route::resource('students', StudentController::class);
   });
 

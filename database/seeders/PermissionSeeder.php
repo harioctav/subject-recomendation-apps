@@ -66,6 +66,8 @@ class PermissionSeeder extends Seeder
       'students.edit',
       'students.update',
       'students.destroy',
+      'students.restore',
+      'students.delete',
 
       // Halaman Rekomendasi
       'recommendations.index',

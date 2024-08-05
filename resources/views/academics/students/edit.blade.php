@@ -108,6 +108,7 @@
 
           <div class="mb-4">
             <label for="religion" class="form-label">{{ trans('Agama') }}</label>
+            <span class="text-danger">*</span>
             <select name="religion" id="religion" class="js-select2 form-select @error('religion') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;">
               <option></option>
               @foreach ($religions as $value)
