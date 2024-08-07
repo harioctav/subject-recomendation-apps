@@ -36,6 +36,7 @@ class Recommendation extends Model
     'student_id',
     'subject_id',
     'semester',
+    'exam_period'
   ];
 
   /**

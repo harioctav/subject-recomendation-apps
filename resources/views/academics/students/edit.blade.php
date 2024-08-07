@@ -132,7 +132,7 @@
           <div class="row mb-0">
             <div class="col-md-10 col-xl-8">
               <div class="push">
-                <img class="img-prev img-avatar" src="{{ $student->getAvatar() }}" alt="Foro Mahasiswa">
+                <img class="img-prev img-avatar" src="{{ $student->getAvatar() }}" alt="Foto Mahasiswa">
               </div>
               <div class="mb-4">
                 <label class="form-label" for="image">{{ trans('Pas Foto Baru Mahasiswa') }}</label>

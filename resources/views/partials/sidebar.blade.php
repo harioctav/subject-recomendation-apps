@@ -88,7 +88,7 @@
           <li class="nav-main-heading">{{ trans('Evaluations') }}</li>
           <li class="nav-main-item {{ Request::is('evaluations*') ? 'open' : '' }}">
             <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="{{ Request::is('evaluations*') ? 'true' : 'false' }}" href="#">
-              <i class="nav-main-link-icon fa fa-check"></i>
+              <i class="nav-main-link-icon fa fa-marker"></i>
               <span class="nav-main-link-name">{{ trans('Penilaian') }}</span>
             </a>
             <ul class="nav-main-submenu">

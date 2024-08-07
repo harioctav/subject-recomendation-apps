@@ -79,10 +79,14 @@ Route::middleware([
 
   Route::prefix('evaluations')->group(function () {
     // Recommendations
-    Route::post('recommendations/export', [RecommendationController::class, 'export'])->name(
-      'recommendations.export'
-    );
-    Route::resource('recommendations', RecommendationController::class)->except('edit', 'update', 'show');
+    Route::prefix('recommendations')->name('recommendations.')
+      ->group(function () {
+        Route::get('', [RecommendationController::class, 'index'])->name('index');
+        Route::get('{student}/create', [RecommendationController::class, 'create'])->name('create');
+        Route::post('store', [RecommendationController::class, 'store'])->name('store');
+        Route::get('{student}/show', [RecommendationController::class, 'show'])->name('show');
+        Route::post('export', [RecommendationController::class, 'export'])->name('export');
+      });
 
     // Grades
     Route::post('grades/export', [GradeController::class, 'export'])->name('grades.export');

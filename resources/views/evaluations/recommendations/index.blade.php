@@ -20,13 +20,6 @@
   <div class="block-content">
 
     <div class="mb-4">
-      @can('recommendations.create')
-      <a href="{{ route('recommendations.create') }}" class="btn btn-sm btn-primary">
-        <i class="fa fa-plus fa-sm me-1"></i>
-        {{ trans('page.recommendations.create') }}
-      </a>
-      @endcan
-
       @can('recommendations.export')
       <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modal-select-student">
         <i class="fa fa-print fa-sm me-1"></i>
@@ -46,8 +39,8 @@
 @push('javascript')
 {{ $dataTable->scripts() }}
 @vite('resources/js/evaluations/recommendations/index.js')
-<script>
+{{-- <script>
   var urlDestroy = "{{ route('recommendations.destroy', ':uuid') }}"
 
-</script>
+</script> --}}
 @endpush

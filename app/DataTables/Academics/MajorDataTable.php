@@ -108,6 +108,7 @@ class MajorDataTable extends DataTable
         ->title(trans('Tingkat atau Jenjang'))
         ->addClass('text-center'),
       Column::computed('action')
+        ->title(trans('Opsi'))
         ->exportable(false)
         ->printable(false)
         ->visible($visibility)

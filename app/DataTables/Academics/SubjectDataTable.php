@@ -112,6 +112,7 @@ class SubjectDataTable extends DataTable
         ->title(trans('Waktu Ujian'))
         ->addClass('text-center'),
       Column::computed('action')
+        ->title(trans('Opsi'))
         ->exportable(false)
         ->printable(false)
         ->visible($visibility)

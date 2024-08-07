@@ -137,6 +137,7 @@ class GradeDataTable extends DataTable
         ->title(trans('WU'))
         ->addClass('text-center'),
       Column::computed('action')
+        ->title(trans('Opsi'))
         ->exportable(false)
         ->printable(false)
         ->visible($visibility)

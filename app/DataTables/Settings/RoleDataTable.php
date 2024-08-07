@@ -112,6 +112,7 @@ class RoleDataTable extends DataTable
         ->title(trans('Jumlah Hak Akses'))
         ->addClass('text-center'),
       Column::computed('action')
+        ->title(trans('Opsi'))
         ->exportable(false)
         ->printable(false)
         ->visible($visibility)

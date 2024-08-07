@@ -109,30 +109,33 @@ class StudentController extends Controller
     return response()->json($details);
   }
 
-  public function courses($student_id)
+  public function courses(Student $student)
   {
-    $student = $this->studentService->findOrFail($student_id);
-    $major_id = $student->major_id;
+    // Student Data
+    $majorId = $student->major->id;
 
     // Ambil ID mata kuliah yang sudah direkomendasikan untuk mahasiswa ini
-    $recommendedSubjects = Recommendation::where('student_id', $student_id)
-      ->select('subject_id')
-      ->get();
+    $recommendedSubjects = $this->recommendationService->getWhere(
+      wheres: [
+        'student_id' => $student->id,
+      ],
+      columns: 'subject_id',
+    )->get();
 
     $recommendedSubjectIds = $recommendedSubjects->pluck('subject_id')->toArray();
 
     // Ambil ID mata kuliah dengan nilai 'E' yang sudah direkomendasikan
-    $subjectIdsWithEGrade = Grade::where('student_id', $student_id)
+    $subjectIdsWithEGrade = Grade::where('student_id', $student->id)
       ->whereIn('subject_id', $recommendedSubjectIds)
-      ->where('grade', 'E')
+      ->where('grade', GradeType::E->value)
       ->pluck('subject_id')
       ->toArray();
 
-    // Query untuk mengambil semua mata kuliah berdasarkan major_id
-    $subjects = Subject::whereHas('majors', function ($query) use ($major_id) {
-      $query->where('majors.id', $major_id);
-    })->with(['majors' => function ($query) use ($major_id) {
-      $query->where('majors.id', $major_id);
+    // Query untuk mengambil semua mata kuliah berdasarkan majorId
+    $subjects = Subject::whereHas('majors', function ($query) use ($majorId) {
+      $query->where('majors.id', $majorId);
+    })->with(['majors' => function ($query) use ($majorId) {
+      $query->where('majors.id', $majorId);
     }])->get();
 
     // Mengelompokkan mata kuliah berdasarkan semester
@@ -148,26 +151,73 @@ class StudentController extends Controller
       });
 
       if ($filteredSubjects->isNotEmpty()) {
+        switch ($semester) {
+          case 1:
+            $semester = 'Semester Satu';
+            break;
+          case 2:
+            $semester = 'Semester Dua';
+            break;
+          case 3:
+            $semester = 'Semester Tiga';
+            break;
+          case 4:
+            $semester = 'Semester Empat';
+            break;
+          case 5:
+            $semester = 'Semester Lima';
+            break;
+          case 6:
+            $semester = 'Semester Enam';
+            break;
+          case 7:
+            $semester = 'Semester Tujuh';
+            break;
+          case 8:
+            $semester = 'Semester Delapan';
+            break;
+          default:
+            $semester = 'Semester Tidak Diketahui';
+            break;
+        }
         $formattedSubjectsBySemester[] = [
           'semester' => $semester,
           'subjects' => $filteredSubjects->map(function ($subject) {
             return [
               'id' => $subject->id,
               'subject_name' => $subject->name,
-              'sks' => $subject->course_credit
+              'sks' => $subject->course_credit,
+              'note' => $subject->note ?: '-',
+              'status' => $subject->status
             ];
           })->values()
         ];
       }
     }
 
-    if (empty($formattedSubjectsBySemester)) {
-      return response()->json([
-        'status' => 'not_found',
-        'message' => 'Data Not Found: Semua mata kuliah sudah direkomendasikan'
-      ]);
-    }
+    $flattenedData = collect($formattedSubjectsBySemester)->flatMap(function ($semester) {
+      return $semester['subjects']->map(function ($subject) use ($semester) {
+        $subject['semester'] = $semester['semester'];
+        return $subject;
+      });
+    });
 
-    return response()->json($formattedSubjectsBySemester);
+    return response()->json($flattenedData);
+  }
+
+  protected function getSemesterName($semester)
+  {
+    $semesterNames = [
+      1 => 'Semester Satu',
+      2 => 'Semester Dua',
+      3 => 'Semester Tiga',
+      4 => 'Semester Empat',
+      5 => 'Semester Lima',
+      6 => 'Semester Enam',
+      7 => 'Semester Tujuh',
+      8 => 'Semester Delapan'
+    ];
+
+    return $semesterNames[$semester] ?? 'Semester Tidak Diketahui';
   }
 }

@@ -11,7 +11,7 @@
       </a>
     </div>
     <nav class="breadcrumb push my-0">
-      {{ Breadcrumbs::render('recommendations.create') }}
+      {{ Breadcrumbs::render('recommendations.create', $student) }}
     </nav>
   </div>
 </div>
@@ -27,80 +27,98 @@
     <form action="{{ route('recommendations.store') }}" method="POST" onsubmit="return disableSubmitButton()">
       @csrf
 
+      <input type="hidden" name="student_id" value="{{ $student->id }}">
+
       <div class="row items-push">
         <div class="col-lg-4">
-          <p class="text-muted">
-            Pilih mahasiswa dan mata kuliah yang direkomendasikan. Jika mahasiswa berstatus <strong>RPL</strong> silahkan cek Matakuliah terlebih dahulu untuk data Alih Kreditnya.
-          </p>
+
+          <a class="block block-rounded block-link-shadow bg-info" href="javascript:void(0)">
+            <div class="block-content block-content-full d-flex justify-content-between align-items-center">
+              <div>
+                <img class="img-avatar" src="{{ $student->getAvatar() }}" alt="Foto Mahasiswa">
+              </div>
+              <div class="text-end">
+                <div class="fw-semibold text-white mb-1">{{ $student->name }}</div>
+                <div class="fs-sm text-white-75">{{ $student->nim }}</div>
+              </div>
+            </div>
+          </a>
+
           <ul class="list-group push">
             <li class="list-group-item d-flex justify-content-between align-items-center">
-              {{ trans('NIM') }}
-              <span id="student-nim" class="fw-semibold">--</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
               {{ trans('Program Studi') }}
-              <span id="student-major" class="fw-semibold text-end">--</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              {{ trans('Total SKS WAJIB Ditempuh') }}
-              <span id="student-total-course-credit" class="fw-semibold">--</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              {{ trans('Total SKS SUDAH Ditempuh') }}
-              <span id="student-total-course-credit-done" class="fw-semibold">--</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              {{ trans('Sisa SKS Belum Ditempuh') }}
-              <span id="student-total-course-credit-remainder" class="fw-semibold">--</span>
+              <span class="fw-semibold text-end">{{ $student->major->name }}</span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
               {{ trans('Status Mahasiswa') }}
-              <span id="student-status" class="fw-semibold">--</span>
+              <span class="fw-semibold text-end">{{ $student->status }}</span>
+            </li>
+          </ul>
+
+        </div>
+        <div class="col-lg-7 offset-lg-1">
+          <ul class="list-group push">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ trans('Total SKS WAJIB Ditempuh') }}
+              <span class="fw-semibold">{{ $data['total_course_credit'] }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ trans('Total SKS SUDAH Ditempuh') }}
+              <span class="fw-semibold">{{ $data['total_course_credit_done'] }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ trans('Sisa SKS Belum Ditempuh') }}
+              <span class="fw-semibold">{{ $data['total_course_credit_remainder'] }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ trans('Indeks Prestasi Kumulatif') }}
+              <span class="fw-semibold">??</span>
             </li>
           </ul>
         </div>
-        <div class="col-lg-6 offset-1">
+      </div>
+
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="mb-1">
+            <label for="course_credit" class="form-label">{{ trans('Filter Berdasarkan Jumlah SKS') }}</label>
+            <input type="text" name="course_credit" id="course_credit" value="{{ old('course_credit') }}" class="form-control @error('course_credit') is-invalid @enderror" placeholder="{{ trans('Masukkan Jumlah SKS') }}">
+          </div>
+        </div>
+      </div>
+
+      <div class="my-3">
+        <table id="coursesTable" class="table table-bordered table-vcenter table-hover">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="select-all"></th>
+              <th>Semester</th>
+              <th>Nama Mata Kuliah</th>
+              <th>SKS</th>
+              <th>Note</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-6">
           <div class="mb-4">
-            <label for="student_id" class="form-label">{{ trans('Mahasiswa') }}</label>
-            <span class="text-danger">*</span>
-            <select name="student_id" id="student_id" class="js-select2 form-select @error('student_id') is-invalid @enderror" data-placeholder="{{ trans('Pilih Mahasiswa') }}" style="width: 100%;" data-old="{{ old('student_id') }}">
-              <option></option>
-              @foreach ($students as $item)
-              <option value="{{ $item->id }}" @if (old('student_id')==$item->id) selected @endif>
-                {{ $item->name }}
-              </option>
-              @endforeach
-            </select>
-            @error('student_id')
+            <label for="exam_period" class="form-label">{{ trans('Masa Ujian') }}</label>
+            <input type="text" name="exam_period" id="exam_period" value="{{ old('exam_period', $student->initial_registration_period) }}" class="form-control @error('exam_period') is-invalid @enderror" placeholder="{{ trans('Masukkan Masa Ujian') }}">
+            @error('exam_period')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror
           </div>
 
-          <div class="loading-indicator" style="display: none;">Loading...</div>
-          <div class="select-box-container" style="display: none;">
-            <div class="mb-4">
-              <label for="sks" class="form-label">{{ trans('Jumlah SKS') }}</label>
-              <span class="text-danger">*</span>
-              <input type="text" name="sks" id="sks" value="{{ old('sks') }}" class="form-control @error('sks') is-invalid @enderror" placeholder="{{ trans('Masukkan Jumlah SKS') }}" readonly disabled>
-              @error('sks')
-              <div class="invalid-feedback">{{ $message }}</div>
-              @enderror
-            </div>
-            <div class="mb-4">
-              <label for="example-select2-multiple" class="form-label">Pilih Mata Kuliah</label>
-              <select class="js-select2 form-select" id="example-select2-multiple" name="subjects[]" style="width: 100%;" data-placeholder="Pilih mata kuliah.." multiple>
-                <!-- Options akan diisi oleh JavaScript -->
-              </select>
-            </div>
-          </div>
-
           <div class="mb-4">
-            <button type="submit" class="btn btn-alt-primary w-100">
+            <button type="submit" class="btn btn-alt-primary w-100" id="submit-button">
               <i class="fa fa-fw fa-circle-check me-1"></i>
               {{ trans('button.create') }}
             </button>
           </div>
-
         </div>
       </div>
 
@@ -109,11 +127,10 @@
 </div>
 @endsection
 @push('javascript')
-@vite('resources/js/evaluations/recommendations/input.js')
+@vite('resources/js/evaluations/recommendations/create.js')
 
 <script>
-  var studentURL = "{{ route('api.students.courses', ':student_id') }}";
-  var studentDetailURL = "{{ route('api.students.show', ':student_id') }}";
+  var datatableURL = "{{ route('api.students.courses', ['student' => $student]) }}"
 
 </script>
 @endpush

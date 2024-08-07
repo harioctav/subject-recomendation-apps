@@ -1,13 +1,12 @@
 <?php
 
-namespace App\DataTables\Academics;
+namespace App\DataTables\Evaluations;
 
 use App\Helpers\Helper;
 use App\Models\Student;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
-use App\Services\Student\StudentService;
 use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
@@ -16,17 +15,6 @@ use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 class StudentDataTable extends DataTable
 {
-  /**
-   * Create a new datatables instance.
-   *
-   * @return void
-   */
-  public function __construct(
-    protected StudentService $studentService,
-  ) {
-    // 
-  }
-
   /**
    * Build the DataTable class.
    *
@@ -46,7 +34,7 @@ class StudentDataTable extends DataTable
           $query->where('name', 'LIKE', "%{$keyword}%");
         });
       })
-      ->addColumn('action', 'academics.students.action')
+      ->addColumn('action', 'evaluations.recommendations.action')
       ->rawColumns([
         'action',
         'status'
@@ -70,15 +58,6 @@ class StudentDataTable extends DataTable
       ->setTableId('student-table')
       ->columns($this->getColumns())
       ->minifiedAjax()
-      ->ajax([
-        'url' => route('students.index'),
-        'type' => 'GET',
-        'data' => "
-          function(data) {
-            data.status = $('select[name=status]').val();
-            data.deleted = $('#isTrash-switch').is(':checked');
-          }"
-      ])
       //->dom('Bfrtip')
       ->addTableClass([
         'table',
@@ -87,7 +66,6 @@ class StudentDataTable extends DataTable
         'table-hover',
         'table-vcenter',
       ])
-      ->orderBy(1)
       ->selectStyleSingle()
       ->processing(true)
       ->retrieve(true)
@@ -106,10 +84,7 @@ class StudentDataTable extends DataTable
   {
     // Check Visibility of Action Row
     $visibility = Helper::checkPermissions([
-      'students.edit',
-      'students.destroy',
-      'students.delete',
-      'students.restore',
+      'recommendations.create',
     ]);
 
     return [

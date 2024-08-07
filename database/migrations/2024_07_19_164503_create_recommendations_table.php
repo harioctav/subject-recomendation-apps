@@ -17,6 +17,7 @@ return new class extends Migration
       $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
       $table->foreignId('subject_id')->constrained('subjects')->onDelete('cascade');
       $table->integer('semester');
+      $table->string('exam_period')->nullable();
       $table->timestamps();
     });
   }

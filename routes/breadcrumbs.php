@@ -1,5 +1,6 @@
 <?php // routes/breadcrumbs.php
 
+use App\Models\Student;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 
@@ -125,9 +126,9 @@ Breadcrumbs::for('recommendations.index', function (BreadcrumbTrail $trail) {
   $trail->push(trans('page.recommendations.index'), route('recommendations.index'));
 });
 
-Breadcrumbs::for('recommendations.create', function (BreadcrumbTrail $trail) {
+Breadcrumbs::for('recommendations.create', function (BreadcrumbTrail $trail, Student $student) {
   $trail->parent('recommendations.index');
-  $trail->push(trans('page.recommendations.create'), route('recommendations.create'));
+  $trail->push(trans('page.recommendations.create'), route('recommendations.create', $student));
 });
 
 Breadcrumbs::for('recommendations.edit', function (BreadcrumbTrail $trail, $recommendation) {

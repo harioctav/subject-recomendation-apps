@@ -132,6 +132,7 @@ class UserDataTable extends DataTable
         ->visible($visibility)
         ->addClass('text-center'),
       Column::computed('action')
+        ->title(trans('Opsi'))
         ->exportable(false)
         ->printable(false)
         ->visible($action)
