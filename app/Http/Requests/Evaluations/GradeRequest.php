@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Evaluations;
 
+use App\Helpers\Enums\GradeType;
 use Illuminate\Foundation\Http\FormRequest;
 
 class GradeRequest extends FormRequest
@@ -29,7 +30,7 @@ class GradeRequest extends FormRequest
         'string',
         'regex:/^[ABCDE][+-]?$/',
         function ($attribute, $value, $fail) {
-          $validGrades = ['A+', 'A-', 'A', 'B+', 'B-', 'B', 'C+', 'C-', 'C', 'D+', 'D-', 'D', 'E'];
+          $validGrades = GradeType::toArray();
           if (!in_array($value, $validGrades)) {
             $fail('Nilai yang dimasukkan tidak valid.');
           }

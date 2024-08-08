@@ -18,6 +18,7 @@ return new class extends Migration
       $table->foreignId('subject_id')->constrained('subjects')->onDelete('cascade');
       $table->integer('semester');
       $table->string('exam_period')->nullable();
+      $table->longText('note')->nullable();
       $table->timestamps();
     });
   }

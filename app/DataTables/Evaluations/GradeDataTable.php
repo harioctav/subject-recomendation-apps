@@ -80,6 +80,14 @@ class GradeDataTable extends DataTable
       ->setTableId('grade-table')
       ->columns($this->getColumns())
       ->minifiedAjax()
+      ->ajax([
+        'url' => route('grades.index'),
+        'type' => 'GET',
+        'data' => "
+          function(data) {
+            data.grade = $('select[name=grade]').val();
+          }"
+      ])
       //->dom('Bfrtip')
       ->addTableClass([
         'table',
@@ -88,12 +96,11 @@ class GradeDataTable extends DataTable
         'table-hover',
         'table-vcenter',
       ])
-      ->orderBy(1)
       ->selectStyleSingle()
       ->processing(true)
       ->retrieve(true)
       ->serverSide(true)
-      ->autoWidth(false)
+      // ->autoWidth(false)
       ->pageLength(5)
       ->responsive(true)
       ->lengthMenu([5, 10, 20])
@@ -132,9 +139,6 @@ class GradeDataTable extends DataTable
         ->addClass('text-center'),
       Column::make('grade')
         ->title(trans('Nilai'))
-        ->addClass('text-center'),
-      Column::make('exam_period')
-        ->title(trans('WU'))
         ->addClass('text-center'),
       Column::computed('action')
         ->title(trans('Opsi'))

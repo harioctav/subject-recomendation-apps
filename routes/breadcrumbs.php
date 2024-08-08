@@ -136,9 +136,9 @@ Breadcrumbs::for('recommendations.edit', function (BreadcrumbTrail $trail, $reco
   $trail->push(trans('page.recommendations.edit'), route('recommendations.edit', $recommendation->uuid));
 });
 
-Breadcrumbs::for('recommendations.show', function (BreadcrumbTrail $trail, $recommendation) {
+Breadcrumbs::for('recommendations.show', function (BreadcrumbTrail $trail, Student $student) {
   $trail->parent('recommendations.index');
-  $trail->push(trans('page.recommendations.show'), route('recommendations.show', $recommendation->uuid));
+  $trail->push(trans('page.recommendations.show'), route('recommendations.show', $student));
 });
 // Recommendations Breadcrumbs
 

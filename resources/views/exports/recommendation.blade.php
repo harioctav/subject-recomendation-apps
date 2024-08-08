@@ -133,7 +133,7 @@
     <table class="border-table" style="margin-top: 30px; border-bottom: none;">
       <thead>
         <tr style="border-bottom: none;" class="semester-header" style="margin-bottom: 10px">
-          <th colspan="6" style="border-bottom: none;">SEMESTER {{ $semesterData['semester'] }}</th>
+          <th colspan="6" style="border-bottom: none;">{{ $semesterData['semester'] }}</th>
         </tr>
       </thead>
     </table>
@@ -145,7 +145,7 @@
           <th>Nilai</th>
           <th>SKS</th>
           <th>Kel.</th>
-          <th>WU</th>
+          <th>MU</th>
           <th>Status</th>
           <th>Pr</th>
         </tr>
@@ -158,7 +158,7 @@
           <td>{{ $subject['grade'] }}</td>
           <td>{{ $subject['sks'] }}</td>
           <td>{{ $subject['kelulusan'] }}</td>
-          <td>{{ $subject['waktu_ujian'] }}</td>
+          <td>{{ $subject['masa_ujian'] }}</td>
           <td>{{ $subject['status'] }}</td>
           <td>{{ $subject['note'] }}</td>
         </tr>

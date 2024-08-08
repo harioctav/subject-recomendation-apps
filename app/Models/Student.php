@@ -90,7 +90,7 @@ class Student extends Model
 
   public function subjects(): BelongsToMany
   {
-    return $this->belongsToMany(Subject::class, 'student_grades');
+    return $this->belongsToMany(Subject::class, 'recommendations', 'student_id', 'subject_id');
   }
 
   /**
@@ -149,5 +149,12 @@ class Student extends Model
     return Attribute::make(
       get: fn () => $statusLabel[$this->status] ?? 'Tidak Diketahui',
     );
+  }
+
+  public function getCurrentSemester()
+  {
+    $totalCredits = $this->subjects()->sum('course_credit');
+    $creditsPerSemester = 15; // Asumsi 15 kredit per semester
+    return ceil($totalCredits / $creditsPerSemester);
   }
 }

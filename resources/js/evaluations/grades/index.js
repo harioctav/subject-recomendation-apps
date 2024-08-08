@@ -4,6 +4,11 @@ let table;
 
 $(() => {
     table = $(".table").DataTable();
+
+    $("#grade").on("change", function (e) {
+        table.draw();
+        e.preventDefault();
+    });
 });
 
 function deleteRole(url) {

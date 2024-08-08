@@ -73,7 +73,7 @@ return [
     'index' => 'Daftar Rekomendasi',
     'create' => 'Tambah Rekomendasi',
     'edit' => 'Ubah Rekomendasi',
-    'show' => 'Detail Rekomendasi',
+    'show' => 'Detail Hasil Rekomendasi',
     'delete' => 'Hapus Rekomendasi',
   ],
 

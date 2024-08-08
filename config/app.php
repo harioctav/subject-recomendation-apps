@@ -190,7 +190,10 @@ return [
     'RoleType' => App\Helpers\Enums\RoleType::class,
     'Helper' => App\Helpers\Helper::class,
     'AccountStatus' => App\Helpers\Enums\AccountStatusType::class,
-    'StatusSubject' => App\Helpers\Enums\StatusSubjectType::class
+    'StatusSubject' => App\Helpers\Enums\StatusSubjectType::class,
+    'StudentStatus' => App\Helpers\Enums\StudentStatusType::class,
+    'RecommendationNote' => App\Helpers\Enums\RecommendationNoteType::class,
+    'GradeType' => App\Helpers\Enums\GradeType::class,
   ])->toArray(),
 
 ];

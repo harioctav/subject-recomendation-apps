@@ -4,10 +4,7 @@ $(() => {
         dropdown.empty().append(`<option value="">${placeholder}</option>`);
 
         $.each(groups, function (key, group) {
-            const optgroup = $("<optgroup>").attr(
-                "label",
-                "Semester " + group.semester
-            );
+            const optgroup = $("<optgroup>").attr("label", group.semester);
             $.each(group.subjects, function (key, subject) {
                 optgroup.append(
                     `<option value="${subject.id}" data-uuid="${subject.uuid}">${subject.name}</option>`

@@ -2,12 +2,15 @@
 
 namespace App\Services\Grade;
 
+use App\Helpers\Enums\GradeType;
+use App\Helpers\Enums\RecommendationNoteType;
 use App\Models\Student;
 use InvalidArgumentException;
 use Illuminate\Support\Facades\DB;
 use LaravelEasyRepository\Service;
 use Illuminate\Support\Facades\Log;
 use App\Repositories\Grade\GradeRepository;
+use App\Repositories\Recommendation\RecommendationRepository;
 use App\Repositories\Student\StudentRepository;
 use App\Repositories\Subject\SubjectRepository;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -18,6 +21,7 @@ class GradeServiceImplement extends Service implements GradeService
     protected GradeRepository $mainRepository,
     protected SubjectRepository $subjectRepository,
     protected StudentRepository $studentRepository,
+    protected RecommendationRepository $recommendationRepository
   ) {
     // 
   }
@@ -72,10 +76,61 @@ class GradeServiceImplement extends Service implements GradeService
       // Find subject
       $subject = $this->subjectRepository->findOrFail($payload['subject_id']);
 
+      // Find Recommendation Data
+      $recommendation = $this->recommendationRepository->getWhere(
+        wheres: [
+          'student_id' => $payload['student_id'],
+          'subject_id' => $payload['subject_id'],
+        ]
+      )->first();
+
+      // Change Note Recommendation
+      if ($payload['grade'] == GradeType::E->value) {
+        $recommendation->update([
+          'note' => RecommendationNoteType::SECOND->value,
+        ]);
+      }
+
       // Store Data
       $payload['exam_period'] = $subject->exam_time;
 
       $this->mainRepository->create($payload);
+
+      DB::commit();
+    } catch (\Exception $e) {
+      DB::rollBack();
+      Log::info($e->getMessage());
+      throw new InvalidArgumentException(trans('session.log.error'));
+    }
+  }
+
+  public function handleUpdateData($request, $id)
+  {
+    try {
+      DB::beginTransaction();
+      $payload = $request->validated();
+
+      // Find Grade Data
+      $grade = $this->mainRepository->findOrFail($id);
+
+      // Find Data Recommendation
+      $recommendation = $this->recommendationRepository->getWhere(
+        wheres: [
+          'student_id' => $payload['student_id'],
+          'subject_id' => $payload['subject_id'],
+        ]
+      )->first();
+
+      // Change Note Recommendation
+      if ($grade->grade == GradeType::E->value) {
+        $recommendation->update([
+          'note' => RecommendationNoteType::DONE->value
+        ]);
+
+        $payload['note'] = "Perbaikan nilai dari {$grade->grade} menjadi {$payload['grade']}.";
+      }
+
+      $this->mainRepository->update($grade->id, $payload);
 
       DB::commit();
     } catch (\Exception $e) {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Evaluations;
 
+use App\DataTables\Scopes\GradeFilter;
 use App\Models\Grade;
 use App\Http\Controllers\Controller;
 use App\Services\Grade\GradeService;
@@ -12,6 +13,7 @@ use App\DataTables\Evaluations\GradeDataTable;
 use App\Helpers\Enums\GradeType;
 use App\Http\Requests\Evaluations\GradeRequest;
 use App\Http\Requests\Evaluations\RecommendationExportRequest;
+use Illuminate\Http\Request;
 
 class GradeController extends Controller
 {
@@ -49,10 +51,12 @@ class GradeController extends Controller
   /**
    * Display a listing of the resource.
    */
-  public function index(GradeDataTable $dataTable)
+  public function index(GradeDataTable $dataTable, Request $request)
   {
     $students = $this->students();
-    return $dataTable->render('evaluations.grades.index', compact('students'));
+    return $dataTable
+      ->addScope(new GradeFilter($request))
+      ->render('evaluations.grades.index', compact('students'));
   }
 
   /**
@@ -89,7 +93,7 @@ class GradeController extends Controller
    */
   public function update(GradeRequest $request, Grade $grade)
   {
-    $this->gradeService->update($grade->id, $request->validated());
+    $this->gradeService->handleUpdateData($request, $grade->id);
     return redirect(route('grades.index'))->withSuccess(trans('session.update'));
   }
 

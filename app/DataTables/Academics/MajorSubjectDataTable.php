@@ -19,7 +19,6 @@ class MajorSubjectDataTable extends DataTable
   public function __construct($majorId = null)
   {
     $this->majorId = $majorId;
-    Log::info('MajorSubjectDataTable constructed with majorId: ' . $this->majorId);
   }
 
   public function dataTable(QueryBuilder $query): EloquentDataTable

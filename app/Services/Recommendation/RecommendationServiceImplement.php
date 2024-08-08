@@ -2,6 +2,7 @@
 
 namespace App\Services\Recommendation;
 
+use App\Helpers\Enums\RecommendationNoteType;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -79,7 +80,7 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
       $major_id = $student->major->id;
 
       // Store to database
-      foreach ($payload['subjects'] as $subject_id) :
+      foreach ($payload['courses'] as $subject_id) :
         // Get the semester from the pivot table
         $semester = DB::table('major_subject')
           ->where('major_id', $major_id)
@@ -93,6 +94,8 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
           'student_id' => $student->id,
           'subject_id' => (int) $subject_id,
           'semester' => $semester,
+          'exam_period' => $payload['exam_period'],
+          'note' => $payload['note'],
         ]);
       endforeach;
 
@@ -103,14 +106,9 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
     }
   }
 
-  public function handleExportData($request)
+  public function handleExportData($student)
   {
-    // Get Payload
-    $payload = $request->validated();
-
     try {
-      // Find student data
-      $student = $this->studentRepository->findOrFail($payload['student_id']);
 
       // Ambil mata kuliah yang direkomendasikan untuk mahasiswa
       $recommendedSubjects = $student->recommendations
@@ -126,10 +124,11 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
               'id' => $subject->id,
               'code' => $subject->code,
               'name' => $subject->name,
-              'grade' => $grade ? $grade->grade : '--',
+              'grade' => $grade ? $grade->grade : '-',
               'sks' => $subject->course_credit,
               'kelulusan' => $kelulusan,
               'waktu_ujian' => $subject->exam_time,
+              'masa_ujian' => $recommendation->exam_period,
               'status' => $subject->status,
               'note' => $subject->note
             ];

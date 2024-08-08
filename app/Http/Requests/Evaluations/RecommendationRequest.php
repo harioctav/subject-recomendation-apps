@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Evaluations;
 
+use App\Helpers\Enums\RecommendationNoteType;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RecommendationRequest extends FormRequest
@@ -23,8 +24,10 @@ class RecommendationRequest extends FormRequest
   {
     return [
       'student_id' => 'required|exists:students,id',
-      'subjects' => 'required|array|min:1',
-      'subjects.*' => 'exists:subjects,id',
+      'courses' => 'required|array|min:1',
+      'courses.*' => 'exists:subjects,id',
+      'exam_period' => 'required|string',
+      'note' => 'required|' . RecommendationNoteType::toValidation()
     ];
   }
 
@@ -34,7 +37,7 @@ class RecommendationRequest extends FormRequest
   public function messages(): array
   {
     return [
-      '*.required' => ':attribute harus tidak boleh dikosongkan',
+      '*.required' => ':attribute tidak boleh dikosongkan',
       '*.min' => ':attribute maksimal :min karakter',
       '*.in' => ':attribute harus salah satu dari jenis berikut: :values',
       '*.unique' => ':attribute sudah digunakan, silahkan pilih yang lain',
@@ -59,6 +62,8 @@ class RecommendationRequest extends FormRequest
     return [
       'student_id' => 'Mahasiswa',
       'subjects' => 'Matakuliah',
+      'exam_period' => 'Masa Ujian',
+      'note' => 'Catatan Rekomendasi',
     ];
   }
 }

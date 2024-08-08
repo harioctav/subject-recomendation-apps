@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Helpers\Enums\RecommendationNoteType;
 use App\Traits\Uuid;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Recommendation extends Model
 {
@@ -36,7 +38,8 @@ class Recommendation extends Model
     'student_id',
     'subject_id',
     'semester',
-    'exam_period'
+    'exam_period',
+    'note'
   ];
 
   /**
@@ -65,5 +68,41 @@ class Recommendation extends Model
   public function student(): BelongsTo
   {
     return $this->belongsTo(Student::class);
+  }
+
+  // Accessor untuk kolom semester
+  public function getSemesterAttribute($value)
+  {
+    $semesters = [
+      1 => 'Semester Pertama',
+      2 => 'Semester Kedua',
+      3 => 'Semester Ketiga',
+      4 => 'Semester Keempat',
+      5 => 'Semester Kelima',
+      6 => 'Semester Keenam',
+      7 => 'Semester Ketujuh',
+      8 => 'Semester Kedelapan',
+    ];
+
+    return $semesters[$value] ?? 'Unknown Semester';
+  }
+
+  public function noteLabel(): Attribute
+  {
+    $first = RecommendationNoteType::FIRST->value;
+    $second = RecommendationNoteType::SECOND->value;
+    $repair = RecommendationNoteType::REPAIR->value;
+    $done = RecommendationNoteType::DONE->value;
+
+    $noteLabel = [
+      $first => "<span class='badge text-primary'>{$first}</span>",
+      $second => "<span class='badge text-danger'>{$second}</span>",
+      $repair => "<span class='badge text-warning'>{$repair}</span>",
+      $done => "<span class='badge text-success'>{$done}</span>",
+    ];
+
+    return Attribute::make(
+      get: fn () => $noteLabel[$this->note] ?? 'Tidak Diketahui',
+    );
   }
 }

@@ -24,7 +24,7 @@
     </h3>
   </div>
   <div class="block-content">
-    <form action="{{ route('recommendations.store') }}" method="POST" onsubmit="return disableSubmitButton()">
+    <form action="{{ route('recommendations.store', $student) }}" method="POST" onsubmit="return disableSubmitButton()">
       @csrf
 
       <input type="hidden" name="student_id" value="{{ $student->id }}">
@@ -51,7 +51,7 @@
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
               {{ trans('Status Mahasiswa') }}
-              <span class="fw-semibold text-end">{{ $student->status }}</span>
+              <span class="fw-semibold text-end">{!! $student->statusLabel !!}</span>
             </li>
           </ul>
 
@@ -80,10 +80,18 @@
 
       <div class="row">
         <div class="col-lg-6">
-          <div class="mb-1">
-            <label for="course_credit" class="form-label">{{ trans('Filter Berdasarkan Jumlah SKS') }}</label>
-            <input type="text" name="course_credit" id="course_credit" value="{{ old('course_credit') }}" class="form-control @error('course_credit') is-invalid @enderror" placeholder="{{ trans('Masukkan Jumlah SKS') }}">
+          <div class="mb-3">
+            <label for="course_credit_selected" class="form-label">{{ trans('Jumlah SKS Diambil') }}</label>
+            <input type="number" max="24" step="1" min="3" name="course_credit_selected" id="course_credit_selected" value="{{ old('course_credit_selected') }}" class="form-control @error('course_credit_selected') is-invalid @enderror" placeholder="{{ trans('Jumlah SKS Dipilih') }}" readonly disabled>
           </div>
+
+          <div class="mb-3">
+            <label for="course_credit" class="form-label">{{ trans('Filter Berdasarkan Jumlah SKS') }}</label>
+            <input type="number" max="24" step="1" min="3" name="course_credit" id="course_credit" value="{{ old('course_credit') }}" class="form-control @error('course_credit') is-invalid @enderror" placeholder="{{ trans('Masukkan Jumlah SKS') }}">
+          </div>
+
+          <div class="alert alert-danger d-none" id="sks-error-message">Total SKS tidak boleh melebihi 24. Mohon kurangi pilihan mata kuliah.</div>
+
         </div>
       </div>
 
@@ -94,8 +102,10 @@
               <th><input type="checkbox" id="select-all"></th>
               <th>Semester</th>
               <th>Nama Mata Kuliah</th>
+              <th>Nilai</th>
               <th>SKS</th>
-              <th>Note</th>
+              <th>Ket. Matkul</th>
+              <th>Ket. Rekomendasi</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -107,14 +117,29 @@
         <div class="col-lg-6">
           <div class="mb-4">
             <label for="exam_period" class="form-label">{{ trans('Masa Ujian') }}</label>
-            <input type="text" name="exam_period" id="exam_period" value="{{ old('exam_period', $student->initial_registration_period) }}" class="form-control @error('exam_period') is-invalid @enderror" placeholder="{{ trans('Masukkan Masa Ujian') }}">
+            <span class="text-danger">*</span>
+            <input type="text" name="exam_period" id="exam_period" value="{{ old('exam_period') }}" class="form-control @error('exam_period') is-invalid @enderror" placeholder="{{ trans('Masukkan Masa Ujian') }}">
             @error('exam_period')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror
           </div>
 
           <div class="mb-4">
-            <button type="submit" class="btn btn-alt-primary w-100" id="submit-button">
+            <label for="note" class="form-label">{{ trans('Catatan Rekomendasi') }}</label>
+            <span class="text-danger">*</span>
+            <select name="note" id="note" class="js-select2 form-select @error('note') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;">
+              <option></option>
+              @foreach (RecommendationNote::toArray(0,2) as $value)
+              <option value="{{ $value }}" @if (old('note')==$value) selected @endif>{{ ucfirst(trans($value)) }}</option>
+              @endforeach
+            </select>
+            @error('note')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="mb-4">
+            <button type="submit" class="btn btn-alt-primary w-100" id="button-submit">
               <i class="fa fa-fw fa-circle-check me-1"></i>
               {{ trans('button.create') }}
             </button>
@@ -131,6 +156,7 @@
 
 <script>
   var datatableURL = "{{ route('api.students.courses', ['student' => $student]) }}"
+  var statusRecommendation = "{{ RecommendationNote::REPAIR->value }}"
 
 </script>
 @endpush

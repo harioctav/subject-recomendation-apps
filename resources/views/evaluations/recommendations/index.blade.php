@@ -19,22 +19,12 @@
   </div>
   <div class="block-content">
 
-    <div class="mb-4">
-      @can('recommendations.export')
-      <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modal-select-student">
-        <i class="fa fa-print fa-sm me-1"></i>
-        {{ trans('Cetak Hasil Rekomendasi') }}
-      </button>
-      @endcan
-    </div>
-
     <div class="my-3">
       {{ $dataTable->table() }}
     </div>
 
   </div>
 </div>
-@includeIf('evaluations.recommendations.student')
 @endsection
 @push('javascript')
 {{ $dataTable->scripts() }}

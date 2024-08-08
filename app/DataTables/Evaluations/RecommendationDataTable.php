@@ -16,15 +16,17 @@ use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 class RecommendationDataTable extends DataTable
 {
+  public $studentId;
+
   /**
    * Create a new datatables instance.
    *
    * @return void
    */
   public function __construct(
-    protected RecommendationService $recommendationService,
+    $studentId = null
   ) {
-    // 
+    $this->studentId = $studentId;
   }
 
   /**
@@ -41,21 +43,16 @@ class RecommendationDataTable extends DataTable
 
     return (new EloquentDataTable($query))
       ->addIndexColumn()
-      ->editColumn('student_id', fn ($row) => $row->student->name)
       ->editColumn('subject_id', fn ($row) => $row->subject->name)
-      ->filterColumn('student_id', function ($query, $keyword) {
-        $query->whereHas('student', function ($query) use ($keyword) {
-          $query->where('name', 'LIKE', "%{$keyword}%");
-        });
-      })
+      ->addColumn('course_credit', fn ($row) => $row->subject->course_credit)
       ->filterColumn('subject_id', function ($query, $keyword) {
         $query->whereHas('subject', function ($query) use ($keyword) {
           $query->where('name', 'LIKE', "%{$keyword}%");
         });
       })
-      ->addColumn('action', 'evaluations.recommendations.action')
+      ->editColumn('note', fn ($row) => $row->noteLabel)
       ->rawColumns([
-        'action',
+        'note',
       ]);
   }
 
@@ -64,7 +61,7 @@ class RecommendationDataTable extends DataTable
    */
   public function query(Recommendation $model): QueryBuilder
   {
-    return $this->recommendationService->getQuery()->latest();
+    return $model->newQuery()->where('student_id', $this->studentId);
   }
 
   /**
@@ -101,12 +98,6 @@ class RecommendationDataTable extends DataTable
    */
   public function getColumns(): array
   {
-    // Check Visibility of Action Row
-    $visibility = Helper::checkPermissions([
-      'recommendations.edit',
-      'recommendations.destroy',
-    ]);
-
     return [
       Column::make('DT_RowIndex')
         ->title(trans('#'))
@@ -114,21 +105,20 @@ class RecommendationDataTable extends DataTable
         ->searchable(false)
         ->width('5%')
         ->addClass('text-center'),
-      Column::make('student_id')
-        ->title(trans('Mahasiswa'))
-        ->addClass('text-center'),
       Column::make('subject_id')
         ->title(trans('Matakuliah'))
+        ->addClass('text-center'),
+      Column::make('course_credit')
+        ->title(trans('SKS'))
         ->addClass('text-center'),
       Column::make('semester')
         ->title(trans('Semester'))
         ->addClass('text-center'),
-      Column::computed('action')
-        ->title(trans('Opsi'))
-        ->exportable(false)
-        ->printable(false)
-        ->visible($visibility)
-        ->width('10%')
+      Column::make('exam_period')
+        ->title(trans('Masa Ujian'))
+        ->addClass('text-center'),
+      Column::make('note')
+        ->title(trans('Catatan'))
         ->addClass('text-center'),
     ];
   }

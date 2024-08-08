@@ -83,9 +83,9 @@ Route::middleware([
       ->group(function () {
         Route::get('', [RecommendationController::class, 'index'])->name('index');
         Route::get('{student}/create', [RecommendationController::class, 'create'])->name('create');
-        Route::post('store', [RecommendationController::class, 'store'])->name('store');
+        Route::post('{student}/store', [RecommendationController::class, 'store'])->name('store');
+        Route::get('{student}/export', [RecommendationController::class, 'export'])->name('export');
         Route::get('{student}/show', [RecommendationController::class, 'show'])->name('show');
-        Route::post('export', [RecommendationController::class, 'export'])->name('export');
       });
 
     // Grades
