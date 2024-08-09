@@ -2,9 +2,9 @@
 
 namespace App\Services\Recommendation;
 
-use App\Helpers\Enums\RecommendationNoteType;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use Illuminate\Support\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Helpers\Enums\GradeType;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +12,7 @@ use LaravelEasyRepository\Service;
 use Illuminate\Support\Facades\Log;
 use App\Repositories\Grade\GradeRepository;
 use App\Repositories\Major\MajorRepository;
+use App\Helpers\Enums\RecommendationNoteType;
 use App\Repositories\Student\StudentRepository;
 use App\Repositories\Subject\SubjectRepository;
 use App\Repositories\Recommendation\RecommendationRepository;
@@ -151,16 +152,20 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
 
       $totalCourseCredit = $student->major->total_course_credit;
 
+      $formattedDate = Carbon::now()->locale('id')->isoFormat('D MMMM YYYY');
+      $fileTitle = "{$formattedDate}-{$student->name}-HASIL-REKOMENDASI.pdf";
+
       $data = [
         'student' => $student,
         'total_course_credit' => $totalCourseCredit,
         'total_course_credit_done' => $totalCompletedCourseCredit,
         'total_course_credit_remainder' => $totalCourseCredit - $totalCompletedCourseCredit,
         'recommended_subjects' => $recommendedSubjects,
+        'datetime' => $formattedDate
       ];
 
       $pdf = Pdf::loadView('exports.recommendation', $data);
-      return $pdf->stream('recommendation.pdf');
+      return $pdf->stream($fileTitle);
     } catch (\Exception $e) {
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));

@@ -75,7 +75,6 @@ class RoleSeeder extends Seeder
         'recommendations.index',
         'recommendations.create',
         'recommendations.store',
-        'recommendations.destroy',
         'recommendations.export',
 
         // Halaman Nilai

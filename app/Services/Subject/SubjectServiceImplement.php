@@ -97,7 +97,12 @@ class SubjectServiceImplement extends Service implements SubjectService
 
       // Fetch request data
       $payload = $request->validated();
-      $payload['note'] = implode(',', $payload['notes']);
+
+      if (isset($payload['notes']) && is_array($payload['notes'])) :
+        $payload['note'] = implode(',', array_filter($payload['notes']));
+      else :
+        $payload['note'] = null;
+      endif;
 
       // Find data
       $subject = $this->mainRepository->findOrFail($id);

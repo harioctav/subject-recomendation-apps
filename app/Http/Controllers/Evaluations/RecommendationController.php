@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Evaluations;
 use App\Models\Grade;
 use App\Models\Student;
 use App\Models\Subject;
+use App\Repositories\Subject\SubjectRepository;
 use Illuminate\Http\Request;
 use App\Models\Recommendation;
 use App\Helpers\Enums\GradeType;
@@ -13,8 +14,10 @@ use App\Services\Student\StudentService;
 use App\DataTables\Evaluations\StudentDataTable;
 use App\Services\Recommendation\RecommendationService;
 use App\DataTables\Evaluations\RecommendationDataTable;
+use App\Helpers\Helper;
 use App\Http\Requests\Evaluations\RecommendationRequest;
 use App\Http\Requests\Evaluations\RecommendationExportRequest;
+use App\Services\Grade\GradeService;
 
 class RecommendationController extends Controller
 {
@@ -26,6 +29,8 @@ class RecommendationController extends Controller
   public function __construct(
     protected StudentService $studentService,
     protected RecommendationService $recommendationService,
+    protected GradeService $gradeService,
+    protected SubjectRepository $subjectRepository
   ) {
     // 
   }
@@ -61,10 +66,13 @@ class RecommendationController extends Controller
     $totalCompletedCourseCredit = Subject::whereIn('id', $passedSubjects)->sum('course_credit');
     $totalCourseCredit = $student->major->total_course_credit;
 
+    $gpa = Helper::calculateGPA($student->id);
+
     $details = [
       'total_course_credit' => $totalCourseCredit,
       'total_course_credit_done' => $totalCompletedCourseCredit,
       'total_course_credit_remainder' => $totalCourseCredit - $totalCompletedCourseCredit,
+      'gpa' => $gpa
     ];
 
     return $details;
@@ -84,7 +92,6 @@ class RecommendationController extends Controller
   public function create(Student $student)
   {
     $data = $this->studentDetail($student->id);
-
     return view('evaluations.recommendations.create', compact('student', 'data'));
   }
 

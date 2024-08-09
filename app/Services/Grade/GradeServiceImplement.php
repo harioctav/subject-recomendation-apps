@@ -2,18 +2,22 @@
 
 namespace App\Services\Grade;
 
-use App\Helpers\Enums\GradeType;
-use App\Helpers\Enums\RecommendationNoteType;
+use App\Models\Grade;
+use App\Helpers\Helper;
 use App\Models\Student;
+use App\Models\Subject;
 use InvalidArgumentException;
+use Illuminate\Support\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Helpers\Enums\GradeType;
 use Illuminate\Support\Facades\DB;
 use LaravelEasyRepository\Service;
 use Illuminate\Support\Facades\Log;
 use App\Repositories\Grade\GradeRepository;
-use App\Repositories\Recommendation\RecommendationRepository;
+use App\Helpers\Enums\RecommendationNoteType;
 use App\Repositories\Student\StudentRepository;
 use App\Repositories\Subject\SubjectRepository;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Repositories\Recommendation\RecommendationRepository;
 
 class GradeServiceImplement extends Service implements GradeService
 {
@@ -91,8 +95,12 @@ class GradeServiceImplement extends Service implements GradeService
         ]);
       }
 
+      // Tambahkan Nilai Mutu Mahasiswa
+      $quality = Helper::generateQuality($payload['grade']);
+
       // Store Data
-      $payload['exam_period'] = $subject->exam_time;
+      $payload['exam_period'] = $recommendation->exam_period;
+      $payload['quality'] = $quality;
 
       $this->mainRepository->create($payload);
 
@@ -130,6 +138,10 @@ class GradeServiceImplement extends Service implements GradeService
         $payload['note'] = "Perbaikan nilai dari {$grade->grade} menjadi {$payload['grade']}.";
       }
 
+      // Tambahkan Nilai Mutu Mahasiswa
+      $quality = Helper::generateQuality($payload['grade']);
+      $payload['quality'] = $quality;
+
       $this->mainRepository->update($grade->id, $payload);
 
       DB::commit();
@@ -157,19 +169,27 @@ class GradeServiceImplement extends Service implements GradeService
         return [$semester => [
           'subject' => $subject,
           'has_grade' => !is_null($grade),
-          'grade' => $grade
+          'grade' => $grade,
+          'mutu' => $grade ? $grade->mutuLabel : null,
+          'exam_period' => $grade ? $grade->exam_period : null,
         ]];
       });
+
+      $formattedDate = Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY');
+      $fileTitle = "{$formattedDate}-{$student->name}-TRANSCRIPT-SEMENTARA.pdf";
+
+      $studentDetail = Helper::getDataStudent($student->id);
 
       // Prepare data for the view
       $data = [
         'student' => $student,
-        'groupedSubjects' => $groupedSubjects
+        'groupedSubjects' => $groupedSubjects,
+        'studentDetail' => $studentDetail
       ];
 
       // Generate PDF
-      $pdf = Pdf::loadView('exports.grade', $data);
-      return $pdf->stream('transcript_grades.pdf');
+      $pdf = Pdf::loadView('exports.transcript', $data);
+      return $pdf->stream($fileTitle);
     } catch (\Exception $e) {
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));

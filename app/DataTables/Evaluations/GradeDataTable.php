@@ -43,10 +43,11 @@ class GradeDataTable extends DataTable
 
     return (new EloquentDataTable($query))
       ->addIndexColumn()
-      ->editColumn('student_id', fn ($row) => $row->student->name)
-      ->editColumn('subject_id', fn ($row) => $row->subject->name)
-      ->addColumn('major', fn ($row) => $row->student->major->name)
-      ->addColumn('semester', fn ($row) => $row->semester)
+      ->editColumn('student_id', fn($row) => $row->student->name)
+      ->editColumn('subject_id', fn($row) => $row->subject->name)
+      ->addColumn('subject_code', fn($row) => $row->subject->code)
+      ->addColumn('major', fn($row) => $row->student->major->name)
+      ->addColumn('semester', fn($row) => $row->semester)
       ->filterColumn('student_id', function ($query, $keyword) {
         $query->whereHas('student', function ($query) use ($keyword) {
           $query->where('name', 'LIKE', "%{$keyword}%");
@@ -128,6 +129,9 @@ class GradeDataTable extends DataTable
       Column::make('student_id')
         ->title(trans('Mahasiswa'))
         ->addClass('text-center'),
+      Column::make('subject_code')
+        ->title(trans('Kode Matkul'))
+        ->addClass('text-center'),
       Column::make('subject_id')
         ->title(trans('Matakuliah'))
         ->addClass('text-center'),
@@ -140,6 +144,9 @@ class GradeDataTable extends DataTable
       Column::make('grade')
         ->title(trans('Nilai'))
         ->addClass('text-center'),
+      // Column::make('mutu')
+      //   ->title(trans('Nilai Mutu'))
+      //   ->addClass('text-center'),
       Column::computed('action')
         ->title(trans('Opsi'))
         ->exportable(false)

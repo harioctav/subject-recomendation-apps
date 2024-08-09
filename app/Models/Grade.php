@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\Uuid;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,7 +22,9 @@ class Grade extends Model
     'student_id',
     'subject_id',
     'grade',
+    'quality',
     'exam_period',
+    'mutu',
     'note',
   ];
 
@@ -63,5 +66,12 @@ class Grade extends Model
     $pivot = $this->subject->majors->where('id', $majorId)->first();
 
     return $pivot ? $pivot->pivot->semester : 'Unknown Semester';
+  }
+
+  public function mutuLabel(): Attribute
+  {
+    return Attribute::make(
+      get: fn() => rtrim(rtrim(number_format($this->mutu, 2), '0'), '.')
+    );
   }
 }

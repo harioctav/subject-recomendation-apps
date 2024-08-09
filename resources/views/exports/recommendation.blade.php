@@ -7,73 +7,81 @@
 
   <title>HASIL REKOMENDASI MATAKULIAH</title>
 
-  <link rel="stylesheet" href="{{ public_path('assets/exports/export.css') }}">
+  <style>
+    @media print {
+      body {
+        width: 210mm;
+        height: 297mm;
+        margin: 0;
+        padding: 10mm;
+        box-sizing: border-box;
+      }
+    }
 
-  {{-- <style>
     body {
-      margin: 0;
-      padding: 20px;
+      font-family: Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.3;
     }
 
-    .header {
+    h1 {
       text-align: center;
-      margin-bottom: 20px;
+      font-size: 14pt;
+      margin-bottom: 15px;
     }
 
-    .logo {
-      width: 150px;
-      height: 150px;
-      margin: 0 auto;
+    .info-container {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
     }
 
-    .logo img {
+    .info-row {
       width: 100%;
-      height: 100%;
-      object-fit: contain;
+      display: flex;
+      margin-bottom: 3px;
     }
 
-    .title {
+    .info-col {
+      flex: 1;
+    }
+
+    .info-label {
       font-weight: bold;
-      font-size: 16px;
-      margin: 10px 0;
+      margin-right: 5px;
     }
 
-    .address {
-      margin-bottom: 10px;
-    }
-
-    .student-info {
-      margin-bottom: 20px;
+    .multi-line {
+      flex-basis: 100%;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
+      margin-top: 15px;
     }
 
-    table,
     th,
     td {
       border: 1px solid black;
-    }
-
-    th,
-    td {
-      padding: 8px;
+      padding: 3px;
+      text-align: center;
+      font-size: 10pt;
     }
 
     th {
       background-color: #f2f2f2;
     }
 
-    .semester-title {
+    .semester-header {
       font-weight: bold;
-      margin-top: 10px;
+      text-align: left;
+      padding-left: 5px;
     }
 
-    .center-text th,
-    .center-text td {
-      text-align: center;
+    .left-align {
+      text-align: left;
+      padding-left: 5px;
     }
 
     .footer {
@@ -81,106 +89,86 @@
       margin-top: 20px;
     }
 
-  </style> --}}
+  </style>
 </head>
 <body>
-  <div class="header">
-    <div class="logo">
-      <img src="{{ public_path('assets/images/logos/logo.png') }}" alt="Logo">
+  <h1>Hasil Rekomendasi Matakuliah</h1>
+  <div style="border-top: 1px solid #000000; margin: 1rem 0;"></div>
+
+  <div class="info-container">
+    <div class="info-row">
+      <div class="info-col">
+        <span class="info-label">NIM :</span>
+        <span>{{ $student->nim }}</span>
+      </div>
+      <div class="info-col">
+        <span class="info-label">Nama :</span>
+        <span>{{ strtoupper($student->name) }}</span>
+      </div>
+      <div class="info-col">
+        <span class="info-label">Program Studi :</span>
+        <span>{{ $student->major->code }}/{{ strtoupper($student->major->name) }}</span>
+      </div>
+      <div class="info-col">
+        <span class="info-label">Total SKS <strong>WAJIB</strong> ditempuh :</span>
+        <span>{{ $total_course_credit }}</span>
+      </div>
+      <div class="info-col">
+        <span class="info-label">Total SKS <strong>SUDAH</strong> ditempuh :</span>
+        <span>{{ $student->initial_registration_period ?? '-' }}</span>
+      </div>
+      <div class="info-col">
+        <span class="info-label">Sisa SKS <strong>Yang Belum</strong> ditempuh :</span>
+        <span>{{ $total_course_credit_remainder }}</span>
+      </div>
     </div>
-    <div class="address">
-      Jl. Lingkar Selatan No. 1, RT.001/RW.001, Cimahi, Kec. Cicantayan, Kabupaten Sukabumi, Jawa Barat 43155 Indonesia<br>
-      Telp. +62812-1015-7276<br>
-      Link Universitas 1 | Link Universitas 2 | email: info@salut.ac.id
-    </div>
-    <div style="border-top: 1px solid #000000; margin: 1rem 0;"></div>
-    <div class="title">HASIL REKOMENDASI MATAKULIAH</div>
   </div>
 
-  <div class="body">
-
-    <table class="no-border-table" style="margin-bottom: 20px">
+  <table>
+    <thead>
       <tr>
-        <td>NIM</td>
-        <td>{{ $student->nim }}</td>
+        <th>No.</th>
+        <th>Kode</th>
+        <th>Matakuliah</th>
+        <th>SKS</th>
+        <th>Nilai</th>
+        <th>Kel.</th>
+        <th>Masa Ujian</th>
+        <th>Status</th>
+        <th>Pr</th>
       </tr>
+    </thead>
+    <tbody>
+      @forelse ($recommended_subjects as $semesterData)
       <tr>
-        <td>Nama Mahasiswa</td>
-        <td>{{ strtoupper($student->name) }}</td>
+        <td colspan="9" class="semester-header">{{ $semesterData['semester'] }}</td>
       </tr>
+      @foreach ($semesterData['subjects'] as $subject)
       <tr>
-        <td>Program Studi</td>
-        <td>{{ $student->major->code }}/{{ strtoupper($student->major->name) }} - {{ $student->major->formatted_degree }}</td>
+        <td>{{ $loop->iteration }}</td>
+        <td>{{ $subject['code'] }}</td>
+        <td>{{ $subject['name'] }}</td>
+        <td>{{ $subject['sks'] }}</td>
+        <td>{{ $subject['grade'] }}</td>
+        <td>{{ $subject['kelulusan'] }}</td>
+        <td>{{ $subject['masa_ujian'] }}</td>
+        <td>{{ $subject['status'] }}</td>
+        <td>{{ $subject['note'] ?: '-' }}</td>
       </tr>
-    </table>
-
-    <table class="no-border-table">
-      <tr>
-        <td>Total SKS <strong>Wajib</strong> Tempuh</td>
-        <td>{{ $total_course_credit }}</td>
+      @endforeach
+      @empty
+      <tr style="border-bottom: none;" class="semester-header" style="margin-bottom: 10px">
+        <th colspan="9">BELUM ADA MATAKULIAH YANG DIREKOMENDASIKAN</th>
       </tr>
-      <tr>
-        <td>Total SKS <strong>Sudah</strong> ditempuh</td>
-        <td>{{ $total_course_credit_done }}</td>
-      </tr>
-      <tr>
-        <td>Sisa SKS <strong>Yang Harus</strong> ditempuh</td>
-        <td>{{ $total_course_credit_remainder }}</td>
-      </tr>
-    </table>
-
-    @forelse ($recommended_subjects as $semesterData)
-    <table class="border-table" style="margin-top: 30px; border-bottom: none;">
-      <thead>
-        <tr style="border-bottom: none;" class="semester-header" style="margin-bottom: 10px">
-          <th colspan="6" style="border-bottom: none;">{{ $semesterData['semester'] }}</th>
-        </tr>
-      </thead>
-    </table>
-    <table class="border-table">
-      <thead>
-        <tr>
-          <th>Kode</th>
-          <th>Matakuliah</th>
-          <th>Nilai</th>
-          <th>SKS</th>
-          <th>Kel.</th>
-          <th>MU</th>
-          <th>Status</th>
-          <th>Pr</th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach($semesterData['subjects'] as $subject)
-        <tr>
-          <td>{{ $subject['code'] }}</td>
-          <td>{{ $subject['name'] }}</td>
-          <td>{{ $subject['grade'] }}</td>
-          <td>{{ $subject['sks'] }}</td>
-          <td>{{ $subject['kelulusan'] }}</td>
-          <td>{{ $subject['masa_ujian'] }}</td>
-          <td>{{ $subject['status'] }}</td>
-          <td>{{ $subject['note'] }}</td>
-        </tr>
-        @endforeach
-      </tbody>
-    </table>
-    @empty
-    <table class="border-table" style="margin-top: 30px; border-bottom: none;">
-      <thead>
-        <tr style="border-bottom: none;" class="semester-header" style="margin-bottom: 10px">
-          <th colspan="6">BELUM ADA MATAKULIAH YANG DIREKOMENDASIKAN</th>
-        </tr>
-      </thead>
-    </table>
-    @endforelse
-  </div>
+      @endforelse
+    </tbody>
+  </table>
 
   <div class="footer">
-    Sukabumi, 14 September 2023<br>
-    a.n. Direktur UNIVERSITAS ABC<br>
+    Sukabumi, {{ $datetime }}<br>
+    a.n. Direktur UNIVERSITAS TERBUKA SUKABUMI<br>
     Ketua Program Studi<br><br><br><br>
-    SAMBAH WAHYU, ST., M.Kom
+    (Nama Ketua Program Studi)
   </div>
 </body>
 </html>

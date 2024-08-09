@@ -36,6 +36,7 @@ class GradeRequest extends FormRequest
           }
         },
       ],
+      'mutu' => 'required|string',
     ];
   }
 
@@ -72,6 +73,7 @@ class GradeRequest extends FormRequest
       'student_id' => 'Mahasiswa',
       'subject_id' => 'Matakuliah',
       'grade' => 'Nilai Mahasiswa',
+      'mutu' => 'Nilai Ujian Mahasiswa',
     ];
   }
 }

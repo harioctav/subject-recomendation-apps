@@ -101,7 +101,8 @@
             <tr>
               <th><input type="checkbox" id="select-all"></th>
               <th>Semester</th>
-              <th>Nama Mata Kuliah</th>
+              <th>Kode</th>
+              <th>Matakuliah</th>
               <th>Nilai</th>
               <th>SKS</th>
               <th>Ket. Matkul</th>

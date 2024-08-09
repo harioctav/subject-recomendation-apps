@@ -33,6 +33,11 @@ $(document).ready(function () {
                     orderable: false,
                 },
                 {
+                    data: "subject_code",
+                    className: "text-center",
+                    orderable: false,
+                },
+                {
                     data: "subject_name",
                     className: "text-center",
                     orderable: false,

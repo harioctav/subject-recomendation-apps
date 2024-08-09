@@ -151,8 +151,6 @@ class StudentController extends Controller
     $formattedSubjectsBySemester = [];
     $totalSKS = 0;
 
-
-
     foreach ($subjectsBySemester as $semesterNumber => $semesterSubjects) {
       // $filteredSubjects = $semesterSubjects->filter(function ($subject) use ($recommendedSubjectIds, $subjectIdsWithEGrade) {
       //   return !in_array($subject->id, $recommendedSubjectIds) || in_array($subject->id, $subjectIdsWithEGrade);
@@ -185,6 +183,7 @@ class StudentController extends Controller
 
           return [
             'id' => $subject->id,
+            'subject_code' => $subject->code,
             'subject_name' => $subject->name,
             'sks' => (int) $subject->course_credit,
             'note_subject' => $subject->note ?: '-',
