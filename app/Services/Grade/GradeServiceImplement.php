@@ -93,6 +93,12 @@ class GradeServiceImplement extends Service implements GradeService
         $recommendation->update([
           'note' => RecommendationNoteType::SECOND->value,
         ]);
+      } else {
+        $recommendation->update([
+          'note' => RecommendationNoteType::PASSED->value,
+        ]);
+
+        $payload['note'] = "Nilai sudah memenuhi standar kelulusan.";
       }
 
       // Tambahkan Nilai Mutu Mahasiswa
@@ -136,6 +142,12 @@ class GradeServiceImplement extends Service implements GradeService
         ]);
 
         $payload['note'] = "Perbaikan nilai dari {$grade->grade} menjadi {$payload['grade']}.";
+      } else {
+        $recommendation->update([
+          'note' => RecommendationNoteType::PASSED->value
+        ]);
+
+        $payload['note'] = "Nilai sudah memenuhi standar kelulusan";
       }
 
       // Tambahkan Nilai Mutu Mahasiswa

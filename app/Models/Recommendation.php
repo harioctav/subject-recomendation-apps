@@ -93,16 +93,18 @@ class Recommendation extends Model
     $second = RecommendationNoteType::SECOND->value;
     $repair = RecommendationNoteType::REPAIR->value;
     $done = RecommendationNoteType::DONE->value;
+    $passed = RecommendationNoteType::PASSED->value;
 
     $noteLabel = [
       $first => "<span class='badge text-primary'>{$first}</span>",
       $second => "<span class='badge text-danger'>{$second}</span>",
       $repair => "<span class='badge text-warning'>{$repair}</span>",
       $done => "<span class='badge text-success'>{$done}</span>",
+      $passed => "<span class='badge text-success'>{$passed}</span>",
     ];
 
     return Attribute::make(
-      get: fn () => $noteLabel[$this->note] ?? 'Tidak Diketahui',
+      get: fn() => $noteLabel[$this->note] ?? 'Tidak Diketahui',
     );
   }
 }

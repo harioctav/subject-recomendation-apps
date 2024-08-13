@@ -12,4 +12,5 @@ enum RecommendationNoteType: string
   case SECOND = 'Perlu Perbaikan';
   case REPAIR = 'Dalam Perbaikan';
   case DONE = 'Sudah Diperbaiki';
+  case PASSED = 'Lulus';
 }

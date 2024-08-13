@@ -91,4 +91,9 @@
 @endsection
 @push('javascript')
 {{ $dataTable->scripts() }}
+@vite('resources/js/evaluations/recommendations/show.js')
+<script>
+  var urlDestroy = "{{ route('recommendations.destroy', ':uuid') }}"
+
+</script>
 @endpush

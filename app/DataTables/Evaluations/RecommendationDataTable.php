@@ -4,14 +4,10 @@ namespace App\DataTables\Evaluations;
 
 use App\Helpers\Helper;
 use App\Models\Recommendation;
-use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
-use App\Services\Recommendation\RecommendationService;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 class RecommendationDataTable extends DataTable
@@ -38,21 +34,31 @@ class RecommendationDataTable extends DataTable
   {
     $query = $query->with([
       'student',
-      'subject'
+      'subject',
+      'subject.grades' => function ($query) {
+        $query->where('student_id', $this->studentId);
+      }
     ]);
 
     return (new EloquentDataTable($query))
       ->addIndexColumn()
-      ->editColumn('subject_id', fn ($row) => $row->subject->name)
-      ->addColumn('course_credit', fn ($row) => $row->subject->course_credit)
+      ->editColumn('subject_id', fn($row) => $row->subject->name)
+      ->addColumn('subject_code', fn($row) => $row->subject->code)
+      ->addColumn('course_credit', fn($row) => $row->subject->course_credit)
+      ->addColumn('grade', function ($row) {
+        // Cek apakah ada nilai untuk mata kuliah tersebut
+        return $row->subject->grades->first()->grade ?? '-';
+      })
       ->filterColumn('subject_id', function ($query, $keyword) {
         $query->whereHas('subject', function ($query) use ($keyword) {
           $query->where('name', 'LIKE', "%{$keyword}%");
         });
       })
-      ->editColumn('note', fn ($row) => $row->noteLabel)
+      ->editColumn('note', fn($row) => $row->noteLabel)
+      ->addColumn('action', 'evaluations.recommendations.option')
       ->rawColumns([
         'note',
+        'action',
       ]);
   }
 
@@ -61,7 +67,7 @@ class RecommendationDataTable extends DataTable
    */
   public function query(Recommendation $model): QueryBuilder
   {
-    return $model->newQuery()->where('student_id', $this->studentId);
+    return $model->newQuery()->latest()->where('student_id', $this->studentId);
   }
 
   /**
@@ -98,6 +104,11 @@ class RecommendationDataTable extends DataTable
    */
   public function getColumns(): array
   {
+    // Check Visibility of Action Row
+    $visibility = Helper::checkPermissions([
+      'recommendations.destroy',
+    ]);
+
     return [
       Column::make('DT_RowIndex')
         ->title(trans('#'))
@@ -105,11 +116,17 @@ class RecommendationDataTable extends DataTable
         ->searchable(false)
         ->width('5%')
         ->addClass('text-center'),
+      Column::make('subject_code')
+        ->title(trans('Kode'))
+        ->addClass('text-center'),
       Column::make('subject_id')
         ->title(trans('Matakuliah'))
         ->addClass('text-center'),
       Column::make('course_credit')
         ->title(trans('SKS'))
+        ->addClass('text-center'),
+      Column::make('grade')
+        ->title(trans('Nilai'))
         ->addClass('text-center'),
       Column::make('semester')
         ->title(trans('Semester'))
@@ -119,6 +136,13 @@ class RecommendationDataTable extends DataTable
         ->addClass('text-center'),
       Column::make('note')
         ->title(trans('Catatan'))
+        ->addClass('text-center'),
+      Column::computed('action')
+        ->title(trans('Opsi'))
+        ->exportable(false)
+        ->printable(false)
+        ->visible($visibility)
+        ->width('5%')
         ->addClass('text-center'),
     ];
   }

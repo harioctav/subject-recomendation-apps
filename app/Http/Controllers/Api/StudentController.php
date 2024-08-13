@@ -152,10 +152,6 @@ class StudentController extends Controller
     $totalSKS = 0;
 
     foreach ($subjectsBySemester as $semesterNumber => $semesterSubjects) {
-      // $filteredSubjects = $semesterSubjects->filter(function ($subject) use ($recommendedSubjectIds, $subjectIdsWithEGrade) {
-      //   return !in_array($subject->id, $recommendedSubjectIds) || in_array($subject->id, $subjectIdsWithEGrade);
-      // });
-
       $filteredSubjects = $semesterSubjects->filter(function ($subject) use ($recommendedSubjectIds, $subjectIdsWithEGrade, $recommendedSubjectsWithNotes) {
         $note = $recommendedSubjectsWithNotes[$subject->id]['note'] ?? null;
         return (!in_array($subject->id, $recommendedSubjectIds) || in_array($subject->id, $subjectIdsWithEGrade)) && $note !== RecommendationNoteType::REPAIR->value;

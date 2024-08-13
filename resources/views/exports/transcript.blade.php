@@ -22,7 +22,7 @@
       line-height: 1.3;
     }
 
-    h1 {
+    h3 {
       text-align: center;
       font-size: 14pt;
       margin-bottom: 15px;
@@ -85,7 +85,7 @@
   </style>
 </head>
 <body>
-  <h1>Lembar Kemajuan Akademik Mahasiswa</h1>
+  <h3>Lembar Kemajuan Akademik Mahasiswa</h3>
   <div style="border-top: 1px solid #000000; margin: 1rem 0;"></div>
 
   <div class="info-container">
@@ -188,7 +188,6 @@
   <ol>
     <li>Jumlah sks dalam Kurikulum yang ditempuh : {{ $studentDetail['total_compeleted_by_curiculum'] }} SKS</li>
     <li>Jumlah sks Alih Kredit : {{ $studentDetail['total_compeleted_55555'] }} SKS</li>
-    <li>Jumlah sks mtk kesetaraan dan mtk lain yang ditempuh :</li>
     <li>Jumlah sks Total yang ditempuh untuk perhitungan IPK : {{ $studentDetail['total_compeleted_course_credit'] }} SKS</li>
     <li>Jumlah total nilai mutu : {{ $studentDetail['mutu'] }}</li>
     <li>Jumlah Total sks keseluruhan : {{ $studentDetail['total_course_credit'] }} SKS</li>

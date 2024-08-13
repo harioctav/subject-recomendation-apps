@@ -144,9 +144,6 @@ class GradeDataTable extends DataTable
       Column::make('grade')
         ->title(trans('Nilai'))
         ->addClass('text-center'),
-      // Column::make('mutu')
-      //   ->title(trans('Nilai Mutu'))
-      //   ->addClass('text-center'),
       Column::computed('action')
         ->title(trans('Opsi'))
         ->exportable(false)

@@ -115,7 +115,7 @@
       </div>
       <div class="info-col">
         <span class="info-label">Total SKS <strong>SUDAH</strong> ditempuh :</span>
-        <span>{{ $student->initial_registration_period ?? '-' }}</span>
+        <span>{{ $total_course_credit_done }}</span>
       </div>
       <div class="info-col">
         <span class="info-label">Sisa SKS <strong>Yang Belum</strong> ditempuh :</span>

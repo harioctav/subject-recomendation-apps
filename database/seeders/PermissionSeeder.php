@@ -74,6 +74,7 @@ class PermissionSeeder extends Seeder
       'recommendations.create',
       'recommendations.store',
       'recommendations.export',
+      'recommendations.destroy',
 
       // Halaman Nilai
       'grades.index',

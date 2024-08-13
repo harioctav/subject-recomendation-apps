@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Settings\RoleController;
@@ -86,6 +85,7 @@ Route::middleware([
         Route::post('{student}/store', [RecommendationController::class, 'store'])->name('store');
         Route::get('{student}/export', [RecommendationController::class, 'export'])->name('export');
         Route::get('{student}/show', [RecommendationController::class, 'show'])->name('show');
+        Route::delete('{recommendation}', [RecommendationController::class, 'destroy'])->name('destroy');
       });
 
     // Grades

@@ -26,10 +26,10 @@ class StudentDataTable extends DataTable
 
     return (new EloquentDataTable($query))
       ->addIndexColumn()
-      ->editColumn('major_id', fn ($row) => $row->major->name)
-      ->editColumn('email', fn ($row) => $row->email ?? "--")
-      ->editColumn('status', fn ($row) => $row->statusLabel)
-      ->addColumn('recommendations', fn ($row) => $row->recommendations->count() . ' Data')
+      ->editColumn('major_id', fn($row) => $row->major->name)
+      ->editColumn('email', fn($row) => $row->email ?? "--")
+      ->editColumn('status', fn($row) => $row->statusLabel)
+      ->addColumn('recommendations', fn($row) => $row->recommendations->count() . ' Data')
       ->filterColumn('major_id', function ($query, $keyword) {
         $query->whereHas('major', function ($query) use ($keyword) {
           $query->where('name', 'LIKE', "%{$keyword}%");
@@ -86,6 +86,7 @@ class StudentDataTable extends DataTable
     // Check Visibility of Action Row
     $visibility = Helper::checkPermissions([
       'recommendations.create',
+      'recommendations.show',
     ]);
 
     return [

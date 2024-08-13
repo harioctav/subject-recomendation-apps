@@ -72,7 +72,7 @@
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
               {{ trans('Indeks Prestasi Kumulatif') }}
-              <span class="fw-semibold">??</span>
+              <span class="fw-semibold">{{ $data['gpa'] }}</span>
             </li>
           </ul>
         </div>
