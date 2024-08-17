@@ -207,4 +207,31 @@ class GradeServiceImplement extends Service implements GradeService
       throw new InvalidArgumentException(trans('session.log.error'));
     }
   }
+
+  public function handleDestroyData(int $id)
+  {
+    try {
+      // Find Grade Data
+      $grade = $this->mainRepository->findOrFail($id);
+
+      // Find Recommendation Data by student & subject id
+      $recommendation = $this->recommendationRepository->getWhere(
+        wheres: [
+          'student_id' => $grade->student_id,
+          'subject_id' => $grade->subject_id,
+        ]
+      )->first();
+
+      if ($recommendation->note === RecommendationNoteType::PASSED->value || $grade->grade === GradeType::E->value) :
+        $recommendation->update([
+          'note' => RecommendationNoteType::FIRST->value
+        ]);
+      endif;
+
+      $grade->delete();
+    } catch (\Exception $e) {
+      Log::info($e->getMessage());
+      throw new InvalidArgumentException(trans('session.log.error'));
+    }
+  }
 }

@@ -102,7 +102,7 @@ class GradeController extends Controller
    */
   public function destroy(Grade $grade)
   {
-    $this->gradeService->delete($grade->id);
+    $this->gradeService->handleDestroyData($grade->id);
     return response()->json([
       'message' => trans('session.delete'),
     ]);
