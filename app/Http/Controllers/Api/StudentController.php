@@ -76,6 +76,12 @@ class StudentController extends Controller
     ]);
   }
 
+  /**
+   * Display the specified student.
+   *
+   * @param int $student_id
+   * @return \Illuminate\Http\JsonResponse
+   */
   public function show($student_id)
   {
     $student = $this->studentService->findOrFail($student_id);
@@ -110,6 +116,13 @@ class StudentController extends Controller
     return response()->json($details);
   }
 
+  /**
+   * Get the courses for the given student.
+   *
+   * @param \Illuminate\Http\Request $request
+   * @param \App\Models\Student $student
+   * @return \Illuminate\Http\JsonResponse
+   */
   public function courses(Request $request, Student $student)
   {
     // Student Data
@@ -136,12 +149,14 @@ class StudentController extends Controller
       ->pluck('subject_id')
       ->toArray();
 
-    // Query untuk mengambil semua mata kuliah berdasarkan majorId
+    $gradeFilter = $request->input('grade', '');
+
     $subjects = Subject::whereHas('majors', function ($query) use ($majorId) {
       $query->where('majors.id', $majorId);
-    })->with(['majors' => function ($query) use ($majorId) {
-      $query->where('majors.id', $majorId);
-    }])->get();
+    })
+      ->with(['majors' => function ($query) use ($majorId) {
+        $query->where('majors.id', $majorId);
+      }])->get();
 
     // Mengelompokkan mata kuliah berdasarkan semester
     $subjectsBySemester = $subjects->groupBy(function ($subject) {
@@ -152,9 +167,23 @@ class StudentController extends Controller
     $totalSKS = 0;
 
     foreach ($subjectsBySemester as $semesterNumber => $semesterSubjects) {
-      $filteredSubjects = $semesterSubjects->filter(function ($subject) use ($recommendedSubjectIds, $subjectIdsWithEGrade, $recommendedSubjectsWithNotes) {
+      $filteredSubjects = $semesterSubjects->filter(function ($subject) use ($recommendedSubjectIds, $subjectIdsWithEGrade, $recommendedSubjectsWithNotes, $student, $gradeFilter) {
+        $grade = Grade::where('student_id', $student->id)
+          ->where('subject_id', $subject->id)
+          ->first();
+
+        $gradeValue = $grade ? $grade->grade : null;
         $note = $recommendedSubjectsWithNotes[$subject->id]['note'] ?? null;
-        return (!in_array($subject->id, $recommendedSubjectIds) || in_array($subject->id, $subjectIdsWithEGrade)) && $note !== RecommendationNoteType::REPAIR->value;
+
+        $isRecommended = in_array($subject->id, $recommendedSubjectIds);
+        $hasEGrade = in_array($subject->id, $subjectIdsWithEGrade);
+        $isNotRepair = $note !== RecommendationNoteType::REPAIR->value;
+
+        if ($gradeFilter === '') {
+          return $isNotRepair; // Show all subjects initially
+        } else {
+          return $gradeValue === $gradeFilter && $isNotRepair;
+        }
       });
 
       if ($filteredSubjects->isNotEmpty()) {
@@ -202,7 +231,6 @@ class StudentController extends Controller
 
     return response()->json($formattedSubjectsBySemester);
   }
-
   protected function getSemesterName($semester)
   {
     $semesterNames = [

@@ -141,6 +141,8 @@ class GradeServiceImplement extends Service implements GradeService
           'note' => RecommendationNoteType::DONE->value
         ]);
 
+        $recommendation->where('note', RecommendationNoteType::REPAIR->value)->delete();
+
         $payload['note'] = "Perbaikan nilai dari {$grade->grade} menjadi {$payload['grade']}.";
       } else {
         $recommendation->update([
