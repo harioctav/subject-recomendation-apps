@@ -163,6 +163,7 @@ return [
     RealRashid\SweetAlert\SweetAlertServiceProvider::class,
     Yajra\DataTables\DataTablesServiceProvider::class,
     Maatwebsite\Excel\ExcelServiceProvider::class,
+    Barryvdh\Debugbar\ServiceProvider::class,
     /*
     * Application Service Providers...
     */
