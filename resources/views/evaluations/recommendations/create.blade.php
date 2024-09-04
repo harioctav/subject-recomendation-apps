@@ -93,6 +93,17 @@
           <div class="alert alert-danger d-none" id="sks-error-message">Total SKS tidak boleh melebihi 24. Mohon kurangi pilihan mata kuliah.</div>
 
         </div>
+        <div class="col-lg-4">
+          <div class="mb-0">
+            <label for="grade" class="form-label">{{ trans('Filter Berdasarkan Nilai') }}</label>
+            <select type="text" class="form-select" name="grade" id="grade">
+              <option value="{{ Helper::ALL }}">{{ Helper::ALL }}</option>
+              @foreach (GradeType::toArray() as $item)
+              <option value="{{ $item }}">{{ $item }}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
       </div>
 
       <div class="my-3">
