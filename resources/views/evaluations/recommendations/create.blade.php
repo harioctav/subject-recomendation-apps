@@ -95,9 +95,9 @@
         </div>
         <div class="col-lg-4">
           <div class="mb-0">
-            <label for="grade" class="form-label">{{ trans('Filter Berdasarkan Nilai') }}</label>
-            <select type="text" class="form-select" name="grade" id="grade">
-              <option value="{{ Helper::ALL }}">{{ Helper::ALL }}</option>
+            <label for="grade_filter" class="form-label">{{ trans('Filter Berdasarkan Nilai') }}</label>
+            <select class="form-select" name="grade_filter" id="grade_filter">
+              <option value="">All</option>
               @foreach (GradeType::toArray() as $item)
               <option value="{{ $item }}">{{ $item }}</option>
               @endforeach
@@ -105,7 +105,23 @@
           </div>
         </div>
       </div>
-
+      @if($data['has_grade_e'])
+      <div class="row">
+        <div class="col-md-12">
+          <div class="alert alert-warning d-flex align-items-center alert-dismissible" role="alert">
+            <div class="flex-shrink-0">
+              <i class="fa fa-fw fa-exclamation"></i>
+            </div>
+            <div class="flex-grow-1 ms-3">
+              <p class="mb-0">
+                {{ trans('Mahasiswa ini memiliki nilai E, tolong lakukan rekomendasi ulang untuk memperbaiki nilai E tersebut.') }}
+              </p>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        </div>
+      </div>
+      @endif
       <div class="my-3">
         <table id="coursesTable" class="table table-bordered table-vcenter table-hover">
           <thead>

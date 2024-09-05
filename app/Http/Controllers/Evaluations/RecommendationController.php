@@ -68,16 +68,20 @@ class RecommendationController extends Controller
 
     $gpa = Helper::calculateGPA($student->id);
 
+    $hasGradeE = Grade::where('student_id', $student->id)
+      ->where('grade', GradeType::E->value)
+      ->exists();
+
     $details = [
       'total_course_credit' => $totalCourseCredit,
       'total_course_credit_done' => $totalCompletedCourseCredit,
       'total_course_credit_remainder' => $totalCourseCredit - $totalCompletedCourseCredit,
-      'gpa' => $gpa
+      'gpa' => $gpa,
+      'has_grade_e' => $hasGradeE
     ];
 
     return $details;
   }
-
   /**
    * Display a listing of the resource.
    */

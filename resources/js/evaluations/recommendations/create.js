@@ -88,10 +88,10 @@ $(document).ready(function () {
         });
     }
 
-    function loadCourses(sks = "") {
+    function loadCourses(sks = "", grade = "") {
         $.ajax({
             url: datatableURL,
-            data: { sks: sks },
+            data: { sks: sks, grade: grade },
             success: function (data) {
                 initializeDataTable(data);
             },
@@ -100,6 +100,12 @@ $(document).ready(function () {
             },
         });
     }
+
+    $("#grade_filter").on("change", function () {
+        var sks = $("#course_credit").val().trim();
+        var grade = $(this).val();
+        loadCourses(sks, grade);
+    });
 
     function calculateTotalSKS() {
         let totalSKS = 0;
