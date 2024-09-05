@@ -118,6 +118,13 @@ class GradeServiceImplement extends Service implements GradeService
     }
   }
 
+  /**
+   * Updates a grade record in the system.
+   *
+   * @param \Illuminate\Http\Request $request
+   * @param int $id The ID of the grade record to update.
+   * @return void
+   */
   public function handleUpdateData($request, $id)
   {
     try {
@@ -166,6 +173,12 @@ class GradeServiceImplement extends Service implements GradeService
     }
   }
 
+  /**
+   * Handles the export of student transcript data.
+   *
+   * @param \Illuminate\Http\Request $request
+   * @return \Illuminate\Http\Response
+   */
   public function handleExportData($request)
   {
     try {
@@ -210,6 +223,12 @@ class GradeServiceImplement extends Service implements GradeService
     }
   }
 
+  /**
+   * Handles the deletion of a grade.
+   *
+   * @param int $id The ID of the grade to be deleted.
+   * @return void
+   */
   public function handleDestroyData(int $id)
   {
     try {

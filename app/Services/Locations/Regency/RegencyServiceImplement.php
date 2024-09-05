@@ -16,9 +16,17 @@ class RegencyServiceImplement extends Service implements RegencyService
     // 
   }
 
+
   /**
-   * Get data by row name use where or where in function
+   * Retrieves records from the repository based on the provided where conditions.
    *
+   * @param array $wheres The where conditions to filter the records.
+   * @param string|array $columns The columns to retrieve from the records.
+   * @param string $comparisons The comparison operator to use in the where conditions.
+   * @param string|null $orderBy The column to order the results by.
+   * @param string|null $orderByType The order direction (ASC or DESC).
+   * @return mixed The retrieved records.
+   * @throws InvalidArgumentException If an error occurs while retrieving the records.
    */
   public function getWhere(
     $wheres = [],
@@ -28,7 +36,6 @@ class RegencyServiceImplement extends Service implements RegencyService
     $orderByType = null
   ) {
     try {
-      DB::beginTransaction();
       return $this->mainRepository->getWhere(
         wheres: $wheres,
         columns: $columns,
@@ -36,9 +43,7 @@ class RegencyServiceImplement extends Service implements RegencyService
         orderBy: $orderBy,
         orderByType: $orderByType
       );
-      DB::commit();
     } catch (\Exception $e) {
-      DB::rollBack();
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
     }
