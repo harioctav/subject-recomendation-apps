@@ -128,7 +128,7 @@
             <tr>
               <th><input type="checkbox" id="select-all"></th>
               <th>Semester</th>
-              <th>Kode</th>
+              {{-- <th>Kode</th> --}}
               <th>Matakuliah</th>
               <th>Nilai</th>
               <th>SKS</th>
