@@ -5,16 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\Enums\GradeType;
 use App\Helpers\Enums\RecommendationNoteType;
 use App\Models\Grade;
-use App\Models\Major;
 use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Http\Request;
-use App\Models\Recommendation;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Services\Grade\GradeService;
 use App\Services\Major\MajorService;
-use Illuminate\Support\Facades\Cache;
 use App\Services\Student\StudentService;
 use App\Services\Recommendation\RecommendationService;
 
@@ -153,10 +149,9 @@ class StudentController extends Controller
 
     $subjects = Subject::whereHas('majors', function ($query) use ($majorId) {
       $query->where('majors.id', $majorId);
-    })
-      ->with(['majors' => function ($query) use ($majorId) {
-        $query->where('majors.id', $majorId);
-      }])->get();
+    })->with(['majors' => function ($query) use ($majorId) {
+      $query->where('majors.id', $majorId);
+    }])->get();
 
     // Mengelompokkan mata kuliah berdasarkan semester
     $subjectsBySemester = $subjects->groupBy(function ($subject) {
@@ -168,6 +163,8 @@ class StudentController extends Controller
 
     foreach ($subjectsBySemester as $semesterNumber => $semesterSubjects) {
       $filteredSubjects = $semesterSubjects->filter(function ($subject) use ($recommendedSubjectIds, $subjectIdsWithEGrade, $recommendedSubjectsWithNotes, $student, $gradeFilter) {
+
+        // Get Grade Datas
         $grade = Grade::where('student_id', $student->id)
           ->where('subject_id', $subject->id)
           ->first();
@@ -189,7 +186,7 @@ class StudentController extends Controller
       if ($filteredSubjects->isNotEmpty()) {
         $semesterName = $this->getSemesterName($semesterNumber);
 
-        $subjectsForSemester = $filteredSubjects->map(function ($subject) use (&$totalSKS, $sksFilter, $semesterName, $student, $recommendedSubjectsWithNotes) {
+        $subjectsForSemester = $filteredSubjects->map(function ($subject) use (&$totalSKS, $sksFilter, $semesterName, $student, $recommendedSubjectsWithNotes, $recommendedSubjectIds, $subjectIdsWithEGrade) {
           $subjectSKS = intval($subject->course_credit);
 
           // Get the grade for the subject if it exists
@@ -215,7 +212,8 @@ class StudentController extends Controller
             'note' => $note,
             'status' => $subject->status,
             'semester' => $semesterName,
-            'grade' => $gradeValue
+            'grade' => $gradeValue,
+            'is_recommended' => in_array($subject->id, $recommendedSubjectIds) && !in_array($subject->id, $subjectIdsWithEGrade)
           ];
         })->filter()->values();
 
@@ -231,17 +229,27 @@ class StudentController extends Controller
 
     return response()->json($formattedSubjectsBySemester);
   }
+
   protected function getSemesterName($semester)
   {
     $semesterNames = [
-      1 => 'Semester Satu',
-      2 => 'Semester Dua',
-      3 => 'Semester Tiga',
-      4 => 'Semester Empat',
-      5 => 'Semester Lima',
-      6 => 'Semester Enam',
-      7 => 'Semester Tujuh',
-      8 => 'Semester Delapan'
+      // 1 => 'Semester Satu',
+      // 2 => 'Semester Dua',
+      // 3 => 'Semester Tiga',
+      // 4 => 'Semester Empat',
+      // 5 => 'Semester Lima',
+      // 6 => 'Semester Enam',
+      // 7 => 'Semester Tujuh',
+      // 8 => 'Semester Delapan',
+
+      1 => 'Semester 1',
+      2 => 'Semester 2',
+      3 => 'Semester 3',
+      4 => 'Semester 4',
+      5 => 'Semester 5',
+      6 => 'Semester 6',
+      7 => 'Semester 7',
+      8 => 'Semester 8'
     ];
 
     return $semesterNames[$semester] ?? 'Semester Tidak Diketahui';

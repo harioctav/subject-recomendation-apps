@@ -15,12 +15,17 @@ $(document).ready(function () {
                 [5, 10, 25, "All"],
             ],
             responsive: true,
+            autoWidth: false,
             columns: [
                 {
                     data: null,
                     orderable: false,
                     className: "text-center",
                     render: function (data, type, row) {
+                        // Jika mata kuliah sudah direkomendasikan, jangan tampilkan checkbox
+                        if (row.is_recommended) {
+                            return "";
+                        }
                         var checked = selectedCourses.has(row.id.toString())
                             ? "checked"
                             : "";
@@ -32,41 +37,25 @@ $(document).ready(function () {
                     className: "text-center",
                     orderable: false,
                 },
-                {
-                    data: "subject_code",
-                    className: "text-center",
-                    orderable: false,
-                },
+                // {
+                //     data: "subject_code",
+                //     className: "text-center",
+                //     orderable: false,
+                // },
                 {
                     data: "subject_name",
                     className: "text-center",
                     orderable: false,
                 },
-                {
-                    data: "grade",
-                    className: "text-center",
-                    orderable: false,
-                },
-                {
-                    data: "sks",
-                    className: "text-center",
-                    orderable: false,
-                },
+                { data: "grade", className: "text-center", orderable: false },
+                { data: "sks", className: "text-center", orderable: false },
                 {
                     data: "note_subject",
                     className: "text-center",
                     orderable: false,
                 },
-                {
-                    data: "note",
-                    className: "text-center",
-                    orderable: false,
-                },
-                {
-                    data: "status",
-                    className: "text-center",
-                    orderable: false,
-                },
+                { data: "note", className: "text-center", orderable: false },
+                { data: "status", className: "text-center", orderable: false },
             ],
             rowGroup: {
                 dataSrc: "semester",
@@ -74,7 +63,11 @@ $(document).ready(function () {
             rowCallback: function (row, data) {
                 if (data.grade === "E") {
                     $(row).css("background-color", "red");
-                    $(row).css("color", "white"); // Optional: to make text readable
+                    $(row).css("color", "white");
+                }
+                // Tambahkan class untuk mata kuliah yang sudah direkomendasikan
+                if (data.is_recommended) {
+                    $(row).addClass("recommended-course");
                 }
             },
             drawCallback: function () {
@@ -171,11 +164,14 @@ $(document).ready(function () {
             .nodes()
             .each(function (node) {
                 var checkbox = $(node).find(".course-checkbox");
-                checkbox.prop("checked", allChecked);
-                if (allChecked) {
-                    selectedCourses.add(checkbox.val());
-                } else {
-                    selectedCourses.delete(checkbox.val());
+                if (checkbox.length > 0) {
+                    // Hanya jika checkbox ada
+                    checkbox.prop("checked", allChecked);
+                    if (allChecked) {
+                        selectedCourses.add(checkbox.val());
+                    } else {
+                        selectedCourses.delete(checkbox.val());
+                    }
                 }
             });
         updateSelectedSKS();
