@@ -147,7 +147,7 @@ class Student extends Model
     ];
 
     return Attribute::make(
-      get: fn () => $statusLabel[$this->status] ?? 'Tidak Diketahui',
+      get: fn() => $statusLabel[$this->status] ?? 'Tidak Diketahui',
     );
   }
 

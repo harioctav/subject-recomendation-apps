@@ -229,6 +229,13 @@ class StudentController extends Controller
 
     return response()->json($formattedSubjectsBySemester);
   }
+
+  /**
+   * Returns the name of the semester based on the provided semester number.
+   *
+   * @param int $semester The semester number.
+   * @return string The name of the semester.
+   */
   protected function getSemesterName($semester)
   {
     $semesterNames = [
@@ -245,6 +252,12 @@ class StudentController extends Controller
     return $semesterNames[$semester] ?? 'Semester Tidak Diketahui';
   }
 
+  /**
+   * Returns an HTML span element with a badge class based on the provided note value.
+   *
+   * @param string $note The note value to be displayed.
+   * @return string An HTML span element with a badge class.
+   */
   protected function getNoteLabel($note)
   {
     switch ($note) {

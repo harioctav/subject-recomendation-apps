@@ -84,31 +84,7 @@
             </a>
           </li>
 
-          @canany(['recommendations.index'])
-          <li class="nav-main-heading">{{ trans('Evaluations') }}</li>
-          <li class="nav-main-item {{ Request::is('evaluations*') ? 'open' : '' }}">
-            <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="{{ Request::is('evaluations*') ? 'true' : 'false' }}" href="#">
-              <i class="nav-main-link-icon fa fa-marker"></i>
-              <span class="nav-main-link-name">{{ trans('Penilaian') }}</span>
-            </a>
-            <ul class="nav-main-submenu">
-              @can('grades.index')
-              <li class="nav-main-item">
-                <a class="nav-main-link {{ Request::is('evaluations/grades*') ? 'active' : '' }}" href="{{ route('grades.index') }}">
-                  <span class="nav-main-link-name">{{ trans('page.grades.title') }}</span>
-                </a>
-              </li>
-              @endcan
-              @can('recommendations.index')
-              <li class="nav-main-item">
-                <a class="nav-main-link {{ Request::is('evaluations/recommendations*') ? 'active' : '' }}" href="{{ route('recommendations.index') }}">
-                  <span class="nav-main-link-name">{{ trans('page.recommendations.title') }}</span>
-                </a>
-              </li>
-              @endcan
-            </ul>
-          </li>
-          @endcanany
+
 
           @canany(['majors.index', 'students.index', 'subjects.index'])
           <li class="nav-main-heading">{{ trans('Akademik') }}</li>
@@ -142,6 +118,32 @@
             </ul>
           </li>
           @endcan
+
+          @canany(['recommendations.index', 'grades.index'])
+          <li class="nav-main-heading">{{ trans('Evaluations') }}</li>
+          <li class="nav-main-item {{ Request::is('evaluations*') ? 'open' : '' }}">
+            <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="{{ Request::is('evaluations*') ? 'true' : 'false' }}" href="#">
+              <i class="nav-main-link-icon fa fa-bookmark fa-sm"></i>
+              <span class="nav-main-link-name">{{ trans('Rekomendasi') }}</span>
+            </a>
+            <ul class="nav-main-submenu">
+              @can('grades.index')
+              <li class="nav-main-item">
+                <a class="nav-main-link {{ Request::is('evaluations/grades*') ? 'active' : '' }}" href="{{ route('grades.index') }}">
+                  <span class="nav-main-link-name">{{ trans('page.grades.title') }}</span>
+                </a>
+              </li>
+              @endcan
+              @can('recommendations.index')
+              <li class="nav-main-item">
+                <a class="nav-main-link {{ Request::is('evaluations/recommendations*') ? 'active' : '' }}" href="{{ route('recommendations.index') }}">
+                  <span class="nav-main-link-name">{{ trans('page.recommendations.title') }}</span>
+                </a>
+              </li>
+              @endcan
+            </ul>
+          </li>
+          @endcanany
 
           @canany(['roles.index', 'users.index'])
           <li class="nav-main-heading">{{ trans('Management') }}</li>

@@ -23,7 +23,16 @@ class MajorSubjectRequest extends FormRequest
   {
     return [
       'subjects' => 'required|array|min:1',
-      'subjects.*' => 'exists:subjects,id',
+      'subjects.*' => [
+        'exists:subjects,id',
+        function ($attribute, $value, $fail) {
+          $existingSubject = \App\Models\MajorSubject::where('subject_id', $value)->first();
+
+          if ($existingSubject) {
+            $fail("Matakuliah ini sudah ada di {$existingSubject->semester}.");
+          }
+        },
+      ],
       'semester' => 'required|integer|between:1,8',
     ];
   }

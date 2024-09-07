@@ -39,7 +39,7 @@ class RoleDataTable extends DataTable
       ->addColumn('user_count', function ($row) {
         return "{$row->users->count()} Akun";
       })
-      ->addColumn('permission_count', fn ($row) => $row->definePermissionCount())
+      ->addColumn('permission_count', fn($row) => $row->definePermissionCount())
       ->addColumn('action', 'settings.roles.action')
       ->rawColumns([
         'permission_count',
