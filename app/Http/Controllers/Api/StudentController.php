@@ -209,7 +209,7 @@ class StudentController extends Controller
             'subject_name' => $subject->name,
             'sks' => (int) $subject->course_credit,
             'note_subject' => $subject->note ?: '-',
-            'note' => $note,
+            'note' => $this->getNoteLabel($note),
             'status' => $subject->status,
             'semester' => $semesterName,
             'grade' => $gradeValue,
@@ -229,19 +229,9 @@ class StudentController extends Controller
 
     return response()->json($formattedSubjectsBySemester);
   }
-
   protected function getSemesterName($semester)
   {
     $semesterNames = [
-      // 1 => 'Semester Satu',
-      // 2 => 'Semester Dua',
-      // 3 => 'Semester Tiga',
-      // 4 => 'Semester Empat',
-      // 5 => 'Semester Lima',
-      // 6 => 'Semester Enam',
-      // 7 => 'Semester Tujuh',
-      // 8 => 'Semester Delapan',
-
       1 => 'Semester 1',
       2 => 'Semester 2',
       3 => 'Semester 3',
@@ -253,5 +243,32 @@ class StudentController extends Controller
     ];
 
     return $semesterNames[$semester] ?? 'Semester Tidak Diketahui';
+  }
+
+  protected function getNoteLabel($note)
+  {
+    switch ($note) {
+      case RecommendationNoteType::FIRST->value:
+        $class = 'badge text-success';
+        break;
+      case RecommendationNoteType::SECOND->value:
+        $class = 'badge text-danger';
+        break;
+      case RecommendationNoteType::REPAIR->value:
+        $class = 'badge text-warning';
+        break;
+      case RecommendationNoteType::DONE->value:
+        $class = 'badge text-success';
+        break;
+      case RecommendationNoteType::PASSED->value:
+        $class = 'badge text-success';
+        break;
+
+      default:
+        $class = 'badge text-secondary';
+        break;
+    }
+
+    return "<span class='{$class}'>{$note}</span>";
   }
 }
