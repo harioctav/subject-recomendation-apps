@@ -16,6 +16,7 @@ interface RecommendationService extends BaseService
     $orderBy = null,
     $orderByType = null
   );
+  public function getRecommendedSubjects(Student $student, $sksFilter, $gradeFilter);
   public function handleStoreData(Request $request);
   public function handleExportData(Student $student);
   public function handleDestroyData(int $id);

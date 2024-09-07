@@ -2,7 +2,11 @@
 
 namespace App\Services\Student;
 
+use App\Helpers\Enums\GradeType;
 use App\Helpers\Helper;
+use App\Models\Grade;
+use App\Models\Subject;
+use App\Repositories\Recommendation\RecommendationRepository;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +20,8 @@ class StudentServiceImplement extends Service implements StudentService
 {
   public function __construct(
     protected StudentRepository $mainRepository,
-    protected VillageRepository $villageRepository
+    protected VillageRepository $villageRepository,
+    protected RecommendationRepository $recommendationRepository
   ) {
     // 
   }
@@ -72,6 +77,74 @@ class StudentServiceImplement extends Service implements StudentService
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
     }
+  }
+
+  public function getStudentDataWithRecommendations($student)
+  {
+    $studentData = [
+      'nim' => $student->nim,
+      'major' => $student->major->name
+    ];
+
+    $existingGrades = $student->grades->pluck('subject_id')->toArray();
+
+    $recommendedSubjects = $student->recommendations
+      ->groupBy('semester')
+      ->map(function ($recommendations, $semester) use ($existingGrades) {
+        $subjects = $recommendations
+          ->reject(function ($recommendation) use ($existingGrades) {
+            return in_array($recommendation->subject_id, $existingGrades);
+          })
+          ->map(function ($recommendation) {
+            return [
+              'id' => $recommendation->subject->id,
+              'name' => $recommendation->subject->name
+            ];
+          });
+
+        return [
+          'semester' => $semester,
+          'subjects' => $subjects->values()
+        ];
+      })
+      ->filter(function ($semesterData) {
+        return $semesterData['subjects']->isNotEmpty();
+      })
+      ->values();
+
+    return [
+      'student' => $studentData,
+      'subjects' => $recommendedSubjects
+    ];
+  }
+
+  public function getStudentDetailedInfo($id)
+  {
+    $student = $this->findOrFail($id);
+
+    $recommendedSubjects = $this->recommendationRepository->getWhere(
+      wheres: [
+        'student_id' => $student->id
+      ]
+    )->pluck('subject_id');
+
+    $passedSubjects = Grade::where('student_id', $id)
+      ->whereIn('subject_id', $recommendedSubjects)
+      ->where('grade', '!=', GradeType::E->value)
+      ->pluck('subject_id');
+
+    $totalCompletedCourseCredit = Subject::whereIn('id', $passedSubjects)->sum('course_credit');
+
+    $totalCourseCredit = $student->major->total_course_credit;
+
+    return [
+      'nim' => $student->nim,
+      'major_name' => $student->major->name,
+      'total_course_credit' => $totalCourseCredit,
+      'total_course_credit_done' => $totalCompletedCourseCredit,
+      'total_course_credit_remainder' => $totalCourseCredit - $totalCompletedCourseCredit,
+      'status' => $student->status
+    ];
   }
 
   public function handleStoreData($request)

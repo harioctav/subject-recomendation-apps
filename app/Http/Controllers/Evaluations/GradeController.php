@@ -7,7 +7,6 @@ use App\Models\Grade;
 use App\Http\Controllers\Controller;
 use App\Services\Grade\GradeService;
 use App\Services\Major\MajorService;
-use Illuminate\Support\Facades\Cache;
 use App\Services\Student\StudentService;
 use App\DataTables\Evaluations\GradeDataTable;
 use App\Helpers\Enums\GradeType;
