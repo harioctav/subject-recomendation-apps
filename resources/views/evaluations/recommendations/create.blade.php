@@ -5,7 +5,7 @@
   <div class="content-heading">
     <div class="d-flex justify-content-between align-items-sm-center">
       {{ trans('page.recommendations.title') }}
-      <a href="{{ route('recommendations.index') }}" class="btn btn-sm btn-block-option text-danger">
+      <a href="{{ route('recommendations.show',  $student) }}" class="btn btn-sm btn-block-option text-danger">
         <i class="fa fa-xs fa-chevron-left me-1"></i>
         {{ trans('button.back') }}
       </a>

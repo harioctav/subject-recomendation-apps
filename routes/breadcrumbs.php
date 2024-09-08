@@ -128,7 +128,7 @@ Breadcrumbs::for('recommendations.index', function (BreadcrumbTrail $trail) {
 });
 
 Breadcrumbs::for('recommendations.create', function (BreadcrumbTrail $trail, Student $student) {
-  $trail->parent('recommendations.index');
+  $trail->parent('recommendations.show', $student);
   $trail->push(trans('page.recommendations.create'), route('recommendations.create', $student));
 });
 

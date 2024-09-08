@@ -74,14 +74,14 @@ class Recommendation extends Model
   public function getSemesterAttribute($value)
   {
     $semesters = [
-      1 => 'Semester Pertama',
-      2 => 'Semester Kedua',
-      3 => 'Semester Ketiga',
-      4 => 'Semester Keempat',
-      5 => 'Semester Kelima',
-      6 => 'Semester Keenam',
-      7 => 'Semester Ketujuh',
-      8 => 'Semester Kedelapan',
+      1 => 'Semester 1',
+      2 => 'Semester 2',
+      3 => 'Semester 3',
+      4 => 'Semester 4',
+      5 => 'Semester 5',
+      6 => 'Semester 6',
+      7 => 'Semester 7',
+      8 => 'Semester 8',
     ];
 
     return $semesters[$value] ?? 'Unknown Semester';
