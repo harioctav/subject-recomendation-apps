@@ -2,6 +2,7 @@
 
 namespace App\Services\Grade;
 
+use App\Models\Student;
 use Illuminate\Http\Request;
 use LaravelEasyRepository\BaseService;
 
@@ -17,6 +18,6 @@ interface GradeService extends BaseService
   );
   public function handleStoreData(Request $request);
   public function handleUpdateData(Request $request, int $id);
-  public function handleExportData(Request $request);
+  public function handleExportData(Student $student);
   public function handleDestroyData(int $id);
 }

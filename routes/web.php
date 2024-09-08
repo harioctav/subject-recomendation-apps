@@ -89,7 +89,15 @@ Route::middleware([
       });
 
     // Grades
-    Route::post('grades/export', [GradeController::class, 'export'])->name('grades.export');
-    Route::resource('grades', GradeController::class)->except('show');
+    Route::prefix('grades')->name('grades.')->group(function () {
+      Route::get('', [GradeController::class, 'index'])->name('index');
+      Route::get('{student}/create', [GradeController::class, 'create'])->name('create');
+      Route::post('{student}/store', [GradeController::class, 'store'])->name('store');
+      Route::get('{grade}/{student}/edit', [GradeController::class, 'edit'])->name('edit');
+      Route::patch('{grade}/{student}/update', [GradeController::class, 'update'])->name('update');
+      Route::get('{student}/export', [GradeController::class, 'export'])->name('export');
+      Route::get('{student}/show', [GradeController::class, 'show'])->name('show');
+      Route::delete('{grade}', [GradeController::class, 'destroy'])->name('destroy');
+    });
   });
 });

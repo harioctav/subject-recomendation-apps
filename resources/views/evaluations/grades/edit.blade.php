@@ -5,7 +5,7 @@
   <div class="content-heading">
     <div class="d-flex justify-content-between align-items-sm-center">
       {{ trans('page.grades.title') }}
-      <a href="{{ route('grades.index') }}" class="btn btn-sm btn-block-option text-danger">
+      <a href="{{ route('grades.show', $grade->student) }}" class="btn btn-sm btn-block-option text-danger">
         <i class="fa fa-xs fa-chevron-left me-1"></i>
         {{ trans('button.back') }}
       </a>
@@ -24,7 +24,7 @@
     </h3>
   </div>
   <div class="block-content">
-    <form action="{{ route('grades.update', $grade->uuid) }}" method="POST" onsubmit="return disableSubmitButton()">
+    <form action="{{ route('grades.update', ['grade' => $grade, 'student' => $grade->student]) }}" method="POST" onsubmit="return disableSubmitButton()">
       @csrf
       @method('PATCH')
 

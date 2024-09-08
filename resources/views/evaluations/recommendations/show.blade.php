@@ -50,14 +50,23 @@
           </li>
         </ul>
 
+        @can('recommendations.export')
         <div class="mb-0">
-          @can('recommendations.export')
           <a href="{{ route('recommendations.export', $student) }}" target="_blank" class="btn btn-sm btn-success">
             <i class="fa fa-print fa-sm me-1"></i>
             {{ trans('Cetak Hasil Rekomendasi') }}
           </a>
-          @endcan
         </div>
+        @endcan
+
+        @can('grades.show')
+        <div class="my-1">
+          <a href="{{ route('grades.show', $student) }}" class="btn btn-sm btn-primary">
+            <i class="fa fa-pencil-alt fa-sm me-1"></i>
+            {{ trans('Input Nilai') }}
+          </a>
+        </div>
+        @endcan
 
       </div>
       <div class="col-lg-6 offset-lg-1">

@@ -80,6 +80,7 @@ class PermissionSeeder extends Seeder
       'grades.index',
       'grades.create',
       'grades.store',
+      'grades.show',
       'grades.edit',
       'grades.update',
       'grades.destroy',

@@ -179,14 +179,13 @@ class GradeServiceImplement extends Service implements GradeService
    * @param \Illuminate\Http\Request $request
    * @return \Illuminate\Http\Response
    */
-  public function handleExportData($request)
+  public function handleExportData($student)
   {
     try {
-      // Get Request
-      $payload = $request->validated();
-
-      // Get Student with related data
-      $student = Student::with(['major.subjects', 'grades'])->findOrFail($payload['student_id']);
+      $student->with([
+        'grades',
+        'major.subjects',
+      ]);
 
       // Group subjects by semester and check if they have grades
       $groupedSubjects = $student->major->subjects->mapToGroups(function ($subject) use ($student) {
@@ -243,7 +242,7 @@ class GradeServiceImplement extends Service implements GradeService
         ]
       )->first();
 
-      if ($recommendation->note === RecommendationNoteType::PASSED->value || $grade->grade === GradeType::E->value) :
+      if ($recommendation->note === RecommendationNoteType::PASSED->value || $grade->grade === GradeType::E->value  || $recommendation->note === RecommendationNoteType::DONE->value) :
         $recommendation->update([
           'note' => RecommendationNoteType::FIRST->value
         ]);

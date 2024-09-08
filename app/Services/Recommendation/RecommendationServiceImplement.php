@@ -124,7 +124,6 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
   public function handleExportData($student)
   {
     try {
-
       // Ambil mata kuliah yang direkomendasikan untuk mahasiswa
       $recommendedSubjects = $student->recommendations
         ->unique('subject_id')
@@ -337,7 +336,7 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
         ->first();
       $gradeValue = $grade ? $grade->grade : '-';
 
-      $note = $recommendedSubjects->where('subject_id', $subject->id)->first()->note ?? '-';
+      $note = $recommendedSubjects->where('subject_id', $subject->id)->first()->noteLabel ?? '-';
 
       if ($sksFilter && $totalSKS + $subjectSKS > intval($sksFilter)) {
         return null;
@@ -351,7 +350,7 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
         'subject_name' => $subject->name,
         'sks' => (int) $subject->course_credit,
         'note_subject' => $subject->note ?: '-',
-        'note' => $this->getNoteLabel($note),
+        'note' => $note,
         'status' => $subject->status,
         'semester' => $semesterName,
         'grade' => $gradeValue,
@@ -381,38 +380,5 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
     ];
 
     return $semesterNames[$semester] ?? 'Semester Tidak Diketahui';
-  }
-
-  /**
-   * Gets the CSS class for the given recommendation note.
-   *
-   * @param string $note The recommendation note.
-   * @return string The CSS class for the note.
-   */
-  protected function getNoteLabel($note)
-  {
-    switch ($note) {
-      case RecommendationNoteType::FIRST->value:
-        $class = 'badge text-success';
-        break;
-      case RecommendationNoteType::SECOND->value:
-        $class = 'badge text-danger';
-        break;
-      case RecommendationNoteType::REPAIR->value:
-        $class = 'badge text-warning';
-        break;
-      case RecommendationNoteType::DONE->value:
-        $class = 'badge text-success';
-        break;
-      case RecommendationNoteType::PASSED->value:
-        $class = 'badge text-success';
-        break;
-
-      default:
-        $class = 'badge text-secondary';
-        break;
-    }
-
-    return "<span class='{$class}'>{$note}</span>";
   }
 }

@@ -112,6 +112,7 @@ class RecommendationController extends Controller
   {
     $data = $this->studentDetail($student->id);
     $dataTable = new RecommendationDataTable($student->id);
+
     return $dataTable->render('evaluations.recommendations.show', compact('student', 'data', 'dataTable'));
   }
 

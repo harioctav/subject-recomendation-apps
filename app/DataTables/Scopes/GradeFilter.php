@@ -3,7 +3,7 @@
 namespace App\DataTables\Scopes;
 
 use App\Helpers\Helper;
-use Illuminate\Http\Request;
+use Yajra\DataTables\Utilities\Request;
 use Yajra\DataTables\Contracts\DataTableScope;
 
 class GradeFilter implements DataTableScope
@@ -22,14 +22,10 @@ class GradeFilter implements DataTableScope
    */
   public function apply($query)
   {
-    $filters = ['grade'];
-
-    foreach ($filters as $field) {
-      if ($this->request->has($field) && $this->request->get($field) !== null) {
-        if ($this->request->get($field) !== Helper::ALL) {
-          $query->where($field, $this->request->get($field));
-        }
-        // Handle the case when $this->request->get($field) === Helper::ALL
+    if ($this->request->has('grade') && $this->request->get('grade') !== null) {
+      $grade = $this->request->get('grade');
+      if ($grade !== Helper::ALL) {
+        $query->where('grade', $grade);
       }
     }
 

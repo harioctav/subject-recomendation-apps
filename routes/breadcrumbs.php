@@ -1,5 +1,6 @@
 <?php // routes/breadcrumbs.php
 
+use App\Models\Grade;
 use App\Models\Student;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
@@ -123,7 +124,7 @@ Breadcrumbs::for('students.show', function (BreadcrumbTrail $trail, $student) {
 // Recommendations Breadcrumbs
 Breadcrumbs::for('recommendations.index', function (BreadcrumbTrail $trail) {
   $trail->parent('home');
-  $trail->push(trans('page.recommendations.index'), route('recommendations.index'));
+  $trail->push(trans('Daftar Mahasiswa'), route('recommendations.index'));
 });
 
 Breadcrumbs::for('recommendations.create', function (BreadcrumbTrail $trail, Student $student) {
@@ -145,21 +146,24 @@ Breadcrumbs::for('recommendations.show', function (BreadcrumbTrail $trail, Stude
 // grades Breadcrumbs
 Breadcrumbs::for('grades.index', function (BreadcrumbTrail $trail) {
   $trail->parent('home');
-  $trail->push(trans('page.grades.index'), route('grades.index'));
+  $trail->push(trans('Daftar Mahasiswa'), route('grades.index'));
 });
 
-Breadcrumbs::for('grades.create', function (BreadcrumbTrail $trail) {
+Breadcrumbs::for('grades.create', function (BreadcrumbTrail $trail, Student $student) {
   $trail->parent('grades.index');
-  $trail->push(trans('page.grades.create'), route('grades.create'));
+  $trail->push(trans('page.grades.create'), route('grades.create', $student));
+});
+
+Breadcrumbs::for('grades.show', function (BreadcrumbTrail $trail, Student $student) {
+  $trail->parent('grades.index');
+  $trail->push(trans('page.grades.show'), route('grades.show', $student));
 });
 
 Breadcrumbs::for('grades.edit', function (BreadcrumbTrail $trail, $grade) {
-  $trail->parent('grades.index');
-  $trail->push(trans('page.grades.edit'), route('grades.edit', $grade->uuid));
-});
-
-Breadcrumbs::for('grades.show', function (BreadcrumbTrail $trail, $grade) {
-  $trail->parent('grades.index');
-  $trail->push(trans('page.grades.show'), route('grades.show', $grade->uuid));
+  $trail->parent('grades.show', $grade->student);
+  $trail->push(trans('page.grades.edit'), route('grades.edit', [
+    'grade' => $grade->uuid,
+    'student' => $grade->student
+  ]));
 });
 // grades Breadcrumbs

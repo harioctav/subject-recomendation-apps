@@ -30,12 +30,19 @@ class StudentDataTable extends DataTable
       ->editColumn('email', fn($row) => $row->email ?? "--")
       ->editColumn('status', fn($row) => $row->statusLabel)
       ->addColumn('recommendations', fn($row) => $row->recommendations->count() . ' Data')
+      ->addColumn('grades', fn($row) => $row->grades->count())
       ->filterColumn('major_id', function ($query, $keyword) {
         $query->whereHas('major', function ($query) use ($keyword) {
           $query->where('name', 'LIKE', "%{$keyword}%");
         });
       })
-      ->addColumn('action', 'evaluations.recommendations.action')
+      ->addColumn('action', function ($row) {
+        if (request()->routeIs('grades.*')):
+          return view('evaluations.grades.action', compact('row'));
+        elseif (request()->routeIs('recommendations.*')):
+          return view('evaluations.recommendations.action', compact('row'));
+        endif;
+      })
       ->rawColumns([
         'action',
         'status'
@@ -89,6 +96,9 @@ class StudentDataTable extends DataTable
       'recommendations.show',
     ]);
 
+    $gradesColumn = Column::make('grades')->title(trans('Data Nilai'))->addClass('text-center');
+    $recommendationsColumn = Column::make('recommendations')->title(trans('Rekomendasi'))->addClass('text-center');
+
     return [
       Column::make('DT_RowIndex')
         ->title(trans('#'))
@@ -108,9 +118,7 @@ class StudentDataTable extends DataTable
       Column::make('status')
         ->title(trans('Status'))
         ->addClass('text-center'),
-      Column::make('recommendations')
-        ->title(trans('Rekomendasi'))
-        ->addClass('text-center'),
+      request()->routeIs('recommendations.*') ? $recommendationsColumn : $gradesColumn,
       Column::computed('action')
         ->title(trans('Opsi'))
         ->exportable(false)

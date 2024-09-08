@@ -11,7 +11,7 @@
       </a>
     </div>
     <nav class="breadcrumb push my-0">
-      {{ Breadcrumbs::render('grades.create') }}
+      {{ Breadcrumbs::render('grades.create', $student) }}
     </nav>
   </div>
 </div>
@@ -24,7 +24,7 @@
     </h3>
   </div>
   <div class="block-content">
-    <form action="{{ route('grades.store') }}" method="POST" onsubmit="return disableSubmitButton()">
+    <form action="{{ route('grades.store', $student) }}" method="POST" onsubmit="return disableSubmitButton()">
       @csrf
 
       <div class="row items-push">
@@ -35,37 +35,37 @@
         </div>
         <div class="col-lg-7 offset-1">
 
-          <div class="mb-4">
-            <label for="student_id" class="form-label">{{ trans('Mahasiswa') }}</label>
-            <span class="text-danger">*</span>
-            <select name="student_id" id="student_id" class="js-select2 form-select @error('student_id') is-invalid @enderror" data-placeholder="{{ trans('Pilih Mahasiswa') }}" style="width: 100%;" data-old="{{ old('student_id') }}">
-              <option></option>
-              @foreach ($students as $item)
-              <option value="{{ $item->id }}" data-uuid="{{ $item->uuid }}" @if (old('student_id')==$item->id) selected @endif>{{ $item->name }}</option>
-              @endforeach
-            </select>
-            @error('student_id')
-            <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-          </div>
+          <input type="hidden" name="student_id" value="{{ $student->id }}">
 
           <ul class="list-group push">
             <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ trans('Mahasiswa') }}
+              <span id="student-name" class="fw-semibold">{{ $student->name }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
               {{ trans('NIM') }}
-              <span id="student-nim" class="fw-semibold">--</span>
+              <span id="student-nim" class="fw-semibold">{{ $student->nim }}</span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
               {{ trans('Program Studi') }}
-              <span id="student-major" class="fw-semibold text-end" style="min-width: 0; flex: 1;">--</span>
+              <span id="student-major" class="fw-semibold text-end" style="min-width: 0; flex: 1;">{{ $student->major->name }}</span>
             </li>
           </ul>
 
           <div class="mb-4">
             <label for="subject_id" class="form-label">{{ trans('Pilih Matakuliah') }}</label>
             <span class="text-danger">*</span>
-            <select name="subject_id" id="subject_id" class="js-select2 form-select @error('subject_id') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('subject_id') }}">
+            <select name="subject_id" id="subject_id" class="js-select2 form-select @error('subject_id') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;">
               <option></option>
-              <!-- Subjects will be populated by JavaScript -->
+              @foreach ($recommendations['subjects'] as $group)
+              <optgroup label="{{ $group['semester'] }}">
+                @foreach ($group['subjects'] as $subject)
+                <option value="{{ $subject['id'] }}" {{ old('subject_id') == $subject['id'] ? 'selected' : '' }}>
+                  {{ $subject['name'] }}
+                </option>
+                @endforeach
+              </optgroup>
+              @endforeach
             </select>
             @error('subject_id')
             <div class="invalid-feedback">{{ $message }}</div>
@@ -113,7 +113,7 @@
 @vite('resources/js/evaluations/grades/input.js')
 
 <script>
-  var studentURL = "{{ route('api.students.index', ['student' => ':student']) }}"
+  var studentURL = "{{ route('api.students.index', ['student' => $student->id]) }}"
 
   // Simpan data NIM dan Program Studi jika ada error validasi
   @if(old('student_id'))

@@ -2,29 +2,22 @@
 
 namespace App\DataTables\Evaluations;
 
-use App\Models\Grade;
+use App\DataTables\Scopes\GradeFilter;
 use App\Helpers\Helper;
-use Yajra\DataTables\Html\Button;
-use Yajra\DataTables\Html\Column;
-use App\Services\Grade\GradeService;
-use Yajra\DataTables\EloquentDataTable;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
-use Yajra\DataTables\Services\DataTable;
-use Yajra\DataTables\Html\Builder as HtmlBuilder;
+use App\Models\Grade;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Yajra\DataTables\EloquentDataTable;
+use Yajra\DataTables\Html\Builder as HtmlBuilder;
+use Yajra\DataTables\Html\Column;
+use Yajra\DataTables\Services\DataTable;
 
 class GradeDataTable extends DataTable
 {
-  /**
-   * Create a new datatables instance.
-   *
-   * @return void
-   */
-  public function __construct(
-    protected GradeService $gradeService,
-  ) {
-    // 
+  public $studentId;
+
+  public function __construct($studentId = null)
+  {
+    $this->studentId = $studentId;
   }
 
   /**
@@ -46,19 +39,15 @@ class GradeDataTable extends DataTable
       ->editColumn('student_id', fn($row) => $row->student->name)
       ->editColumn('subject_id', fn($row) => $row->subject->name)
       ->addColumn('subject_code', fn($row) => $row->subject->code)
+      ->editColumn('mutu', fn($row) => $row->mutuLabel)
       ->addColumn('major', fn($row) => $row->student->major->name)
       ->addColumn('semester', fn($row) => $row->semester)
-      ->filterColumn('student_id', function ($query, $keyword) {
-        $query->whereHas('student', function ($query) use ($keyword) {
-          $query->where('name', 'LIKE', "%{$keyword}%");
-        });
-      })
       ->filterColumn('subject_id', function ($query, $keyword) {
         $query->whereHas('subject', function ($query) use ($keyword) {
           $query->where('name', 'LIKE', "%{$keyword}%");
         });
       })
-      ->addColumn('action', 'evaluations.grades.action')
+      ->addColumn('action', 'evaluations.grades.option')
       ->rawColumns([
         'action',
       ]);
@@ -69,7 +58,16 @@ class GradeDataTable extends DataTable
    */
   public function query(Grade $model): QueryBuilder
   {
-    return $this->gradeService->getQuery()->latest();
+    $query = $model->newQuery()
+      ->latest()
+      ->where('student_id', $this->studentId);
+
+    if ($this->request()->has('grade')) {
+      $gradeFilter = new GradeFilter($this->request());
+      $gradeFilter->apply($query);
+    }
+
+    return $query;
   }
 
   /**
@@ -81,15 +79,10 @@ class GradeDataTable extends DataTable
       ->setTableId('grade-table')
       ->columns($this->getColumns())
       ->minifiedAjax()
-      ->ajax([
-        'url' => route('grades.index'),
-        'type' => 'GET',
-        'data' => "
-          function(data) {
-            data.grade = $('select[name=grade]').val();
-          }"
-      ])
       //->dom('Bfrtip')
+      ->ajax([
+        'data' => 'function(d) { d.grade = $("#grade").val(); }'
+      ])
       ->addTableClass([
         'table',
         'table-striped',
@@ -97,11 +90,12 @@ class GradeDataTable extends DataTable
         'table-hover',
         'table-vcenter',
       ])
+      ->orderBy(1)
       ->selectStyleSingle()
       ->processing(true)
       ->retrieve(true)
       ->serverSide(true)
-      // ->autoWidth(false)
+      ->autoWidth(false)
       ->pageLength(5)
       ->responsive(true)
       ->lengthMenu([5, 10, 20])
@@ -126,17 +120,11 @@ class GradeDataTable extends DataTable
         ->searchable(false)
         ->width('5%')
         ->addClass('text-center'),
-      Column::make('student_id')
-        ->title(trans('Mahasiswa'))
-        ->addClass('text-center'),
       Column::make('subject_code')
         ->title(trans('Kode Matkul'))
         ->addClass('text-center'),
       Column::make('subject_id')
         ->title(trans('Matakuliah'))
-        ->addClass('text-center'),
-      Column::make('major')
-        ->title(trans('Prodi'))
         ->addClass('text-center'),
       Column::make('semester')
         ->title(trans('Semester'))
@@ -144,12 +132,15 @@ class GradeDataTable extends DataTable
       Column::make('grade')
         ->title(trans('Nilai'))
         ->addClass('text-center'),
+      Column::make('mutu')
+        ->title(trans('Mutu'))
+        ->addClass('text-center'),
       Column::computed('action')
         ->title(trans('Opsi'))
         ->exportable(false)
         ->printable(false)
         ->visible($visibility)
-        ->width('5%')
+        ->width('10%')
         ->addClass('text-center'),
     ];
   }
