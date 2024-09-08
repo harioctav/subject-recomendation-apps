@@ -73,6 +73,7 @@ class PermissionSeeder extends Seeder
       'recommendations.index',
       'recommendations.create',
       'recommendations.store',
+      'recommendations.show',
       'recommendations.export',
       'recommendations.destroy',
 

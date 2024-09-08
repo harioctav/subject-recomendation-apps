@@ -37,9 +37,9 @@ class UserDataTable extends DataTable
   {
     return (new EloquentDataTable($query))
       ->addIndexColumn()
-      ->editColumn('roles', fn ($row) => $row->getRoleName())
-      ->editColumn('status', fn ($row) => $row->statusLabel)
-      ->editColumn('phone', fn ($row) => $row->phone ?: '--')
+      ->editColumn('roles', fn($row) => $row->getRoleName())
+      ->editColumn('status', fn($row) => $row->statusLabel)
+      ->editColumn('phone', fn($row) => $row->phone ?: '--')
       ->addColumn('edit_status', 'settings.users.status')
       ->addColumn('action', 'settings.users.action')
       ->rawColumns([
@@ -121,9 +121,9 @@ class UserDataTable extends DataTable
       Column::make('roles')
         ->title(trans('Peran'))
         ->addClass('text-center'),
-      Column::make('phone')
-        ->title(trans('No. Hp'))
-        ->addClass('text-center'),
+      // Column::make('phone')
+      //   ->title(trans('No. Hp'))
+      //   ->addClass('text-center'),
       Column::make('status')
         ->title(trans('Status'))
         ->addClass('text-center'),
@@ -136,7 +136,7 @@ class UserDataTable extends DataTable
         ->exportable(false)
         ->printable(false)
         ->visible($action)
-        ->width('5%')
+        ->width('10%')
         ->addClass('text-center'),
     ];
   }
