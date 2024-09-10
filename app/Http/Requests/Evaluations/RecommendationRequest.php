@@ -27,7 +27,6 @@ class RecommendationRequest extends FormRequest
       'courses' => 'required|array|min:1',
       'courses.*' => 'exists:subjects,id',
       'exam_period' => 'required|string',
-      'note' => 'required|' . RecommendationNoteType::toValidation()
     ];
   }
 

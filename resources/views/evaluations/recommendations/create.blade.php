@@ -153,20 +153,6 @@
           </div>
 
           <div class="mb-4">
-            <label for="note" class="form-label">{{ trans('Catatan Rekomendasi') }}</label>
-            <span class="text-danger">*</span>
-            <select name="note" id="note" class="js-select2 form-select @error('note') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;">
-              <option></option>
-              @foreach (RecommendationNote::toArray(0,2) as $value)
-              <option value="{{ $value }}" @if (old('note')==$value) selected @endif>{{ ucfirst(trans($value)) }}</option>
-              @endforeach
-            </select>
-            @error('note')
-            <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-          </div>
-
-          <div class="mb-4">
             <button type="submit" class="btn btn-alt-primary w-100" id="button-submit">
               <i class="fa fa-fw fa-circle-check me-1"></i>
               {{ trans('button.create') }}

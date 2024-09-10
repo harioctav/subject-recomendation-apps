@@ -74,7 +74,7 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
   {
     $majorId = $student->major->id;
     $recommendedSubjects = $this->getRecommendedSubjectsForStudent($student->id);
-    $subjectsWithEGrade = $this->getSubjectsWithEGrade($student->id, $recommendedSubjects->pluck('subject_id'));
+    $subjectsWithEGrade = $this->getSubjectsWithEGrade($student->id, $recommendedSubjects->pluck('subject_id'))->pluck('subject_id');
 
     $subjects = $this->getSubjectsForMajor($majorId);
     $subjectsBySemester = $this->groupSubjectsBySemester($subjects, $majorId);
@@ -88,11 +88,16 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
       // Fetch request
       $payload = $request->validated();
 
+      // dd($payload);
+
       DB::beginTransaction();
 
       // Fetch student and its major
       $student = $this->studentRepository->findOrFail($payload['student_id']);
       $major_id = $student->major->id;
+
+      // cek apakah nilainya adalah "E"
+      $isGradeE = $this->getSubjectsWithEGrade($student->id, $payload['courses'])->exists();
 
       // Store to database
       foreach ($payload['courses'] as $subject_id) :
@@ -102,16 +107,31 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
           ->where('subject_id', $subject_id)
           ->value('semester');
 
-        // Prepare recommendation data
-        // Store recommendations
-        $this->mainRepository->create([
-          'uuid' => Str::uuid(),
-          'student_id' => $student->id,
-          'subject_id' => (int) $subject_id,
-          'semester' => $semester,
-          'exam_period' => $payload['exam_period'],
-          'note' => $payload['note'],
-        ]);
+        // apakah data rekomendasi tersedia
+        $isRecommendations = $this->mainRepository->getWhere(
+          wheres: [
+            'student_id' => $student->id,
+            'subject_id' => $subject_id,
+          ],
+        )->first();
+
+        if (!$isRecommendations->exists()):
+          // Store recommendations
+          $this->mainRepository->create([
+            'uuid' => Str::uuid(),
+            'student_id' => $student->id,
+            'subject_id' => (int) $subject_id,
+            'semester' => $semester,
+            'exam_period' => $payload['exam_period'],
+            'note' => RecommendationNoteType::FIRST->value,
+          ]);
+        else :
+          if ($isGradeE):
+            $this->mainRepository->update($isRecommendations->id, [
+              'note' => RecommendationNoteType::REPAIR->value,
+            ]);
+          endif;
+        endif;
       endforeach;
 
       DB::commit();
@@ -218,14 +238,12 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
    *
    * @param int $studentId The ID of the student.
    * @param array $subjectIds The IDs of the subjects to check.
-   * @return \Illuminate\Support\Collection The subject IDs where the student has an 'E' grade.
    */
   private function getSubjectsWithEGrade($studentId, $subjectIds)
   {
     return Grade::where('student_id', $studentId)
       ->whereIn('subject_id', $subjectIds)
-      ->where('grade', GradeType::E->value)
-      ->pluck('subject_id');
+      ->where('grade', GradeType::E->value);
   }
 
   /**
