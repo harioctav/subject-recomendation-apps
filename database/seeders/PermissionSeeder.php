@@ -86,6 +86,7 @@ class PermissionSeeder extends Seeder
       'grades.update',
       'grades.destroy',
       'grades.export',
+      'grades.import',
     ];
 
     $guardName = 'web';

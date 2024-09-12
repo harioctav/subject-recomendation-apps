@@ -96,6 +96,7 @@ Route::middleware([
       Route::get('{grade}/{student}/edit', [GradeController::class, 'edit'])->name('edit');
       Route::patch('{grade}/{student}/update', [GradeController::class, 'update'])->name('update');
       Route::get('{student}/export', [GradeController::class, 'export'])->name('export');
+      Route::post('{student}/import', [GradeController::class, 'import'])->name('import');
       Route::get('{student}/show', [GradeController::class, 'show'])->name('show');
       Route::delete('{grade}', [GradeController::class, 'destroy'])->name('destroy');
     });

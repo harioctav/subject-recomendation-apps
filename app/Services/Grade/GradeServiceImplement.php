@@ -2,10 +2,7 @@
 
 namespace App\Services\Grade;
 
-use App\Models\Grade;
 use App\Helpers\Helper;
-use App\Models\Student;
-use App\Models\Subject;
 use InvalidArgumentException;
 use Illuminate\Support\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -15,9 +12,17 @@ use LaravelEasyRepository\Service;
 use Illuminate\Support\Facades\Log;
 use App\Repositories\Grade\GradeRepository;
 use App\Helpers\Enums\RecommendationNoteType;
+use App\Imports\GradeImport;
+use App\Models\Subject;
 use App\Repositories\Student\StudentRepository;
 use App\Repositories\Subject\SubjectRepository;
 use App\Repositories\Recommendation\RecommendationRepository;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpWord\Element\TextRun;
+use PhpOffice\PhpWord\IOFactory;
+use Smalot\PdfParser\Parser;
+use Illuminate\Support\Str;
 
 class GradeServiceImplement extends Service implements GradeService
 {
@@ -213,6 +218,61 @@ class GradeServiceImplement extends Service implements GradeService
       $pdf = Pdf::loadView('exports.transcript', $data);
       return $pdf->stream($fileTitle);
     } catch (\Exception $e) {
+      Log::info($e->getMessage());
+      throw new InvalidArgumentException(trans('session.log.error'));
+    }
+  }
+
+  public function handleImportData($student, $request)
+  {
+    DB::beginTransaction();
+    try {
+      if ($request->hasFile('file') && $request->file('file')->isValid()) :
+        $import = new GradeImport();
+        $data = Excel::toCollection($import, $request->file('file'))->first();
+
+        $processed = $import->collection($data); // This will show you the processed data
+
+        // Process grouped data
+        foreach ($processed as $semester => $courses):
+          foreach ($courses as $course):
+            // Your existing logic to process each course
+            $subject = $this->subjectRepository->getWhere(
+              wheres: [
+                'code' => $course['code']
+              ]
+            )->first();
+
+            if ($subject):
+              // Add subject to recommendations
+              $this->recommendationRepository->create([
+                'uuid' => Str::uuid(),
+                'student_id' => $student->id,
+                'subject_id' => $subject->id,
+                'semester' => $semester,
+                'exam_period' => $course['exam_period'],
+                'note' => RecommendationNoteType::PASSED->value,
+              ]);
+
+              // Add to grades
+              $this->mainRepository->create([
+                'uuid' => Str::uuid(),
+                'student_id' => $student->id,
+                'subject_id' => $subject->id,
+                'grade' => $course['grade'],
+                'quality' => Helper::generateQuality($course['grade']),
+                'mutu' => $course['mutu'],
+                'exam_period' => $course['exam_period'],
+              ]);
+            endif;
+          endforeach;
+        endforeach;
+      endif;
+      DB::commit();
+
+      return redirect(route('grades.show', $student))->withSuccess(trans('page.grades.create'));
+    } catch (\Exception $e) {
+      DB::rollBack();
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
     }

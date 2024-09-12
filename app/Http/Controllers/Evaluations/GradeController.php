@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Evaluations;
 
 use App\DataTables\Scopes\GradeFilter;
+use App\Http\Requests\Imports\ImportRequest;
 use App\Models\Grade;
 use App\Http\Controllers\Controller;
 use App\Services\Grade\GradeService;
@@ -104,5 +105,10 @@ class GradeController extends Controller
   public function export(Student $student)
   {
     return $this->gradeService->handleExportData($student);
+  }
+
+  public function import(Student $student, ImportRequest $request)
+  {
+    return $this->gradeService->handleImportData($student, $request);
   }
 }

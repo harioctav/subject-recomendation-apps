@@ -48,6 +48,13 @@
       </a>
       @endcan
 
+      @can('grades.import')
+      <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-fadein">
+        <i class="fa fa-file-pdf fa-sm me-1"></i>
+        {{ trans('Import Data Nilai') }}
+      </button>
+      @endcan
+
       @can('grades.create')
       <a href="{{ route('grades.create', $student) }}" class="btn btn-sm btn-primary">
         <i class="fa fa-plus fa-sm me-1"></i>
@@ -72,6 +79,48 @@
 
     <div class="my-3">
       {{ $dataTable->table() }}
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="modal-fadein" tabindex="-1" role="dialog" aria-labelledby="modal-fadein" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="block block-rounded shadow-none mb-0">
+        <div class="block-header block-header-default">
+          <h3 class="block-title">
+            {{ trans('Import Data Nilai Mahasiswa') }}
+          </h3>
+          <div class="block-options">
+            <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <form action="{{ route('grades.import', ['student' => $student]) }}" method="POST" enctype="multipart/form-data" onsubmit="return disableSubmitButton()">
+          @csrf
+          <div class="block-content fs-sm">
+
+            <div class="mb-4">
+              <label class="form-label" for="file">{{ trans('Pilih File Import') }}</label>
+              <input class="form-control @error('file') is-invalid @enderror" type="file" accept=".xls,.xlsx" id="file" name="file">
+              @error('file')
+              <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
+            </div>
+
+          </div>
+          <div class="block-content block-content-full block-content-sm text-end border-top">
+            <button type="button" class="btn btn-alt-secondary" data-bs-dismiss="modal">
+              {{ trans('Tutup') }}
+            </button>
+            <button type="submit" class="btn btn-alt-primary" data-bs-dismiss="modal" id="submit-button">
+              {{ trans('Import Nilai Mahasiswa') }}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>

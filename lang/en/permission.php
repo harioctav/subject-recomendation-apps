@@ -95,7 +95,7 @@ return [
     'show' => 'Menampilkan Detail Nilai',
     'edit' => 'Buka formulir ubah Nilai',
     'update' => 'Simpan perubahan data Nilai',
-    'import' => 'Import data Nilai dari excel',
+    'import' => 'Import data Nilai dari PDF',
     'export' => 'Cetak Transkrip Nilai ke format PDF',
     'destroy' => 'Hapus data Nilai',
   ],

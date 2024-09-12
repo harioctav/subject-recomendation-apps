@@ -31,7 +31,9 @@ class GradeDataTable extends DataTable
       'student',
       'subject' => function ($query) {
         $query->with('majors');
-      }
+      },
+      // Pastikan kita mengambil semua kolom yang diperlukan dari tabel recommendations
+      'recommendations'
     ]);
 
     return (new EloquentDataTable($query))
@@ -47,10 +49,16 @@ class GradeDataTable extends DataTable
           $query->where('name', 'LIKE', "%{$keyword}%");
         });
       })
-      ->addColumn('action', 'evaluations.grades.option')
-      ->rawColumns([
-        'action',
-      ]);
+      ->addColumn('action', function ($row) {
+        // Periksa apakah catatan ada dan sama dengan "Perlu Perbaikan"
+        // $hasNote = optional($row->recommendations)->note;
+
+        return view('evaluations.grades.option', [
+          'uuid' => $row->uuid,
+          'model' => $row,
+        ]);
+      })
+      ->rawColumns(['action']);
   }
 
   /**

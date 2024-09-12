@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Grade extends Model
 {
@@ -54,6 +55,12 @@ class Grade extends Model
   public function student(): BelongsTo
   {
     return $this->belongsTo(Student::class);
+  }
+
+  public function recommendations()
+  {
+    return $this->hasOne(Recommendation::class, 'student_id', 'student_id')
+      ->where('subject_id', $this->subject_id);
   }
 
   // Method untuk mendapatkan semester dari tabel pivot

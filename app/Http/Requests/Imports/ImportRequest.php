@@ -48,7 +48,7 @@ class ImportRequest extends FormRequest
   public function attributes(): array
   {
     return [
-      'file' => 'File Excel',
+      'file' => 'File Import',
     ];
   }
 }

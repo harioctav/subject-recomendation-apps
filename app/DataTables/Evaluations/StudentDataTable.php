@@ -118,7 +118,7 @@ class StudentDataTable extends DataTable
       Column::make('status')
         ->title(trans('Status'))
         ->addClass('text-center'),
-      request()->routeIs('recommendations.*') ? $recommendationsColumn : $gradesColumn,
+      // request()->routeIs('recommendations.*') ? $recommendationsColumn : $gradesColumn,
       Column::computed('action')
         ->title(trans('Opsi'))
         ->exportable(false)

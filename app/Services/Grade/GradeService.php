@@ -19,5 +19,6 @@ interface GradeService extends BaseService
   public function handleStoreData(Request $request);
   public function handleUpdateData(Request $request, int $id);
   public function handleExportData(Student $student);
+  public function handleImportData(Student $student, Request $request);
   public function handleDestroyData(int $id);
 }

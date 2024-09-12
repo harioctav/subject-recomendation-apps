@@ -115,7 +115,7 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
           ],
         )->first();
 
-        if (!$isRecommendations->exists()):
+        if ($isRecommendations == null):
           // Store recommendations
           $this->mainRepository->create([
             'uuid' => Str::uuid(),
