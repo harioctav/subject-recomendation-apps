@@ -77,6 +77,24 @@
       </div>
     </div>
 
+    @if ($message = Session::get('flashError'))
+    <div class="row mt-4">
+      <div class="col-md-12">
+        <div class="alert alert-warning d-flex align-items-center alert-dismissible" role="alert">
+          <div class="flex-shrink-0">
+            <i class="fa fa-fw fa-exclamation"></i>
+          </div>
+          <div class="flex-grow-1 ms-3">
+            <p class="mb-0">
+              {!! $message !!}
+            </p>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+    </div>
+    @endif
+
     <div class="my-3">
       {{ $dataTable->table() }}
     </div>
