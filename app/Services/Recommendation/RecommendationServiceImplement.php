@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use App\Repositories\Grade\GradeRepository;
 use App\Repositories\Major\MajorRepository;
 use App\Helpers\Enums\RecommendationNoteType;
+use App\Helpers\Helper;
 use App\Models\Grade;
 use App\Models\Subject;
 use App\Repositories\Student\StudentRepository;
@@ -88,8 +89,6 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
       // Fetch request
       $payload = $request->validated();
 
-      // dd($payload);
-
       DB::beginTransaction();
 
       // Fetch student and its major
@@ -98,6 +97,9 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
 
       // cek apakah nilainya adalah "E"
       $isGradeE = $this->getSubjectsWithEGrade($student->id, $payload['courses'])->exists();
+
+      // Array untuk menyimpan mata kuliah yang ditambahkan
+      $addedSubjects = [];
 
       // Store to database
       foreach ($payload['courses'] as $subject_id) :
@@ -117,7 +119,7 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
 
         if ($isRecommendations == null):
           // Store recommendations
-          $this->mainRepository->create([
+          $recommendation = $this->mainRepository->create([
             'uuid' => Str::uuid(),
             'student_id' => $student->id,
             'subject_id' => (int) $subject_id,
@@ -125,14 +127,50 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
             'exam_period' => $payload['exam_period'],
             'note' => RecommendationNoteType::FIRST->value,
           ]);
+
+          // Tambahkan mata kuliah ke array
+          $subject = $this->subjectRepository->findOrFail($subject_id);
+          $addedSubjects[] = [
+            'id' => $subject_id,
+            'name' => $subject->name,
+            'semester' => $semester,
+            'note' => RecommendationNoteType::FIRST->value,
+          ];
         else :
           if ($isGradeE):
             $this->mainRepository->update($isRecommendations->id, [
               'note' => RecommendationNoteType::REPAIR->value,
             ]);
+
+            // Tambahkan mata kuliah ke array
+            $subject = $this->subjectRepository->findOrFail($subject_id);
+            $addedSubjects[] = [
+              'id' => $subject_id,
+              'name' => $subject->name,
+              'semester' => $semester,
+              'note' => RecommendationNoteType::REPAIR->value,
+            ];
           endif;
         endif;
       endforeach;
+
+      // Activity Log
+      Helper::log(
+        trans('activity.recommendations.create', [
+          'student' => $student->name,
+          'recommendation' => implode(', ', array_column($addedSubjects, 'name')),
+        ]),
+        auth()->id(),
+        'recommendation_activity_store',
+        [
+          'student' => [
+            'id' => $student->id,
+            'name' => $student->name,
+          ],
+          'subjects' => $addedSubjects,
+          'exam_period' => $payload['exam_period'],
+        ]
+      );
 
       DB::commit();
     } catch (\Exception $e) {
@@ -210,6 +248,20 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
     try {
       // get recomend data
       $recommendation = $this->mainRepository->findOrFail($id);
+      $subject = $this->subjectRepository->findOrFail($recommendation->subject_id);
+
+      // Activity Log
+      Helper::log(
+        trans('activity.recommendations.destroy', [
+          'recommendation' => $subject->name
+        ]),
+        auth()->id(),
+        'recommendation_activity_destroy',
+        [
+          'data' => $recommendation
+        ]
+      );
+
       $recommendation->delete();
       return response()->json([
         'message' => trans('session.delete'),

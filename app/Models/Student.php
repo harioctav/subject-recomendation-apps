@@ -151,6 +151,30 @@ class Student extends Model
     );
   }
 
+  // Accessor default, tidak diubah (jika diperlukan tetap dalam format GANJIL/GENAP)
+  public function getInitialRegistrationPeriodAttribute($value)
+  {
+    return $value; // Tetap mempertahankan format asli
+  }
+
+  // Accessor custom untuk format alternatif (XXXX.1/2)
+  public function getFormattedRegistrationPeriodAttribute()
+  {
+    // Mendapatkan nilai asli dari initial_registration_period
+    $value = $this->attributes['initial_registration_period'];
+
+    // Pisahkan tahun dan periode (GANJIL/GENAP)
+    $parts = explode(' ', $value);
+    $year = $parts[0]; // Mengambil tahun, misalnya XXXX
+    $period = $parts[1]; // Mengambil periode, misalnya GANJIL atau GENAP
+
+    // Mengganti periode dari GANJIL/GENAP menjadi 1/2
+    $periodNumber = ($period == 'GANJIL') ? '1' : '2';
+
+    // Format menjadi XXXX.1/2
+    return "{$year}.{$periodNumber}";
+  }
+
   public function getCurrentSemester()
   {
     $totalCredits = $this->subjects()->sum('course_credit');

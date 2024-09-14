@@ -173,7 +173,17 @@ class StudentServiceImplement extends Service implements StudentService
       // Menghilangkan province, regency, district, dan post_code menggunakan array_except()
       $create = Arr::except($payload, ['province', 'regency', 'district', 'village', 'post_code']);
 
-      $this->mainRepository->create($create);
+      $student = $this->mainRepository->create($create);
+
+      // Activity Log
+      Helper::log(
+        trans('activity.students.create', ['student' => $student->name]),
+        me()->id,
+        'student_activity_store',
+        [
+          'data' => $student
+        ]
+      );
 
       DB::commit();
     } catch (\Exception $e) {
@@ -204,7 +214,20 @@ class StudentServiceImplement extends Service implements StudentService
       // Menghilangkan province, regency, district, dan post_code menggunakan array_except()
       $update = Arr::except($payload, ['province', 'regency', 'district', 'village', 'post_code']);
 
-      $this->mainRepository->update($id, $update);
+      // update database
+      $student->update($update);
+
+      // Activity Log
+      Helper::log(
+        trans('activity.students.edit', [
+          'student' => $student->name
+        ]),
+        me()->id,
+        'student_activity_update',
+        [
+          'data' => $student
+        ]
+      );
 
       DB::commit();
     } catch (\Exception $e) {
@@ -224,6 +247,19 @@ class StudentServiceImplement extends Service implements StudentService
 
       // Handle delete
       $student = $this->mainRepository->findOrFail($id);
+
+      // Activity Log
+      Helper::log(
+        trans('activity.students.destroy', [
+          'student' => $student->name
+        ]),
+        me()->id,
+        'student_activity_destroy',
+        [
+          'data' => $student
+        ]
+      );
+
       $student->delete();
 
       DB::commit();
@@ -237,6 +273,18 @@ class StudentServiceImplement extends Service implements StudentService
   public function handleRestoreData($id)
   {
     try {
+      $student = $this->mainRepository->getTrashed($id);
+      // Activity Log
+      Helper::log(
+        trans('activity.students.restore', [
+          'student' => $student->name
+        ]),
+        me()->id,
+        'student_activity_restore',
+        [
+          'data' => $student
+        ]
+      );
       return $this->mainRepository->handleRestoreData($id);
     } catch (\Exception $e) {
       Log::info($e->getMessage());
@@ -251,6 +299,18 @@ class StudentServiceImplement extends Service implements StudentService
 
       // Find Student
       $student = $this->mainRepository->getTrashed($id);
+
+      // Activity Log
+      Helper::log(
+        trans('activity.students.delete', [
+          'student' => $student->name
+        ]),
+        me()->id,
+        'student_activity_delete',
+        [
+          'data' => $student
+        ]
+      );
 
       if ($student->avatar) :
         Storage::delete($student->avatar);

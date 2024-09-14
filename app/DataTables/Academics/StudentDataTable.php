@@ -38,9 +38,9 @@ class StudentDataTable extends DataTable
 
     return (new EloquentDataTable($query))
       ->addIndexColumn()
-      ->editColumn('major_id', fn ($row) => $row->major->name)
-      ->editColumn('email', fn ($row) => $row->email ?? "--")
-      ->editColumn('status', fn ($row) => $row->statusLabel)
+      ->editColumn('major_id', fn($row) => $row->major->name)
+      ->editColumn('email', fn($row) => $row->email ?? "--")
+      ->editColumn('status', fn($row) => $row->statusLabel)
       ->filterColumn('major_id', function ($query, $keyword) {
         $query->whereHas('major', function ($query) use ($keyword) {
           $query->where('name', 'LIKE', "%{$keyword}%");
@@ -58,7 +58,7 @@ class StudentDataTable extends DataTable
    */
   public function query(Student $model): QueryBuilder
   {
-    return $model->newQuery();
+    return $model->newQuery()->orderBy('name', 'asc')->latest();
   }
 
   /**

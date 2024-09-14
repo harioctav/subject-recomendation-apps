@@ -11,6 +11,7 @@ use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Academics\MajorSubjectController;
 use App\Http\Controllers\Evaluations\GradeController;
 use App\Http\Controllers\Evaluations\RecommendationController;
+use App\Http\Controllers\Settings\ActivityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +36,9 @@ Route::middleware([
   'auth',
   'permission',
 ])->group(function () {
+  // Activities
+  Route::resource('activities', ActivityController::class)->only('index');
+
   // Settings Page
   Route::prefix('settings')->group(function () {
     // Role management.

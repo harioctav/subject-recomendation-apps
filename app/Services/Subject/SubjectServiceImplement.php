@@ -2,6 +2,7 @@
 
 namespace App\Services\Subject;
 
+use App\Helpers\Helper;
 use InvalidArgumentException;
 use App\Imports\SubjectImport;
 use Illuminate\Support\Facades\DB;
@@ -76,7 +77,15 @@ class SubjectServiceImplement extends Service implements SubjectService
       endif;
 
       // Save data to database
-      $this->mainRepository->create($payload);
+      $subject = $this->mainRepository->create($payload);
+
+      // Activity Log
+      Helper::log(
+        trans('activity.subjects.create', ['subject' => $subject->name]),
+        me()->id,
+        'subject_activity_store',
+        ['data' => $subject]
+      );
 
       DB::commit();
     } catch (\Exception $e) {
@@ -108,7 +117,15 @@ class SubjectServiceImplement extends Service implements SubjectService
       $subject = $this->mainRepository->findOrFail($id);
 
       // Update data in database
-      $this->mainRepository->update($subject->id, $payload);
+      $subject->update($payload);
+
+      // Activity Log
+      Helper::log(
+        trans('activity.subjects.edit', ['subject' => $subject->name]),
+        me()->id,
+        'subject_activity_update',
+        ['data' => $subject]
+      );
 
       DB::commit();
     } catch (\Exception $e) {
@@ -132,6 +149,11 @@ class SubjectServiceImplement extends Service implements SubjectService
 
       // Save data to database
       Excel::import(new SubjectImport, $payload['file']);
+      Helper::log(
+        trans('activity.subjects.import'),
+        me()->id,
+        'subject_activity_import'
+      );
 
       DB::commit();
     } catch (\Exception $e) {

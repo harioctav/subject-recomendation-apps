@@ -1,32 +1,20 @@
 <?php
 
-namespace App\DataTables\Academics;
+namespace App\DataTables\Settings;
 
-use App\Models\Major;
-use App\Helpers\Helper;
+use App\Models\Activity;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Yajra\DataTables\EloquentDataTable;
+use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
-use App\Services\Major\MajorService;
-use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
-use Yajra\DataTables\Html\Builder as HtmlBuilder;
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
-class MajorDataTable extends DataTable
+class ActivityDataTable extends DataTable
 {
-  /**
-   * Create a new datatables instance.
-   *
-   * @return void
-   */
-  public function __construct(
-    protected MajorService $majorService,
-  ) {
-    // 
-  }
-
   /**
    * Build the DataTable class.
    *
@@ -36,19 +24,21 @@ class MajorDataTable extends DataTable
   {
     return (new EloquentDataTable($query))
       ->addIndexColumn()
-      ->editColumn('total_course_credit', fn($row) => $row->total_course_credit ?: '--')
-      ->addColumn('action', 'academics.majors.action')
-      ->rawColumns([
-        'action',
-      ]);
+      ->addColumn('causer', function ($activity) {
+        $causer = $activity->causer;
+        return $causer instanceof User ? $causer->name : 'System';
+      })
+      ->editColumn('created_at', function ($activity) {
+        return $activity->created_at->format('d M Y H:i:s');
+      });
   }
 
   /**
    * Get the query source of dataTable.
    */
-  public function query(Major $model): QueryBuilder
+  public function query(Activity $model): QueryBuilder
   {
-    return $this->majorService->getQuery()->orderBy('name', 'asc')->latest();
+    return $model->newQuery()->with('causer')->latest();
   }
 
   /**
@@ -57,7 +47,7 @@ class MajorDataTable extends DataTable
   public function html(): HtmlBuilder
   {
     return $this->builder()
-      ->setTableId('major-table')
+      ->setTableId('activity-table')
       ->columns($this->getColumns())
       ->minifiedAjax()
       //->dom('Bfrtip')
@@ -68,7 +58,6 @@ class MajorDataTable extends DataTable
         'table-hover',
         'table-vcenter',
       ])
-      ->orderBy(1)
       ->selectStyleSingle()
       ->processing(true)
       ->retrieve(true)
@@ -76,8 +65,7 @@ class MajorDataTable extends DataTable
       ->autoWidth(false)
       ->pageLength(5)
       ->responsive(true)
-      ->lengthMenu([5, 10, 20])
-      ->orderBy(1);
+      ->lengthMenu([5, 10, 20]);
   }
 
   /**
@@ -85,12 +73,6 @@ class MajorDataTable extends DataTable
    */
   public function getColumns(): array
   {
-    // Check Visibility of Action Row
-    $visibility = Helper::checkPermissions([
-      'majors.edit',
-      'majors.destroy',
-    ]);
-
     return [
       Column::make('DT_RowIndex')
         ->title(trans('#'))
@@ -98,21 +80,14 @@ class MajorDataTable extends DataTable
         ->searchable(false)
         ->width('5%')
         ->addClass('text-center'),
-      Column::make('code')
-        ->title(trans('Kode'))
+      Column::make('log_name')
+        ->title('Aktivitas')
         ->addClass('text-center'),
-      Column::make('name')
-        ->title(trans('Nama Jurusan'))
+      Column::make('causer')
+        ->title('Pengguna')
         ->addClass('text-center'),
-      Column::make('degree')
-        ->title(trans('Tingkat atau Jenjang'))
-        ->addClass('text-center'),
-      Column::computed('action')
-        ->title(trans('Opsi'))
-        ->exportable(false)
-        ->printable(false)
-        ->visible($visibility)
-        ->width('10%')
+      Column::make('created_at')
+        ->title('Waktu')
         ->addClass('text-center'),
     ];
   }
@@ -122,6 +97,6 @@ class MajorDataTable extends DataTable
    */
   protected function filename(): string
   {
-    return 'Major_' . date('YmdHis');
+    return 'Activity_' . date('YmdHis');
   }
 }

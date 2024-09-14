@@ -21,6 +21,7 @@
         "phpoffice/phpword": "^1.3",
         "realrashid/sweet-alert": "^7.2",
         "smalot/pdfparser": "^2.11",
+        "spatie/laravel-activitylog": "^4.8",
         "spatie/laravel-permission": "^6.9",
         "spatie/pdf-to-text": "^1.53",
         "yajra/laravel-datatables": "^10.1",

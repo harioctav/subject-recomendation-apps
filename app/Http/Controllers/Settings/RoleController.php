@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Settings;
 
 use App\DataTables\Settings\RoleDataTable;
+use App\Helpers\Helper;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Services\Role\RoleService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\RoleRequest;
 use App\Services\PermissionCategory\PermissionCategoryService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use InvalidArgumentException;
 
 class RoleController extends Controller
 {
@@ -88,9 +92,28 @@ class RoleController extends Controller
    */
   public function destroy(Role $role)
   {
-    $this->roleService->delete($role->id);
-    return response()->json([
-      'message' => trans('session.delete'),
-    ], 200);
+    try {
+      DB::beginTransaction();
+
+      // Activity Log
+      Helper::log(
+        trans('activity.roles.destroy', ['role' => $role->name]),
+        me()->id,
+        'role_activity_destroy',
+        [
+          'data' => $role
+        ]
+      );
+
+      $this->roleService->delete($role->id);
+      DB::commit();
+      return response()->json([
+        'message' => trans('session.delete'),
+      ], 200);
+    } catch (\Exception $e) {
+      DB::rollBack();
+      Log::info($e->getMessage());
+      throw new InvalidArgumentException(trans('session.log.error'));
+    }
   }
 }

@@ -12,7 +12,10 @@ use App\Helpers\Enums\StatusSubjectType;
 use App\Services\Subject\SubjectService;
 use App\Http\Requests\Imports\ImportRequest;
 use App\DataTables\Academics\SubjectDataTable;
+use App\Helpers\Helper;
 use App\Http\Requests\Academics\SubjectRequest;
+use Illuminate\Support\Facades\Log;
+use InvalidArgumentException;
 
 class SubjectController extends Controller
 {
@@ -111,10 +114,25 @@ class SubjectController extends Controller
    */
   public function destroy(Subject $subject)
   {
-    $this->subjectService->delete($subject->id);
-    return response()->json([
-      'message' => trans('session.delete'),
-    ]);
+    try {
+      // Activity Log
+      Helper::log(
+        trans('activity.subjects.destroy', ['subject' => $subject->name]),
+        me()->id,
+        'subject_activity_destroy',
+        [
+          'data' => $subject
+        ]
+      );
+
+      $this->subjectService->delete($subject->id);
+      return response()->json([
+        'message' => trans('session.delete'),
+      ]);
+    } catch (\Exception $e) {
+      Log::info($e->getMessage());
+      throw new InvalidArgumentException(trans('session.log.error'));
+    }
   }
 
   /**

@@ -33,7 +33,12 @@ class MajorSubjectController extends Controller
    */
   public function create(Major $major)
   {
-    $subjects = $this->subjectService->getQuery()->get();
+    // Ambil semua subject yang belum ditambahkan ke major tersebut
+    $subjects = Subject::whereNotIn('id', function ($query) use ($major) {
+      $query->select('subject_id')
+        ->from('major_subject')
+        ->where('major_id', $major->id);
+    })->get();
 
     $semesters = $this->cacheData('subject_semesters', function () {
       return SemesterLevelType::toArray();

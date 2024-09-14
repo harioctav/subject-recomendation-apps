@@ -98,7 +98,7 @@ class UserController extends Controller
   {
     $this->userService->handleUpdateData($request, $user->id);
 
-    if (me()->isRoleName !== RoleType::ADMINISTRATOR->value) {
+    if ($user->id != me()->id) {
       return redirect(route('users.show', me()->uuid))->withSuccess(trans('session.update'));
     }
 

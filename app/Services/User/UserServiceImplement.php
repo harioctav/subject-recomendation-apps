@@ -98,6 +98,16 @@ class UserServiceImplement extends Service implements UserService
       // Give User Role
       $user->assignRole($role->name);
 
+      // Activity Log
+      Helper::log(
+        trans('activity.users.create', ['user' => $user->name]),
+        me()->id,
+        'user_activity_store',
+        [
+          'data' => $user
+        ]
+      );
+
       DB::commit();
     } catch (\Exception $e) {
       DB::rollBack();
@@ -133,7 +143,17 @@ class UserServiceImplement extends Service implements UserService
 
       // Ubah data di database
       $payload['avatar'] = $avatar;
-      $this->mainRepository->update($id, $payload);
+      $user->update($payload);
+
+      // Activity Log
+      Helper::log(
+        trans('activity.users.edit', ['user' => $user->name]),
+        me()->id,
+        'user_activity_update',
+        [
+          'data' => $user
+        ]
+      );
 
       DB::commit();
     } catch (\Exception $e) {
@@ -151,21 +171,43 @@ class UserServiceImplement extends Service implements UserService
   {
     try {
       DB::beginTransaction();
+
       // Find User
       $user = $this->findOrFail($id);
+      $oldStatus = $user->status;
 
-      // New Status
-      $newStatus = ($user->status == AccountStatusType::ACTIVE->value) ? AccountStatusType::INACTIVE->value : AccountStatusType::ACTIVE->value;
+      // Determine New Status
+      $newStatus = $oldStatus == AccountStatusType::ACTIVE->value
+        ? AccountStatusType::INACTIVE->value
+        : AccountStatusType::ACTIVE->value;
 
       // Change Status
-      $this->mainRepository->update($id, [
-        'status' => $newStatus,
-      ]);
+      $this->mainRepository->update($id, ['status' => $newStatus]);
+
+      // Convert Status to Human-Readable Format
+      $statusMap = [
+        AccountStatusType::ACTIVE->value => "Active",
+        AccountStatusType::INACTIVE->value => "Inactive"
+      ];
+
+      $oldStatusReadable = $statusMap[$oldStatus] ?? 'Unknown';
+      $newStatusReadable = $statusMap[$newStatus] ?? 'Unknown';
+
+      // Activity Log
+      Helper::log(
+        trans('activity.users.status', ['user' => $user->name]),
+        me()->id,
+        'user_activity_status',
+        [
+          'old' => $oldStatusReadable,
+          'new' => $newStatusReadable,
+        ]
+      );
 
       DB::commit();
     } catch (\Exception $e) {
       DB::rollBack();
-      Log::info($e->getMessage());
+      Log::error($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
     }
   }
@@ -185,6 +227,16 @@ class UserServiceImplement extends Service implements UserService
       if ($user->avatar) :
         Storage::delete($user->avatar);
       endif;
+
+      // Activity
+      Helper::log(
+        trans('activity.users.destroy', ['user' => $user->name]),
+        me()->id,
+        'user_activity_destroy',
+        [
+          'data' => $user,
+        ]
+      );
 
       $this->mainRepository->delete($user->id);
 

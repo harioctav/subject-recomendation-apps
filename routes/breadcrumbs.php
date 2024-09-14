@@ -167,3 +167,8 @@ Breadcrumbs::for('grades.edit', function (BreadcrumbTrail $trail, $grade) {
   ]));
 });
 // grades Breadcrumbs
+
+Breadcrumbs::for('activities.index', function (BreadcrumbTrail $trail) {
+  $trail->parent('home');
+  $trail->push(trans('page.activities.index'), route('activities.index'));
+});

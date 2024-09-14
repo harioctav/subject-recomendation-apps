@@ -146,7 +146,10 @@
           <div class="mb-4">
             <label for="exam_period" class="form-label">{{ trans('Masa Ujian') }}</label>
             <span class="text-danger">*</span>
-            <input type="text" name="exam_period" id="exam_period" value="{{ old('exam_period') }}" class="form-control @error('exam_period') is-invalid @enderror" placeholder="{{ trans('Masukkan Masa Ujian') }}">
+            <input type="text" name="exam_period" id="exam_period" value="{{ old('exam_period', $student->formatted_registration_period ?: '') }}" class="form-control @error('exam_period') is-invalid @enderror" placeholder="{{ trans('Masukkan Masa Ujian') }}">
+            <span class="text-muted">
+              <small><em>{{ __('Ubah masa ujian sesuai waktu saat ini akan menambahkan Rekomendasi.') }}</em></small>
+            </span>
             @error('exam_period')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror

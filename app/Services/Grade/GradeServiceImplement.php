@@ -115,7 +115,20 @@ class GradeServiceImplement extends Service implements GradeService
       $payload['exam_period'] = $recommendation->exam_period;
       $payload['quality'] = $quality;
 
-      $this->mainRepository->create($payload);
+      $grade = $this->mainRepository->create($payload);
+
+      // Activity Log
+      Helper::log(
+        trans('activity.grades.create', [
+          'grade' => $subject->name
+        ]),
+        me()->id,
+        'grade_activity_store',
+        [
+          'subject' => $subject,
+          'data' => $grade,
+        ]
+      );
 
       DB::commit();
     } catch (\Exception $e) {
@@ -140,6 +153,7 @@ class GradeServiceImplement extends Service implements GradeService
 
       // Find Grade Data
       $grade = $this->mainRepository->findOrFail($id);
+      $subject = $this->subjectRepository->findOrFail($grade->subject_id);
 
       // Find Data Recommendation
       $recommendation = $this->recommendationRepository->getWhere(
@@ -166,7 +180,21 @@ class GradeServiceImplement extends Service implements GradeService
       $quality = Helper::generateQuality($payload['grade']);
       $payload['quality'] = $quality;
 
-      $this->mainRepository->update($grade->id, $payload);
+      // $this->mainRepository->update($grade->id, $payload);
+      $grade->update($payload);
+
+      // Activity Log
+      Helper::log(
+        trans('activity.grades.edit', [
+          'grade' => $subject->name
+        ]),
+        me()->id,
+        'grade_activity_update',
+        [
+          'subject' => $subject,
+          'data' => $grade,
+        ]
+      );
 
       DB::commit();
     } catch (\Exception $e) {
@@ -330,6 +358,14 @@ class GradeServiceImplement extends Service implements GradeService
         }
 
       endif;
+
+      // Activity Log
+      Helper::log(
+        trans('activity.grades.import'),
+        me()->id,
+        'grade_activity_import'
+      );
+
       DB::commit();
 
       return redirect(route('grades.show', $student))->withSuccess(trans('session.create'));
@@ -351,6 +387,7 @@ class GradeServiceImplement extends Service implements GradeService
     try {
       // Find Grade Data
       $grade = $this->mainRepository->findOrFail($id);
+      $subject = $this->subjectRepository->findOrFail($grade->subject_id);
 
       // Find Recommendation Data by student & subject id
       $recommendation = $this->recommendationRepository->getWhere(
@@ -365,6 +402,19 @@ class GradeServiceImplement extends Service implements GradeService
           'note' => RecommendationNoteType::FIRST->value
         ]);
       endif;
+
+      // Activity Log
+      Helper::log(
+        trans('activity.grades.destroy', [
+          'grade' => $subject->name
+        ]),
+        me()->id,
+        'grade_activity_destroy',
+        [
+          'subject' => $subject,
+          'data' => $grade,
+        ]
+      );
 
       $grade->delete();
     } catch (\Exception $e) {

@@ -87,6 +87,9 @@ class PermissionSeeder extends Seeder
       'grades.destroy',
       'grades.export',
       'grades.import',
+
+      // Halaman Activity
+      'activities.index',
     ];
 
     $guardName = 'web';
@@ -98,6 +101,7 @@ class PermissionSeeder extends Seeder
       'students' => 5,
       'recommendations' => 6,
       'grades' => 7,
+      'activities' => 8,
     ];
 
     foreach ($permissions as $permission) :

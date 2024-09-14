@@ -99,4 +99,9 @@ return [
     'export' => 'Cetak Transkrip Nilai ke format PDF',
     'destroy' => 'Hapus data Nilai',
   ],
+
+  'activities' => [
+    'name' => 'Management Aktivitas Log',
+    'index' => 'Menampilkan daftar Aktivitas Log',
+  ],
 ];

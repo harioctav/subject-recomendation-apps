@@ -85,4 +85,9 @@ return [
     'show' => 'Detail Nilai',
     'delete' => 'Hapus Nilai',
   ],
+
+  'activities' => [
+    'title' => 'Log Aktivitas',
+    'index' => 'Daftar Log Aktivitas',
+  ],
 ];

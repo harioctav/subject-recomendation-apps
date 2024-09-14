@@ -84,8 +84,6 @@
             </a>
           </li>
 
-
-
           @canany(['majors.index', 'students.index', 'subjects.index'])
           <li class="nav-main-heading">{{ trans('Akademik') }}</li>
           <li class="nav-main-item {{ Request::is('academics*') ? 'open' : '' }}">
@@ -169,6 +167,15 @@
               </li>
               @endcan
             </ul>
+          </li>
+          @endcan
+
+          @can('activities.index')
+          <li class="nav-main-item">
+            <a class="nav-main-link {{ Request::is('activities*') ? 'active' : '' }}" href="{{ route('activities.index') }}">
+              <i class="nav-main-link-icon fa fa-snowboarding"></i>
+              <span class="nav-main-link-name">{{ trans('page.activities.title') }}</span>
+            </a>
           </li>
           @endcan
 

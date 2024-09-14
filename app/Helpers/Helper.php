@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-
+use Spatie\Activitylog\Models\Activity;
 
 class Helper
 {
@@ -138,6 +138,24 @@ class Helper
     $gpa = $totalCredits > 0 ? $totalQualityPoints / $totalCredits : 0;
 
     return number_format($gpa, 2);
+  }
+
+  // Log
+  public static function log(
+    $description,
+    $userId = null,
+    $logName = 'default',
+    $properties = []
+  ) {
+    $userId = $userId ?? auth()->id();
+
+    activity()
+      ->causedBy($userId)
+      ->withProperties($properties)  // Tambahkan properti tambahan seperti perubahan data
+      ->tap(function (Activity $activity) use ($logName) {
+        $activity->log_name = $logName;
+      })
+      ->log($description);
   }
 
   public static function getDataStudent($stduentId)

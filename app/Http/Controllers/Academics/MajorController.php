@@ -87,16 +87,7 @@ class MajorController extends Controller
    */
   public function destroy(Major $major)
   {
-    if ($major->students()->count() > 0) :
-      return response()->json([
-        'message' => trans('session.delete_error')
-      ], 400);
-    endif;
-
-    $this->majorService->delete($major->id);
-    return response()->json([
-      'message' => trans('session.delete'),
-    ]);
+    return $this->majorService->handleDestroyData($major->id);
   }
 
   /**

@@ -2,6 +2,7 @@
 
 namespace App\Services\Major;
 
+use App\Helpers\Helper;
 use Illuminate\Support\Str;
 use App\Imports\MajorImport;
 use InvalidArgumentException;
@@ -10,11 +11,13 @@ use LaravelEasyRepository\Service;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Repositories\Major\MajorRepository;
+use App\Repositories\Subject\SubjectRepository;
 
 class MajorServiceImplement extends Service implements MajorService
 {
   public function __construct(
-    protected MajorRepository $mainRepository
+    protected MajorRepository $mainRepository,
+    protected SubjectRepository $subjectRepository
   ) {
     //
   }
@@ -67,7 +70,17 @@ class MajorServiceImplement extends Service implements MajorService
       $payload = $request->validated();
 
       // Save data to database
-      $this->mainRepository->create($payload);
+      $major = $this->mainRepository->create($payload);
+
+      // Activity Log
+      Helper::log(
+        trans('activity.majors.create', ['major' => $major->name]),
+        me()->id,
+        'major_activity_store',
+        [
+          'data' => $major
+        ]
+      );
 
       DB::commit();
     } catch (\Exception $e) {
@@ -89,7 +102,17 @@ class MajorServiceImplement extends Service implements MajorService
       $major = $this->mainRepository->findOrFail($id);
 
       // Update data in database
-      $this->mainRepository->update($major->id, $payload);
+      $major->update($payload);
+
+      // Activity Log
+      Helper::log(
+        trans('activity.majors.edit', ['major' => $major->name]),
+        me()->id,
+        'major_activity_update',
+        [
+          'data' => $major,
+        ]
+      );
 
       DB::commit();
     } catch (\Exception $e) {
@@ -114,7 +137,52 @@ class MajorServiceImplement extends Service implements MajorService
       // Save data to database
       Excel::import(new MajorImport, $payload['file']);
 
+      Helper::log(
+        trans('activity.majors.import'),
+        me()->id,
+        'major_activity_import'
+      );
+
       DB::commit();
+    } catch (\Exception $e) {
+      DB::rollBack();
+      Log::info($e->getMessage());
+      throw new InvalidArgumentException(trans('session.log.error'));
+    }
+  }
+
+  public function handleDestroyData(int $id)
+  {
+    try {
+      DB::beginTransaction();
+
+      // Find data
+      $major = $this->mainRepository->findOrFail($id);
+
+      if (isset($major->students)) :
+        return response()->json([
+          'message' => trans('session.delete_error')
+        ], 400);
+      endif;
+
+      // Activity Log
+      Helper::log(
+        trans('activity.majors.destroy', ['major' => $major->name]),
+        me()->id,
+        'major_activity_destroy',
+        [
+          'data' => $major,
+        ]
+      );
+
+      $this->mainRepository->delete($major->id);
+
+
+      DB::commit();
+
+      return response()->json([
+        'message' => trans('session.delete'),
+      ]);
     } catch (\Exception $e) {
       DB::rollBack();
       Log::info($e->getMessage());
@@ -131,7 +199,9 @@ class MajorServiceImplement extends Service implements MajorService
       $payload = $request->validated();
 
       $subjectsData = [];
-      foreach ($payload['subjects'] as $subject) :
+      $subjectNames = []; // Array untuk menyimpan nama-nama subject
+      foreach ($payload['subjects'] as $subject) {
+        $subjectModel = $this->subjectRepository->findOrFail($subject);
         $subjectsData[] = [
           'uuid' => Str::uuid(),
           'subject_id' => $subject,
@@ -139,13 +209,37 @@ class MajorServiceImplement extends Service implements MajorService
           'created_at' => now(),
           'updated_at' => now()
         ];
-      endforeach;
+        $subjectNames[$subject] = $subjectModel->name; // Menyimpan nama subject dengan key subject_id
+      }
 
       // Add data to table major_subjects
       $major->subjects()->attach($subjectsData);
 
       // Perbarui total_course_credit
       $major->updateTotalCourseCredit();
+
+      // Activity Log
+      Helper::log(
+        trans('activity.majors.subjects.create', [
+          'major' => $major->name,
+          'subject' => implode(', ', $subjectNames), // Menggunakan nama-nama subject
+        ]),
+        me()->id,
+        'major_subject_activity_store',
+        [
+          'major' => [
+            'id' => $major->id,
+            'name' => $major->name,
+          ],
+          'subjects' => array_map(function ($item) use ($subjectNames) {
+            return [
+              'id' => $item['subject_id'],
+              'name' => $subjectNames[$item['subject_id']] ?? 'Unknown',
+              'semester' => $item['semester'],
+            ];
+          }, $subjectsData),
+        ]
+      );
 
       DB::commit();
     } catch (\Exception $e) {
@@ -159,6 +253,19 @@ class MajorServiceImplement extends Service implements MajorService
   {
     try {
       DB::beginTransaction();
+
+      // activity log
+      Helper::log(
+        trans('activity.majors.subjects.destroy', [
+          'subject' => $subject->name,
+          'major' => $major->name
+        ]),
+        me()->id,
+        'major_subject_activity_destroy',
+        [
+          'data' => $subject
+        ]
+      );
 
       // Hapus relasi dari tabel major_subject
       $deleted = DB::table('major_subject')

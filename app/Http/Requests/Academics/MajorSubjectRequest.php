@@ -26,10 +26,17 @@ class MajorSubjectRequest extends FormRequest
       'subjects.*' => [
         'exists:subjects,id',
         function ($attribute, $value, $fail) {
-          $existingSubject = \App\Models\MajorSubject::where('subject_id', $value)->first();
+          // Dapatkan major_id dari request atau context
+          $major = $this->route('major'); // Asumsi ada 'major' di route
 
+          // Cari subject berdasarkan major_id dan subject_id
+          $existingSubject = \App\Models\MajorSubject::where('major_id', $major->id)
+            ->where('subject_id', $value)
+            ->first();
+
+          // Jika subject sudah ada di jurusan tersebut, berikan pesan error
           if ($existingSubject) {
-            $fail("Matakuliah ini sudah ada di {$existingSubject->semester}.");
+            $fail("Mata kuliah ini sudah ada di semester {$existingSubject->semester} untuk jurusan tersebut.");
           }
         },
       ],

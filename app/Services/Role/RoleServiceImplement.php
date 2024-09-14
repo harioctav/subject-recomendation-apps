@@ -2,6 +2,7 @@
 
 namespace App\Services\Role;
 
+use App\Helpers\Helper;
 use InvalidArgumentException;
 use Illuminate\Support\Facades\DB;
 use LaravelEasyRepository\Service;
@@ -23,11 +24,8 @@ class RoleServiceImplement extends Service implements RoleService
   public function getQuery()
   {
     try {
-      DB::beginTransaction();
       return $this->mainRepository->getQuery();
-      DB::commit();
     } catch (\Exception $e) {
-      DB::rollBack();
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
     }
@@ -45,7 +43,6 @@ class RoleServiceImplement extends Service implements RoleService
     $orderByType = null
   ) {
     try {
-      DB::beginTransaction();
       return $this->mainRepository->getWhere(
         wheres: $wheres,
         columns: $columns,
@@ -53,9 +50,7 @@ class RoleServiceImplement extends Service implements RoleService
         orderBy: $orderBy,
         orderByType: $orderByType
       );
-      DB::commit();
     } catch (\Exception $e) {
-      DB::rollBack();
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('alert.log.error'));
     }
@@ -68,9 +63,7 @@ class RoleServiceImplement extends Service implements RoleService
   public function getRoleByName($name = [])
   {
     try {
-      DB::beginTransaction();
       return $this->mainRepository->getRoleByName($name);
-      DB::commit();
     } catch (\Exception $e) {
       DB::rollBack();
       Log::info($e->getMessage());
@@ -85,11 +78,8 @@ class RoleServiceImplement extends Service implements RoleService
   public function getRoleHasPermissions($id)
   {
     try {
-      DB::beginTransaction();
       return $this->mainRepository->getRoleHasPermissions($id);
-      DB::commit();
     } catch (\Exception $e) {
-      DB::rollBack();
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
     }
@@ -106,6 +96,16 @@ class RoleServiceImplement extends Service implements RoleService
       // Create a new Role & Sync permissions
       $create = $this->mainRepository->create($request->validated());
       $create->syncPermissions($request->permission);
+
+      // create activity
+      Helper::log(
+        trans('activity.roles.create', ['role' => $create->name]),
+        me()->id,
+        "role_activity_store",
+        [
+          'data' => $create->only(['name', 'permissions'])
+        ]
+      );
       DB::commit();
     } catch (\Exception $e) {
       DB::rollBack();
@@ -123,8 +123,17 @@ class RoleServiceImplement extends Service implements RoleService
     try {
       DB::beginTransaction();
       $role = $this->mainRepository->findOrFail($id); // Find a Role
-      $this->mainRepository->update($role->id, $request->validated()); // Update a Existing role
+      $role->update($request->validated());
       $role->syncPermissions($request->permission); // sync with Permissions
+
+      // Activity log
+      Helper::log(
+        trans('activity.roles.edit', ['role' => $role->name]),
+        me()->id,
+        'role_activity_update',
+        ['old' => $role->only(['name', 'permissions'])]
+      );
+
       DB::commit();
     } catch (\Exception $e) {
       DB::rollBack();

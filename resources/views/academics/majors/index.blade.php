@@ -32,7 +32,10 @@
       </a>
       @endcan
       @can('majors.import')
-      <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modal-fadein">{{ trans('Import Data Jurusan') }}</button>
+      <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modal-fadein">
+        <i class="fa fa-file-excel sm me-1"></i>
+        {{ trans('Import Data Program Studi') }}
+      </button>
       @endcan
     </div>
 

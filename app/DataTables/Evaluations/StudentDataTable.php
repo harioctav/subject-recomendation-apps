@@ -54,7 +54,7 @@ class StudentDataTable extends DataTable
    */
   public function query(Student $model): QueryBuilder
   {
-    return $model->newQuery();
+    return $model->newQuery()->orderBy('name', 'asc')->latest();;
   }
 
   /**
