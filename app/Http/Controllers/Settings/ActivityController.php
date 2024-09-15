@@ -18,4 +18,12 @@ class ActivityController extends Controller
       'settings.activities.index'
     );
   }
+
+  /**
+   * Display the specified resource.
+   */
+  public function show(Activity $activity)
+  {
+    return view('settings.activities.show', compact('activity'));
+  }
 }

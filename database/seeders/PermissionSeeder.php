@@ -90,6 +90,7 @@ class PermissionSeeder extends Seeder
 
       // Halaman Activity
       'activities.index',
+      'activities.show',
     ];
 
     $guardName = 'web';

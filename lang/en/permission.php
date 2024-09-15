@@ -103,5 +103,6 @@ return [
   'activities' => [
     'name' => 'Management Aktivitas Log',
     'index' => 'Menampilkan daftar Aktivitas Log',
+    'show' => 'Menampilkan Detail Aktivitas Log',
   ],
 ];

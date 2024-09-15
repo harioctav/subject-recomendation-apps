@@ -21,15 +21,16 @@ class Activity extends SpatieActivity
     'subject' => 'Matakuliah',
     'user' => 'Pengguna',
     'role' => 'Role & Permission',
+    'recommendation' => 'Rekomendasi Matakuliah',
+    'grade' => 'Nilai Matakuliah'
   ];
 
   protected static $actionMap = [
-    'store' => 'Tambah',
-    'update' => 'Ubah',
-    'destroy' => 'Hapus',
+    'store' => 'Menambah',
+    'update' => 'Mengubah',
+    'destroy' => 'Menghapus',
     'restore' => 'Pemulihan',
-    'delete' => 'Hapus Permanen',
-    'create' => 'Tambah',
+    'delete' => 'Menghapus Permanen',
   ];
 
   // Metode untuk mendapatkan titleMap
@@ -42,33 +43,5 @@ class Activity extends SpatieActivity
   public static function getActionMap()
   {
     return self::$actionMap;
-  }
-
-  public function getLogNameAttribute($value)
-  {
-    $parts = explode('_', $value);
-    $action = end($parts);
-    $subject = implode('_', array_slice($parts, 0, -1));
-
-    $actionText = self::$actionMap[$action] ?? Str::title($action);
-    $subjectText = $this->getSubjectText($subject);
-
-    return "{$actionText} Data {$subjectText}";
-  }
-
-  protected function getSubjectText($subject)
-  {
-    foreach (self::$titleMap as $key => $value) {
-      if (Str::startsWith($subject, $key)) {
-        return $value;
-      }
-    }
-
-    return Str::title(str_replace('_', ' ', $subject));
-  }
-
-  public function causer(): MorphTo
-  {
-    return $this->morphTo();
   }
 }

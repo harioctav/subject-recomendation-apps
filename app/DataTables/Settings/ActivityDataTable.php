@@ -2,6 +2,7 @@
 
 namespace App\DataTables\Settings;
 
+use App\Helpers\Helper;
 use App\Models\Activity;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
@@ -30,7 +31,11 @@ class ActivityDataTable extends DataTable
       })
       ->editColumn('created_at', function ($activity) {
         return $activity->created_at->format('d M Y H:i:s');
-      });
+      })
+      ->addColumn('action', 'settings.activities.action')
+      ->rawColumns([
+        'action'
+      ]);
   }
 
   /**
@@ -73,6 +78,11 @@ class ActivityDataTable extends DataTable
    */
   public function getColumns(): array
   {
+    // Check Visibility of Action Row
+    $visibility = Helper::checkPermissions([
+      'activities.show',
+    ]);
+
     return [
       Column::make('DT_RowIndex')
         ->title(trans('#'))
@@ -88,6 +98,13 @@ class ActivityDataTable extends DataTable
         ->addClass('text-center'),
       Column::make('created_at')
         ->title('Waktu')
+        ->addClass('text-center'),
+      Column::computed('action')
+        ->title(trans('Opsi'))
+        ->exportable(false)
+        ->printable(false)
+        ->visible($visibility)
+        ->width('10%')
         ->addClass('text-center'),
     ];
   }

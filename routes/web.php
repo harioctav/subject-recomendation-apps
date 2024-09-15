@@ -37,7 +37,7 @@ Route::middleware([
   'permission',
 ])->group(function () {
   // Activities
-  Route::resource('activities', ActivityController::class)->only('index');
+  Route::resource('activities', ActivityController::class)->only('index', 'show');
 
   // Settings Page
   Route::prefix('settings')->group(function () {

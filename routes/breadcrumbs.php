@@ -172,3 +172,8 @@ Breadcrumbs::for('activities.index', function (BreadcrumbTrail $trail) {
   $trail->parent('home');
   $trail->push(trans('page.activities.index'), route('activities.index'));
 });
+
+Breadcrumbs::for('activities.show', function (BreadcrumbTrail $trail, $activity) {
+  $trail->parent('activities.index');
+  $trail->push(trans('page.activities.show'), route('activities.show', $activity));
+});

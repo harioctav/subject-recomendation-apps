@@ -89,5 +89,6 @@ return [
   'activities' => [
     'title' => 'Log Aktivitas',
     'index' => 'Daftar Log Aktivitas',
+    'show' => 'Detail Log Aktivitas',
   ],
 ];

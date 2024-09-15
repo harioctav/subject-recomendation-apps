@@ -8,11 +8,13 @@ use App\Models\Subject;
 use Illuminate\Http\Request;
 use App\Models\Recommendation;
 use App\Helpers\Enums\GradeType;
+use App\Models\Activity as ActivityModel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Spatie\Activitylog\Models\Activity;
+use Illuminate\Support\Str;
 
 class Helper
 {
@@ -141,6 +143,22 @@ class Helper
   }
 
   // Log
+  // public static function log(
+  //   $description,
+  //   $userId = null,
+  //   $logName = 'default',
+  //   $properties = []
+  // ) {
+  //   $userId = $userId ?? auth()->id();
+
+  //   activity()
+  //     ->causedBy($userId)
+  //     ->withProperties($properties)  // Tambahkan properti tambahan seperti perubahan data
+  //     ->tap(function (Activity $activity) use ($logName) {
+  //       $activity->log_name = $logName;
+  //     })
+  //     ->log($description);
+  // }
   public static function log(
     $description,
     $userId = null,
@@ -149,11 +167,32 @@ class Helper
   ) {
     $userId = $userId ?? auth()->id();
 
+    // Proses log_name menjadi format yang diinginkan
+    $parts = explode('_', strtolower($logName));
+
+    // Ambil action (kata terakhir dari logName)
+    $action = end($parts);
+
+    // Ambil subject (kata pertama dari logName, abaikan 'activity')
+    $subject = $parts[0]; // Ambil hanya bagian pertama untuk subject
+
+    // Mapping action dan subject ke format yang diinginkan
+    $actionMap = ActivityModel::getActionMap(); // Panggil Action Map
+    $titleMap = ActivityModel::getTitleMap(); // Panggil Title Map
+
+    // Cari action dan subject di dalam map
+    $actionText = $actionMap[$action] ?? Str::title($action);
+    $subjectText = $titleMap[$subject] ?? Str::title(str_replace('_', ' ', $subject));
+
+    // Gabungkan action dan subject menjadi log_name yang telah diparsing
+    $parsedLogName = "{$actionText} Data {$subjectText}";
+
+    // Simpan activity log dengan log_name yang sudah diparsing
     activity()
       ->causedBy($userId)
       ->withProperties($properties)  // Tambahkan properti tambahan seperti perubahan data
-      ->tap(function (Activity $activity) use ($logName) {
-        $activity->log_name = $logName;
+      ->tap(function (Activity $activity) use ($parsedLogName) {
+        $activity->log_name = $parsedLogName;
       })
       ->log($description);
   }
