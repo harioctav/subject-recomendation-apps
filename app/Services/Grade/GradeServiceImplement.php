@@ -13,16 +13,11 @@ use Illuminate\Support\Facades\Log;
 use App\Repositories\Grade\GradeRepository;
 use App\Helpers\Enums\RecommendationNoteType;
 use App\Imports\Grades\GradeImport;
-use App\Models\Subject;
 use App\Repositories\Major\MajorRepository;
 use App\Repositories\Student\StudentRepository;
 use App\Repositories\Subject\SubjectRepository;
 use App\Repositories\Recommendation\RecommendationRepository;
-use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
-use PhpOffice\PhpWord\Element\TextRun;
-use PhpOffice\PhpWord\IOFactory;
-use Smalot\PdfParser\Parser;
 use Illuminate\Support\Str;
 
 class GradeServiceImplement extends Service implements GradeService

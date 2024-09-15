@@ -26,19 +26,19 @@
   <div class="block-content">
 
     <div class="row items-push">
-      <div class="col-lg-4">
-        <a class="block block-rounded block-link-shadow bg-info" href="javascript:void(0)">
-          <div class="block-content block-content-full d-flex justify-content-between align-items-center">
-            <div>
-              <img class="img-avatar" src="{{ $student->getAvatar() }}" alt="Foto Mahasiswa">
-            </div>
-            <div class="text-end">
-              <div class="fw-semibold text-white mb-1">{{ $student->name }}</div>
-              <div class="fs-sm text-white-75">{{ $student->nim }}</div>
-            </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="block block-rounded text-center my-0">
+          <div class="block-content block-content-full bg-gd-dusk">
+            <img class="img-avatar img-avatar-thumb" src="{{ $student->getAvatar() }}" alt="{{ trans('Foto Avatar') }}">
           </div>
-        </a>
-
+          <div class="block-content block-content-full">
+            <div class="fw-semibold mb-1">{{ $student->name }}</div>
+            <div class="fs-sm text-muted">{{ $student->nim }}</div>
+          </div>
+          <div class="block-content block-content-full block-content-sm bg-body-light mb-3">
+            <span class="fw-semibold fs-sm text-elegance">{{ $student->email ?: '--' }}</span>
+          </div>
+        </div>
         <ul class="list-group push">
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Program Studi') }}
@@ -49,9 +49,13 @@
             <span class="fw-semibold text-end">{{ $student->status }}</span>
           </li>
         </ul>
-
       </div>
-      <div class="col-lg-6 offset-lg-1">
+      <div class="col-md-6 col-xl-8">
+        <div class="py-1 my-0 mb-1">
+          <p class="fs-sm text-uppercase text-primary fw-bold mb-1">
+            {{ trans('Informasi Akademik') }}
+          </p>
+        </div>
         <ul class="list-group push">
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Total SKS WAJIB Ditempuh') }}
@@ -75,34 +79,28 @@
 
     <div class="row">
       <div class="col-md-auto">
-
-        @can('grades.show')
-        <div class="mb-2">
+        <div class="mb-3">
+          @can('grades.show')
           <a href="{{ route('grades.show', $student) }}" class="btn btn-sm btn-primary">
             <i class="fa fa-pencil-alt fa-sm me-1"></i>
             {{ trans('Input Data Nilai Matakuliah') }}
           </a>
-        </div>
-        @endcan
+          @endcan
 
-        @can('recommendations.create')
-        <div class="mb-2">
+          @can('recommendations.create')
           <a href="{{ route('recommendations.create', $student) }}" class="btn btn-sm btn-secondary">
             <i class="fa fa-plus fa-sm me-1"></i>
             {{ trans('Input Rekomendasi') }}
           </a>
-        </div>
-        @endcan
+          @endcan
 
-        @can('recommendations.export')
-        <div class="mb-2">
+          @can('recommendations.export')
           <a href="{{ route('recommendations.export', $student) }}" target="_blank" class="btn btn-sm btn-success">
             <i class="fa fa-print fa-sm me-1"></i>
             {{ trans('Cetak Hasil Rekomendasi') }}
           </a>
+          @endcan
         </div>
-        @endcan
-
       </div>
     </div>
 

@@ -3,7 +3,7 @@
 <a href="{{ route('students.edit', $uuid) }}" class="text-warning me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ trans('page.students.edit') }}"><i class="fa fa-sm fa-pencil"></i></a>
 @endcan
 @can('students.show')
-<a href="{{ route('students.show', $uuid) }}" class="text-modern me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ trans('page.students.show') }}"><i class="fa fa-sm fa-eye"></i></a>
+<a href="{{ route('students.show', $uuid) }}" class="text-modern me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ trans('page.students.show') }}"><i class="fa fa-sm fa-eye"></i></a>
 @endcan
 @if(!$model->recommendations()->exists())
 @can('students.destroy')

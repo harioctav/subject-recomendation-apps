@@ -274,8 +274,6 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
   /**
    * Get the recommended subjects for a student.
    *
-   * @param int $studentId The ID of the student.
-   * @return \Illuminate\Database\Eloquent\Collection The recommended subjects for the student.
    */
   private function getRecommendedSubjectsForStudent($studentId)
   {
@@ -288,8 +286,6 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
   /**
    * Get the subjects where the student has an 'E' grade.
    *
-   * @param int $studentId The ID of the student.
-   * @param array $subjectIds The IDs of the subjects to check.
    */
   private function getSubjectsWithEGrade($studentId, $subjectIds)
   {
@@ -301,8 +297,6 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
   /**
    * Get the subjects for the given major.
    *
-   * @param int $majorId The ID of the major.
-   * @return \Illuminate\Database\Eloquent\Collection The subjects for the given major.
    */
   private function getSubjectsForMajor($majorId)
   {
@@ -316,9 +310,6 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
   /**
    * Groups the given subjects by the semester they are taken in.
    *
-   * @param \Illuminate\Database\Eloquent\Collection $subjects The subjects to group.
-   * @param int $majorId The ID of the major.
-   * @return \Illuminate\Support\Collection The subjects grouped by semester.
    */
   private function groupSubjectsBySemester($subjects, $majorId)
   {
@@ -330,13 +321,6 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
   /**
    * Formats the subjects by semester for the given student and recommendation criteria.
    *
-   * @param \Illuminate\Support\Collection $subjectsBySemester The subjects grouped by semester.
-   * @param \App\Models\Student $student The student to format the subjects for.
-   * @param \Illuminate\Support\Collection $recommendedSubjects The recommended subjects for the student.
-   * @param \Illuminate\Support\Collection $subjectsWithEGrade The subjects where the student has an 'E' grade.
-   * @param string|null $sksFilter The SKS (credit) filter to apply.
-   * @param string|null $gradeFilter The grade filter to apply.
-   * @return array The formatted subjects by semester.
    */
   private function formatSubjectsBySemester($subjectsBySemester, $student, $recommendedSubjects, $subjectsWithEGrade, $sksFilter, $gradeFilter)
   {
@@ -363,12 +347,6 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
   /**
    * Filters the given subjects based on the specified criteria.
    *
-   * @param \Illuminate\Database\Eloquent\Collection $semesterSubjects The subjects to filter.
-   * @param \App\Models\Student $student The student to filter the subjects for.
-   * @param \Illuminate\Support\Collection $recommendedSubjects The recommended subjects for the student.
-   * @param \Illuminate\Support\Collection $subjectsWithEGrade The subjects where the student has an 'E' grade.
-   * @param string|null $gradeFilter The grade filter to apply.
-   * @return \Illuminate\Database\Eloquent\Collection The filtered subjects.
    */
   private function filterSubjects($semesterSubjects, $student, $recommendedSubjects, $subjectsWithEGrade, $gradeFilter)
   {
@@ -433,8 +411,6 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
   /**
    * Gets the name of the specified semester.
    *
-   * @param int $semester The semester number.
-   * @return string The name of the semester.
    */
   protected function getSemesterName($semester)
   {
