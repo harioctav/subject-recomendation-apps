@@ -73,27 +73,37 @@
       </div>
     </div>
 
-    <div class="mb-2">
-      @can('grades.show')
-      <a href="{{ route('grades.show', $student) }}" class="btn btn-sm btn-primary">
-        <i class="fa fa-pencil-alt fa-sm me-1"></i>
-        {{ trans('Input Nilai') }}
-      </a>
-      @endcan
+    <div class="row">
+      <div class="col-md-auto">
 
-      @can('recommendations.create')
-      <a href="{{ route('recommendations.create', $student) }}" class="btn btn-sm btn-secondary">
-        <i class="fa fa-plus fa-sm me-1"></i>
-        {{ trans('Input Rekomendasi') }}
-      </a>
-      @endcan
+        @can('grades.show')
+        <div class="mb-2">
+          <a href="{{ route('grades.show', $student) }}" class="btn btn-sm btn-primary">
+            <i class="fa fa-pencil-alt fa-sm me-1"></i>
+            {{ trans('Input Data Nilai Matakuliah') }}
+          </a>
+        </div>
+        @endcan
 
-      @can('recommendations.export')
-      <a href="{{ route('recommendations.export', $student) }}" target="_blank" class="btn btn-sm btn-success">
-        <i class="fa fa-print fa-sm me-1"></i>
-        {{ trans('Cetak Hasil Rekomendasi') }}
-      </a>
-      @endcan
+        @can('recommendations.create')
+        <div class="mb-2">
+          <a href="{{ route('recommendations.create', $student) }}" class="btn btn-sm btn-secondary">
+            <i class="fa fa-plus fa-sm me-1"></i>
+            {{ trans('Input Rekomendasi') }}
+          </a>
+        </div>
+        @endcan
+
+        @can('recommendations.export')
+        <div class="mb-2">
+          <a href="{{ route('recommendations.export', $student) }}" target="_blank" class="btn btn-sm btn-success">
+            <i class="fa fa-print fa-sm me-1"></i>
+            {{ trans('Cetak Hasil Rekomendasi') }}
+          </a>
+        </div>
+        @endcan
+
+      </div>
     </div>
 
     <div class="my-3">

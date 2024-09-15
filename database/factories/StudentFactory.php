@@ -25,13 +25,15 @@ class StudentFactory extends Factory
    */
   public function definition(): array
   {
+    $fake = fake('id_ID');
+
     $now = Carbon::now();
     $maxDate = $now->subYears(19)->toDateString();
     $minDate = $now->subYears(25)->toDateString();
 
     // Nama Lengkap
-    $first = fake()->unique()->firstName();
-    $last = fake()->lastName();
+    $first = $fake->unique()->firstName();
+    $last = $fake->lastName();
     $name = "{$first} {$last}";
 
     // Ambil ID Major secara acak dari tabel Major
@@ -44,19 +46,29 @@ class StudentFactory extends Factory
     // Email
     $email = strtolower($first) . "@gmail.com";
 
+    // Random Years
+    $year = $fake->dateTimeBetween('-4 years', 'now')->format('Y');
+
+    // Random Kurikulum
+    $curiculum = $fake->randomElement([
+      strtoupper("Genap"),
+      strtoupper("Ganjil"),
+    ]);
+
     $datas = [
       'major_id' => $majorId,
       'village_id' => $villageId,
-      'nim' => fake()->randomNumber(9, true),
+      'nim' => $fake->randomNumber(9, true),
       'name' => $name,
       'email' => $email,
-      'birth_place' => strtoupper(fake()->city()),
-      'birth_date' => fake()->dateTimeBetween($minDate, $maxDate)->format('Y-m-d'),
-      'gender' => fake()->randomElement(GenderType::toArray()),
-      'phone' => fake()->unique()->e164PhoneNumber(),
-      'religion' => fake()->randomElement(ReligionType::toArray()),
-      'status' => fake()->randomElement(StudentStatusType::toArray()),
-      'address' => fake()->address(),
+      'birth_place' => strtoupper($fake->city()),
+      'birth_date' => $fake->dateTimeBetween($minDate, $maxDate)->format('Y-m-d'),
+      'gender' => $fake->randomElement(GenderType::toArray()),
+      'phone' => $fake->unique()->e164PhoneNumber(),
+      'religion' => $fake->randomElement(ReligionType::toArray()),
+      'status' => $fake->randomElement(StudentStatusType::toArray()),
+      'address' => $fake->address(),
+      'initial_registration_period' => "{$year} {$curiculum}",
     ];
 
     return $datas;
