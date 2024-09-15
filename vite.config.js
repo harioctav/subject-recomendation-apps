@@ -19,6 +19,8 @@ export default defineConfig({
                 // Evaluations
                 "resources/js/evaluations/grades/index.js",
                 "resources/js/evaluations/grades/input.js",
+                "resources/js/evaluations/grades/show.js",
+
                 "resources/js/evaluations/recommendations/index.js",
                 "resources/js/evaluations/recommendations/create.js",
                 "resources/js/evaluations/recommendations/show.js",
