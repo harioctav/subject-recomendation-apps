@@ -17,7 +17,6 @@ export default defineConfig({
                 "resources/js/academics/subjects/index.js",
 
                 // Evaluations
-                "resources/js/evaluations/grades/index.js",
                 "resources/js/evaluations/grades/input.js",
                 "resources/js/evaluations/grades/show.js",
 
