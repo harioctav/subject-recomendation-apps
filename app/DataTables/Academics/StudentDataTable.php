@@ -82,6 +82,7 @@ class StudentDataTable extends DataTable
       //->dom('Bfrtip')
       ->addTableClass([
         'table',
+        'table-responsive',
         'table-striped',
         'table-bordered',
         'table-hover',
@@ -130,7 +131,8 @@ class StudentDataTable extends DataTable
         ->addClass('text-center'),
       Column::make('status')
         ->title(trans('Status'))
-        ->addClass('text-center'),
+        ->orderable(false)
+        ->addClass('text-center',),
       Column::computed('action')
         ->title(trans('Opsi'))
         ->exportable(false)

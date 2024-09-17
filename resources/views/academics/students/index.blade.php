@@ -31,9 +31,18 @@
   </div>
   <div class="block-content">
 
+    @can('students.create')
+    <div class="mb-4">
+      <a href="{{ route('students.create') }}" class="btn btn-sm btn-primary">
+        <i class="fa fa-plus fa-sm me-1"></i>
+        {{ trans('page.students.create') }}
+      </a>
+    </div>
+    @endcan
+
     <div class="row">
       <div class="col-md-4">
-        <div class="mb-4">
+        <div class="">
           <label for="status" class="form-label">{{ trans('Filter Berdasarkan Status Mahasiswa') }}</label>
           <select type="text" class="form-select" name="status" id="status">
             <option value="{{ Helper::ALL }}">{{ Helper::ALL }}</option>
@@ -44,15 +53,6 @@
         </div>
       </div>
     </div>
-
-    @can('students.create')
-    <div class="mb-0">
-      <a href="{{ route('students.create') }}" class="btn btn-sm btn-primary">
-        <i class="fa fa-plus fa-sm me-1"></i>
-        {{ trans('page.students.create') }}
-      </a>
-    </div>
-    @endcan
 
     <div class="my-3">
       {{ $dataTable->table() }}

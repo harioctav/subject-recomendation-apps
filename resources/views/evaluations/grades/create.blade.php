@@ -61,7 +61,7 @@
               <optgroup label="{{ $group['semester'] }}">
                 @foreach ($group['subjects'] as $subject)
                 <option value="{{ $subject['id'] }}" {{ old('subject_id') == $subject['id'] ? 'selected' : '' }}>
-                  {{ $subject['name'] }}
+                  {{ $subject['code'] }} - {{ $subject['name'] }} - {{ $subject['exam_period'] }}
                 </option>
                 @endforeach
               </optgroup>

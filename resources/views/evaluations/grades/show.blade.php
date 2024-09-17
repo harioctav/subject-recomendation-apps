@@ -37,6 +37,17 @@
             </div>
           </div>
         </a>
+
+        <ul class="list-group push">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ trans('Program Studi') }}
+            <span class="fw-semibold text-end">{{ $student->major->name }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ trans('Status Mahasiswa') }}
+            <span class="fw-semibold text-end">{!! $student->statusLabel !!}</span>
+          </li>
+        </ul>
       </div>
     </div>
 

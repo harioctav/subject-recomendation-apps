@@ -1,33 +1,17 @@
 @extends('layouts.app')
 @section('title', trans('page.overview.title'))
-{{-- @section('hero')
-<div class="content">
-  <!-- Header -->
-  <div class="block block-rounded bg-gd-dusk">
-    <div class="block-content bg-white-5">
-      <div class="py-4 text-center">
-        <h1 class="h2 fw-bold text-white mb-2">{{ trans('Dashboard') }}</h1>
-<h2 class="h5 fw-medium text-white-75">
-  {{ $greeting }}. Saat ini anda login sebagai <span class="fw-semibold text-white">{{ me()->name }}</span>
-</h2>
-<!-- Datetime -->
-<div class="fs-sm fw-semibold text-white" id="date"></div>
-<div class="d-flex justify-content-center align-items-center text-white">
-  <i class="fa fa-clock fa-sm"></i>
-  <div class="fs-sm fw-semibold ms-2" id="clock"></div>
+@section('hero')
+<div class="content content-full">
+  <h2 class="content-heading">
+    {{ trans('page.overview.title') }}
+    <nav class="breadcrumb push my-0">
+      <div class="fw-semibold" id="date"></div>
+      <div class="fw-semibold ms-2" id="clock"></div>
+    </nav>
+  </h2>
 </div>
-<!-- END Datetime -->
-</div>
-</div>
-</div>
-<!-- END Header -->
-</div>
-@endsection --}}
+@endsection
 @section('content')
-<h2 class="content-heading">
-  <i class="fa fa-chart-line opacity-50 opacity-50 me-2"></i>
-  {{ trans('Ringkasan Statistik') }}
-</h2>
 @if (session('status'))
 <div class="row items-push">
   <div class="col-6 col-xl-6">

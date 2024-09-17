@@ -102,12 +102,12 @@ class User extends Authenticatable
   public function statusLabel(): Attribute
   {
     $statusLabel = [
-      0 => "<span class='badge text-danger'>Inactive</span>",
-      1 => "<span class='badge text-success'>Active</span>",
+      0 => "<span class='badge bg-danger'>Inactive</span>",
+      1 => "<span class='badge bg-success'>Active</span>",
     ];
 
     return Attribute::make(
-      get: fn () => $statusLabel[$this->status] ?? 'Tidak Diketahui',
+      get: fn() => $statusLabel[$this->status] ?? 'Tidak Diketahui',
     );
   }
 

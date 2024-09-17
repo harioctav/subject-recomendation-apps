@@ -98,7 +98,9 @@ class StudentServiceImplement extends Service implements StudentService
           ->map(function ($recommendation) {
             return [
               'id' => $recommendation->subject->id,
-              'name' => $recommendation->subject->name
+              'code' => $recommendation->subject->code,
+              'name' => $recommendation->subject->name,
+              'exam_period' => $recommendation->exam_period
             ];
           });
 

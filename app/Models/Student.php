@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Enums\RecommendationNoteType;
 use App\Helpers\Enums\StudentStatusType;
 use App\Traits\Uuid;
 use Illuminate\Support\Carbon;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Student extends Model
 {
@@ -141,13 +143,16 @@ class Student extends Model
 
   public function statusLabel(): Attribute
   {
+    $rpl = StudentStatusType::RPL->value;
+    $nonRpl = StudentStatusType::NON_RPL->value;
+
     $statusLabel = [
-      StudentStatusType::RPL->value => "<span class='badge text-success'>" . StudentStatusType::RPL->value . "</span>",
-      StudentStatusType::NON_RPL->value => "<span class='badge text-primary'>" . StudentStatusType::NON_RPL->value . "</span>",
+      $rpl => "<span class='badge bg-success'>{$rpl}</span>",
+      $nonRpl => "<span class='badge bg-primary'>{$nonRpl}</span>",
     ];
 
     return Attribute::make(
-      get: fn() => $statusLabel[$this->status] ?? 'Tidak Diketahui',
+      get: fn() => $statusLabel[$this->status] ?? "<span class='badge bg-primary'>Tidak Diketahui</span>",
     );
   }
 
@@ -175,10 +180,46 @@ class Student extends Model
     return "{$year}.{$periodNumber}";
   }
 
-  public function getCurrentSemester()
+  public function getRemainingCredits()
   {
-    $totalCredits = $this->subjects()->sum('course_credit');
-    $creditsPerSemester = 15; // Asumsi 15 kredit per semester
-    return ceil($totalCredits / $creditsPerSemester);
+    $totalCredits = $this->major->total_course_credit;
+
+    $passedCredits = $this->recommendations()
+      ->whereNotIn('recommendations.note', [
+        RecommendationNoteType::SECOND->value,
+        RecommendationNoteType::REPAIR->value,
+        RecommendationNoteType::FIRST->value
+      ])
+      ->join('subjects', 'recommendations.subject_id', '=', 'subjects.id')
+      ->sum('subjects.course_credit');
+
+    return $totalCredits - $passedCredits;
+  }
+
+  public function getEstimatedRemainingSemesters()
+  {
+    $remainingCredits = $this->getRemainingCredits();
+    $maxCreditsPerSemester = 24;
+
+    $takenCredits = $this->recommendations()
+      ->select(DB::raw('SUM(subjects.course_credit) as semester_credits'), 'recommendations.semester')
+      ->join('subjects', 'recommendations.subject_id', '=', 'subjects.id')
+      ->groupBy('recommendations.semester')
+      ->get();
+
+    $estimatedSemesters = 0;
+
+    foreach ($takenCredits as $semester) {
+      $creditsThisSemester = min($semester->semester_credits, $maxCreditsPerSemester);
+      $remainingCredits -= $creditsThisSemester;
+      $estimatedSemesters++;
+    }
+
+    while ($remainingCredits > 0) {
+      $remainingCredits -= $maxCreditsPerSemester;
+      $estimatedSemesters++;
+    }
+
+    return $estimatedSemesters;
   }
 }
