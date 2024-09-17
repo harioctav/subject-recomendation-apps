@@ -43,6 +43,7 @@ class Student extends Model
     'upbjj',
     'address',
     'status',
+    'student_status',
     'avatar',
     'parent_name',
     'parent_phone_number',
