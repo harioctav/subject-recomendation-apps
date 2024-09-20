@@ -19,4 +19,9 @@ return [
   'restore' => 'Pemulihan Data Berhasil Dilakukan',
   'is_null_roles' => 'Anda tidak bisa masuk ke halaman Aplikasi. Silahkan hubungi Administrator untuk info lebih lanjut',
   'banned' => "Mohon Maaf, Akun anda tidak aktif. \n Mohon hubungi {$admin} untuk mengaktifkan Akun Anda.",
+  'students' => [
+    'nim' => [
+      'not-found' => "Mahasiswa dengan NIM: :nim tidak tersedia. Silahkan masukkan NIM yang tersedia atau yang sudah terdaftar di Halaman Mahasiswa!"
+    ]
+  ]
 ];

@@ -73,36 +73,40 @@ Route::middleware([
     Route::resource('subjects', SubjectController::class);
 
     // Student management
-    Route::prefix('students')->name('students.')->group(function () {
-      Route::put('{student}/restore', [StudentController::class, 'restore'])->name('restore')->withTrashed();
-      Route::delete('{student}/delete', [StudentController::class, 'delete'])->name('delete')->withTrashed();
-    });
+    Route::prefix('students')->name('students.')
+      ->controller(StudentController::class)->group(function () {
+        Route::post('student-data-status', 'data')->name('data');
+        Route::put('{student}/restore', 'restore')->name('restore')->withTrashed();
+        Route::delete('{student}/delete', 'delete')->name('delete')->withTrashed();
+      });
+
     Route::resource('students', StudentController::class);
   });
 
   Route::prefix('evaluations')->group(function () {
     // Recommendations
     Route::prefix('recommendations')->name('recommendations.')
-      ->group(function () {
-        Route::get('', [RecommendationController::class, 'index'])->name('index');
-        Route::get('{student}/create', [RecommendationController::class, 'create'])->name('create');
-        Route::post('{student}/store', [RecommendationController::class, 'store'])->name('store');
-        Route::get('{student}/export', [RecommendationController::class, 'export'])->name('export');
-        Route::get('{student}/show', [RecommendationController::class, 'show'])->name('show');
-        Route::delete('{recommendation}', [RecommendationController::class, 'destroy'])->name('destroy');
+      ->controller(RecommendationController::class)->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::get('{student}/create', 'create')->name('create');
+        Route::post('{student}/store', 'store')->name('store');
+        Route::get('{student}/export', 'export')->name('export');
+        Route::get('{student}/show', 'show')->name('show');
+        Route::delete('{recommendation}', 'destroy')->name('destroy');
       });
 
     // Grades
-    Route::prefix('grades')->name('grades.')->group(function () {
-      Route::get('', [GradeController::class, 'index'])->name('index');
-      Route::get('{student}/create', [GradeController::class, 'create'])->name('create');
-      Route::post('{student}/store', [GradeController::class, 'store'])->name('store');
-      Route::get('{grade}/{student}/edit', [GradeController::class, 'edit'])->name('edit');
-      Route::patch('{grade}/{student}/update', [GradeController::class, 'update'])->name('update');
-      Route::get('{student}/export', [GradeController::class, 'export'])->name('export');
-      Route::post('{student}/import', [GradeController::class, 'import'])->name('import');
-      Route::get('{student}/show', [GradeController::class, 'show'])->name('show');
-      Route::delete('{grade}', [GradeController::class, 'destroy'])->name('destroy');
-    });
+    Route::prefix('grades')->name('grades.')
+      ->controller(GradeController::class)->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::get('{student}/create', 'create')->name('create');
+        Route::post('{student}/store', 'store')->name('store');
+        Route::get('{grade}/{student}/edit', 'edit')->name('edit');
+        Route::patch('{grade}/{student}/update', 'update')->name('update');
+        Route::get('{student}/export', 'export')->name('export');
+        Route::post('{student}/import', 'import')->name('import');
+        Route::get('{student}/show', 'show')->name('show');
+        Route::delete('{grade}', 'destroy')->name('destroy');
+      });
   });
 });

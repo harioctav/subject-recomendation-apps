@@ -16,6 +16,7 @@ use App\Services\Student\StudentService;
 use App\DataTables\Scopes\UserStatusFilter;
 use App\DataTables\Academics\StudentDataTable;
 use App\Http\Requests\Academics\StudentRequest;
+use App\Http\Requests\Academics\Students\NimRequest;
 use App\Services\Locations\Province\ProvinceService;
 
 class StudentController extends Controller
@@ -71,9 +72,9 @@ class StudentController extends Controller
     $majors = $this->majors();
     $provinces = $this->provinces();
 
-    $genders = $this->cacheData('genders', fn () => GenderType::toArray());
-    $religions = $this->cacheData('religions', fn () => ReligionType::toArray());
-    $status = $this->cacheData('status', fn () => StudentStatusType::toArray());
+    $genders = $this->cacheData('genders', fn() => GenderType::toArray());
+    $religions = $this->cacheData('religions', fn() => ReligionType::toArray());
+    $status = $this->cacheData('status', fn() => StudentStatusType::toArray());
 
     return view('academics.students.create', compact('majors', 'genders', 'religions', 'provinces', 'status'));
   }
@@ -103,9 +104,9 @@ class StudentController extends Controller
     $majors = $this->majors();
     $provinces = $this->provinces();
 
-    $genders = $this->cacheData('genders', fn () => GenderType::toArray());
-    $religions = $this->cacheData('religions', fn () => ReligionType::toArray());
-    $status = $this->cacheData('status', fn () => StudentStatusType::toArray());
+    $genders = $this->cacheData('genders', fn() => GenderType::toArray());
+    $religions = $this->cacheData('religions', fn() => ReligionType::toArray());
+    $status = $this->cacheData('status', fn() => StudentStatusType::toArray());
 
     return view('academics.students.edit', compact('majors', 'genders', 'religions', 'student', 'provinces', 'status'));
   }
@@ -144,5 +145,10 @@ class StudentController extends Controller
     return response()->json([
       'message' => trans('session.force-delete'),
     ]);
+  }
+
+  public function data(NimRequest $request)
+  {
+    return $this->studentService->getStudentAllData($request);
   }
 }

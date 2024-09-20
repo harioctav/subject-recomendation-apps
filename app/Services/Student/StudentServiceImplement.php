@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Repositories\Student\StudentRepository;
 use App\Repositories\Village\VillageRepository;
 
+use function PHPUnit\Framework\isEmpty;
+
 class StudentServiceImplement extends Service implements StudentService
 {
   public function __construct(
@@ -73,6 +75,54 @@ class StudentServiceImplement extends Service implements StudentService
         orderBy: $orderBy,
         orderByType: $orderByType
       );
+    } catch (\Exception $e) {
+      Log::info($e->getMessage());
+      throw new InvalidArgumentException(trans('session.log.error'));
+    }
+  }
+
+  /**
+   * Get all student data based on the provided request.
+   */
+  public function getStudentAllData($request)
+  {
+    try {
+      $payload = $request->validated();
+
+      // Get student data
+      $student = $this->mainRepository->getWhere(
+        wheres: [
+          'nim' => $payload['nim']
+        ]
+      )->first();
+
+      if (empty($student)) {
+        return back()->with('error', trans('session.students.nim.not-found', ['nim' => $payload['nim']]));
+      }
+
+      $student->with([
+        'grades',
+        'major.subjects',
+      ]);
+
+      $subjects = $student->major->subjects->mapToGroups(function ($subject) use ($student) {
+        $grade = $student->grades->firstWhere('subject_id', $subject->id);
+        $semester = $subject->pivot->semester;
+
+        $subject->course_credit = ($subject->course_credit === '') ? 0 : $subject->course_credit;
+
+        return [$semester => [
+          'subject' => $subject,
+          'has_grade' => !is_null($grade),
+          'grade' => $grade,
+          'mutu' => $grade ? $grade->mutuLabel : null,
+          'exam_period' => $grade ? $grade->exam_period : null,
+        ]];
+      });
+
+      $detail = Helper::getDataStudent($student->id);
+
+      return view('academics.students.data', compact('student', 'subjects', 'detail'));
     } catch (\Exception $e) {
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));

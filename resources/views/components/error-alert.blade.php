@@ -2,7 +2,8 @@
   @if($message = session('error'))
   Swal.fire({
     icon: 'error'
-    , title: '{{ $message }}'
+    , title: 'Opss.. Ada Kesalahan'
+    , text: '{{ $message }}'
     , confirmButtonText: 'Mengerti'
     , confirmButtonColor: '#E74C3C'
   , })

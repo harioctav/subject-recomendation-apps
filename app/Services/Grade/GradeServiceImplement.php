@@ -218,6 +218,8 @@ class GradeServiceImplement extends Service implements GradeService
         $grade = $student->grades->firstWhere('subject_id', $subject->id);
         $semester = $subject->pivot->semester;
 
+        $subject->course_credit = ($subject->course_credit === '') ? 0 : $subject->course_credit;
+
         return [$semester => [
           'subject' => $subject,
           'has_grade' => !is_null($grade),

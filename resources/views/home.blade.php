@@ -51,7 +51,7 @@
     </a>
   </div>
   <div class="col-6 col-xl-3">
-    <a class="block block-rounded block-link-shadow text-end" href="javascript:void(0)">
+    <a class="block block-rounded block-link-shadow text-end" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#modal-fadein">
       <div class="block-content block-content-full d-sm-flex justify-content-between align-items-center">
         <div class="d-none d-sm-block">
           <i class="fa fa-graduation-cap fa-2x opacity-25"></i>
@@ -81,5 +81,20 @@
     </a>
   </div>
 </div>
+@includeIf('components.form-input-nim')
 @endsection
 @vite('resources/js/home.js')
+@push('javascript')
+<script>
+  @if($message = session('error'))
+  Swal.fire({
+    icon: 'error'
+    , title: 'Data Tidak Ditemukan'
+    , text: '{{ $message }}'
+    , confirmButtonText: 'Mengerti'
+    , confirmButtonColor: '#E74C3C'
+  , })
+  @endif
+
+</script>
+@endpush

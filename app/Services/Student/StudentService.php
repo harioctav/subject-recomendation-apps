@@ -18,6 +18,7 @@ interface StudentService extends BaseService
     $orderByType = null
   );
   public function getStudentDetailedInfo(int $id);
+  public function getStudentAllData(Request $request);
   public function getStudentDataWithRecommendations(Student $student);
   public function handleStoreData(Request $request);
   public function handleUpdateData(Request $request, int $id);
