@@ -35,53 +35,6 @@ class RecommendationController extends Controller
     // 
   }
 
-  protected function students()
-  {
-    $students = $this->studentService->getWhere(
-      orderBy: 'name',
-      orderByType: 'asc',
-    )->get();
-
-    return $students;
-  }
-
-  protected function studentDetail($studentId)
-  {
-    $student = $this->studentService->findOrFail($studentId);
-
-    // Hitung total SKS yang sudah ditempuh
-    $recommendedSubjects = $this->recommendationService->getWhere(
-      wheres: [
-        'student_id' => $student->id
-      ]
-    )->pluck('subject_id');
-
-    // Ambil ID mata kuliah yang dinilai dengan nilai bukan 'E'
-    $passedSubjects = Grade::where('student_id', $student->id)
-      ->whereIn('subject_id', $recommendedSubjects)
-      ->where('grade', '!=', GradeType::E->value)
-      ->pluck('subject_id');
-
-    // Hitung total SKS dari mata kuliah yang lulus
-    $totalCompletedCourseCredit = Subject::whereIn('id', $passedSubjects)->sum('course_credit');
-    $totalCourseCredit = $student->major->total_course_credit;
-
-    $gpa = Helper::calculateGPA($student->id);
-
-    $hasGradeE = Grade::where('student_id', $student->id)
-      ->where('grade', GradeType::E->value)
-      ->exists();
-
-    $details = [
-      'total_course_credit' => $totalCourseCredit,
-      'total_course_credit_done' => $totalCompletedCourseCredit,
-      'total_course_credit_remainder' => $totalCourseCredit - $totalCompletedCourseCredit,
-      'gpa' => $gpa,
-      'has_grade_e' => $hasGradeE
-    ];
-
-    return $details;
-  }
   /**
    * Display a listing of the resource.
    */
@@ -95,8 +48,9 @@ class RecommendationController extends Controller
    */
   public function create(Student $student)
   {
-    $data = $this->studentDetail($student->id);
-    return view('evaluations.recommendations.create', compact('student', 'data'));
+    $detail = $this->studentService->getStudentAcademicInfo($student->id);
+
+    return view('evaluations.recommendations.create', compact('student', 'detail'));
   }
 
   /**
@@ -110,10 +64,10 @@ class RecommendationController extends Controller
 
   public function show(Student $student)
   {
-    $data = $this->studentDetail($student->id);
+    $detail = $this->studentService->getStudentAcademicInfo($student->id);
     $dataTable = new RecommendationDataTable($student->id);
 
-    return $dataTable->render('evaluations.recommendations.show', compact('student', 'data', 'dataTable'));
+    return $dataTable->render('evaluations.recommendations.show', compact('student', 'detail', 'dataTable'));
   }
 
   /**

@@ -109,8 +109,6 @@ class StudentController extends Controller
     $religions = $this->cacheData('religions', fn() => ReligionType::toArray());
     $status = $this->cacheData('status', fn() => StudentStatusType::toArray());
 
-    // dd($student->province->name);
-
     return view('academics.students.edit', compact('majors', 'genders', 'religions', 'student', 'provinces', 'status'));
   }
 
@@ -153,6 +151,11 @@ class StudentController extends Controller
   public function data(NimRequest $request)
   {
     return $this->studentService->getStudentAllData($request);
+  }
+
+  public function semester(NimRequest $request)
+  {
+    return $this->studentService->getSemesterRemainingData($request);
   }
 
   public function import(ImportRequest $request)

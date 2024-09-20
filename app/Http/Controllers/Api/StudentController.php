@@ -43,8 +43,7 @@ class StudentController extends Controller
    */
   public function show($student_id)
   {
-    $data = $this->studentService->getStudentDetailedInfo($student_id);
-    return response()->json($data);
+    // 
   }
 
   /**

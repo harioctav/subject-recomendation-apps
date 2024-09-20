@@ -1,4 +1,3 @@
-{{-- @dd($groupedSubjects) --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -22,35 +21,43 @@
       line-height: 1.3;
     }
 
-    h3 {
-      text-align: center;
-      font-size: 14pt;
-      margin-bottom: 15px;
-    }
-
     .info-container {
-      display: flex;
-      flex-wrap: wrap;
-      margin-bottom: 15px;
-    }
-
-    .info-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 15px;
       width: 100%;
-      display: flex;
-      margin-bottom: 3px;
+      margin-top: 20px;
     }
 
-    .info-col {
-      flex: 1;
+    .info-item {
+      display: flex;
+      justify-content: space-between;
     }
 
     .info-label {
       font-weight: bold;
-      margin-right: 5px;
+      width: 180px;
     }
 
-    .multi-line {
-      flex-basis: 100%;
+    .info-value {
+      max-width: calc(100% - 185px);
+    }
+
+    .semester-header {
+      font-weight: bold;
+      text-align: left;
+      padding-left: 5px;
+    }
+
+    .left-align {
+      text-align: left;
+      padding-left: 5px;
+    }
+
+    h3 {
+      text-align: center;
+      font-size: 14pt;
+      margin-bottom: 15px;
     }
 
     table {
@@ -71,15 +78,40 @@
       background-color: #f2f2f2;
     }
 
-    .semester-header {
-      font-weight: bold;
-      text-align: left;
-      padding-left: 5px;
+    h3 {
+      text-align: center;
+      font-size: 14pt;
+      margin-bottom: 15px;
     }
 
-    .left-align {
-      text-align: left;
-      padding-left: 5px;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th,
+    td {
+      border: 1px solid black;
+      padding: 3px;
+      text-align: center;
+      font-size: 10pt;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    @media print {
+      .info-container {
+        page-break-inside: avoid;
+      }
+    }
+
+    @media screen and (max-width: 600px) {
+      .info-container {
+        grid-template-columns: 1fr;
+      }
     }
 
   </style>
@@ -89,47 +121,45 @@
   <div style="border-top: 1px solid #000000; margin: 1rem 0;"></div>
 
   <div class="info-container">
-    <div class="info-row">
-      <div class="info-col">
-        <span class="info-label">NIM :</span>
-        <span>{{ $student->nim }}</span>
-      </div>
-      <div class="info-col">
-        <span class="info-label">UPBJJ :</span>
-        <span>{{ $student->upbjj ?: '-' }}</span>
-      </div>
-      <div class="info-col">
-        <span class="info-label">Nama :</span>
-        <span>{{ strtoupper($student->name) }}</span>
-      </div>
-      <div class="info-col">
-        <span class="info-label">Program Studi :</span>
-        <span>{{ $student->major->code }}/{{ strtoupper($student->major->name) }}</span>
-      </div>
-      <div class="info-col">
-        <span class="info-label">Alamat Mahasiswa :</span>
-        <span>{{ strtoupper($student->address) }}</span>
-      </div>
-      <div class="info-col">
-        <span class="info-label">REGIS I :</span>
-        <span>{{ $student->initial_registration_period ?? '-' }}</span>
-      </div>
-      <div class="info-col">
-        <span class="info-label">KAB/KOTA :</span>
-        <span>{{ strtoupper($student->village->district->regency->type) }} {{ strtoupper($student->village->district->regency->name) }}</span>
-      </div>
-      <div class="info-col">
-        <span class="info-label">Kode Pos :</span>
-        <span>{{ $student->village->pos_code }}/{{ strtoupper($student->village->district->name) }}</span>
-      </div>
-      <div class="info-col">
-        <span class="info-label">Jurusan Asal :</span>
-        <span>{{ $student->origin_department ?? '-' }}</span>
-      </div>
-      <div class="info-col">
-        <span class="info-label">Tempat, Tanggal Lahir :</span>
-        <span>{{ $student->birth_place }}, {{ $student->formatted_birth_date }}</span>
-      </div>
+    <div class="info-item">
+      <span class="info-label">NIM :</span>
+      <span class="info-value">{{ $detail['student']->nim }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Nama :</span>
+      <span class="info-value">{{ strtoupper($detail['student']->name) }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Alamat Mahasiswa :</span>
+      <span class="info-value">{{ strtoupper($detail['student']->address) ?: '--' }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Kab/Kota :</span>
+      <span class="info-value">{{ strtoupper($detail['student']->regency->type) ?: '--' }} {{ strtoupper($detail['student']->regency->name) ?: '--' }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Kode Pos :</span>
+      <span class="info-value">{{ optional($detail['student']->village)->pos_code ?: '--' }}/{{ strtoupper($detail['student']->district->name) ?: '--' }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">UPBJJ :</span>
+      <span class="info-value">{{ strtoupper($detail['student']->upbjj) ?: '--' }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Program Studi :</span>
+      <span class="info-value">{{ $detail['student']->major->code }}/{{ strtoupper($detail['student']->major->name) }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Regis :</span>
+      <span class="info-value">{{ $detail['student']->initial_registration_period ?: '--' }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Jurusan Asal :</span>
+      <span class="info-value">{{ strtoupper($detail['student']->origin_department) ?: '--' }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Tempat, Tanggal Lahir :</span>
+      <span class="info-value">{{ $detail['student']->birth_place ?: '--' }}, {{ $detail['student']->formatted_birth_date }}</span>
     </div>
   </div>
 
@@ -152,33 +182,17 @@
       <tr>
         <td colspan="9" class="semester-header">SEMESTER {{ strtoupper($semester) }}</td>
       </tr>
-      @foreach ($subjects as $index => $subjectInfo)
+      @foreach ($subjects as $key => $value)
       <tr>
         <td>{{ $loop->iteration }}</td>
-        <td>{{ $subjectInfo['subject']->code }}</td>
-        <td class="left-align">{{ $subjectInfo['subject']->name }}</td>
-        <td>{{ $subjectInfo['subject']->course_credit }}</td>
-        <td>{{ $subjectInfo['has_grade'] ? $subjectInfo['grade']->grade : '-' }}</td>
-        <td>{{ $subjectInfo['mutu'] ?? '-' }}</td>
-        <td>
-          @if($subjectInfo['has_grade'])
-          @if($subjectInfo['grade']->grade == GradeType::E->value)
-          BL
-          @else
-          LL
-          @endif
-          @else
-          BL
-          @endif
-        </td>
-        <td>{{ $subjectInfo['exam_period'] ?? '-' }}</td>
-        <td>
-          @if($subjectInfo['subject']->status == StatusSubject::I->value)
-          I
-          @else
-          N
-          @endif
-        </td>
+        <td>{{ $value['subject']->code }}</td>
+        <td class="left-align">{{ $value['subject']->name }}</td>
+        <td>{{ $value['subject']->course_credit }}</td>
+        <td>{{ $value['has_grade'] ? $value['grade']->grade : '-' }}</td>
+        <td>{{ $value['mutu'] ?? '-' }}</td>
+        <td>{{ $value['has_grade'] ? ($value['grade']->grade == GradeType::E->value ? 'BL' : 'LL') : 'BL' }}</td>
+        <td>{{ $value['exam_period'] ?? '-' }}</td>
+        <td>{{ $value['subject']->status == StatusSubject::I->value ? 'I' : 'N' }}</td>
       </tr>
       @endforeach
       @endforeach
@@ -186,12 +200,12 @@
   </table>
 
   <ol>
-    <li>Jumlah sks dalam Kurikulum yang ditempuh : {{ $studentDetail['total_compeleted_by_curiculum'] }} SKS</li>
-    <li>Jumlah sks Alih Kredit : {{ $studentDetail['total_compeleted_55555'] }} SKS</li>
-    <li>Jumlah sks Total yang ditempuh untuk perhitungan IPK : {{ $studentDetail['total_compeleted_course_credit'] }} SKS</li>
-    <li>Jumlah total nilai mutu : {{ $studentDetail['mutu'] }}</li>
-    <li>Jumlah Total sks keseluruhan : {{ $studentDetail['total_course_credit'] }} SKS</li>
-    <li>IPK : {{ $studentDetail['gpa'] }}</li>
+    <li>Jumlah sks dalam Kurikulum yang ditempuh : {{ $detail['total_completed_by_curriculum'] }} SKS</li>
+    <li>Jumlah sks Alih Kredit : {{ $detail['total_completed_55555'] }} SKS</li>
+    <li>Jumlah sks Total yang ditempuh untuk perhitungan IPK : {{ $detail['total_completed_course_credit'] }} SKS</li>
+    <li>Jumlah total nilai mutu : {{ $detail['mutu'] }}</li>
+    <li>Jumlah Total sks keseluruhan : {{ $detail['total_course_credit'] }} SKS</li>
+    <li>IPK : {{ $detail['gpa'] }}</li>
   </ol>
 
 </body>

@@ -62,8 +62,8 @@ $(document).ready(function () {
             },
             rowCallback: function (row, data) {
                 if (data.grade === "E") {
-                    $(row).css("background-color", "red");
-                    $(row).css("color", "white");
+                    // $(row).css("background-color", "red");
+                    // $(row).css("color", "#000000");
                 }
                 // Tambahkan class untuk mata kuliah yang sudah direkomendasikan
                 if (data.is_recommended) {

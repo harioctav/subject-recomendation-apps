@@ -17,6 +17,7 @@ use App\Repositories\Major\MajorRepository;
 use App\Repositories\Student\StudentRepository;
 use App\Repositories\Subject\SubjectRepository;
 use App\Repositories\Recommendation\RecommendationRepository;
+use App\Services\Student\StudentService;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Str;
 
@@ -27,7 +28,8 @@ class GradeServiceImplement extends Service implements GradeService
     protected SubjectRepository $subjectRepository,
     protected StudentRepository $studentRepository,
     protected RecommendationRepository $recommendationRepository,
-    protected MajorRepository $majorRepository
+    protected MajorRepository $majorRepository,
+    protected StudentService $studentService
   ) {
     // 
   }
@@ -232,13 +234,12 @@ class GradeServiceImplement extends Service implements GradeService
       $formattedDate = Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY');
       $fileTitle = "{$formattedDate}-{$student->name}-TRANSCRIPT-SEMENTARA.pdf";
 
-      $studentDetail = Helper::getDataStudent($student->id);
+      $detail = $this->studentService->getStudentAcademicInfo($student->id);
 
       // Prepare data for the view
       $data = [
-        'student' => $student,
         'groupedSubjects' => $groupedSubjects,
-        'studentDetail' => $studentDetail
+        'detail' => $detail
       ];
 
       // Generate PDF

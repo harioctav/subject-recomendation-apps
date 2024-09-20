@@ -25,22 +25,12 @@
   </div>
   <div class="block-content">
 
-    <div class="row items-push">
-      <div class="col-md-6 col-xl-3">
-        <div class="block block-rounded text-center my-0">
-          <div class="block-content block-content-full bg-gd-dusk">
-            <img class="img-avatar img-avatar-thumb" src="{{ $student->getAvatar() }}" alt="{{ trans('Foto Avatar') }}">
-          </div>
-          <div class="block-content block-content-full">
-            <div class="fw-semibold mb-1">{{ $student->name }}</div>
-            <div class="fs-sm text-muted">{{ $student->nim }}</div>
-          </div>
-          <div class="block-content block-content-full block-content-sm bg-body-light mb-3">
-            <span class="fw-semibold fs-sm text-elegance">{{ $student->email ?: '--' }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6 col-xl-9">
+    {{-- Student Info --}}
+    @includeIf('components.students.info')
+    {{-- Student Info --}}
+
+    <div class="row items-push m-3">
+      <div class="col-lg-12">
         <div class="row items-push">
           <div class="col-md-6">
             <span class="info-item">
@@ -87,15 +77,17 @@
             </div>
           </div>
         </div>
-
-        @can('grades.export')
-        <a href="{{ route('grades.export', $student) }}" target="_blank" class="btn btn-sm btn-success">
-          <i class="fa fa-print fa-sm me-1"></i>
-          {{ trans('Cetak Transkrip Nilai') }}
-        </a>
-        @endcan
       </div>
     </div>
+
+    @can('grades.export')
+    <div class="mb-3">
+      <a href="{{ route('grades.export', $student) }}" target="_blank" class="btn btn-sm btn-success">
+        <i class="fa fa-print fa-sm me-1"></i>
+        {{ trans('Cetak Transkrip Nilai') }}
+      </a>
+    </div>
+    @endcan
 
     <div class="row items-push">
       <div class="col-12">
@@ -141,15 +133,15 @@
           <ol>
             <li>
               <span class="info-label">Jumlah SKS Dalam Kurikulum Yang Ditempuh :</span>
-              <span class="info-value">{{ $detail['total_compeleted_by_curiculum'] }} SKS</span>
+              <span class="info-value">{{ $detail['total_completed_by_curriculum'] }} SKS</span>
             </li>
             <li>
               <span class="info-label">Jumlah SKS Alih Kredit :</span>
-              <span class="info-value">{{ $detail['total_compeleted_55555'] }} SKS</span>
+              <span class="info-value">{{ $detail['total_completed_55555'] }} SKS</span>
             </li>
             <li>
               <span class="info-label">Jumlah SKS Total Yang Ditempuh Untuk Perhitungan IPK :</span>
-              <span class="info-value">{{ $detail['total_compeleted_course_credit'] }} SKS</span>
+              <span class="info-value">{{ $detail['total_completed_course_credit'] }} SKS</span>
             </li>
             <li>
               <span class="info-label">Jumlah Total Nilai Mutu :</span>

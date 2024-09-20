@@ -24,32 +24,10 @@
     </h3>
   </div>
   <div class="block-content">
-    <div class="row items-push">
-      <div class="col-lg-4">
-        <a class="block block-rounded block-link-shadow bg-info" href="javascript:void(0)">
-          <div class="block-content block-content-full d-flex justify-content-between align-items-center">
-            <div>
-              <img class="img-avatar" src="{{ $student->getAvatar() }}" alt="Foto Mahasiswa">
-            </div>
-            <div class="text-end">
-              <div class="fw-semibold text-white mb-1">{{ $student->name }}</div>
-              <div class="fs-sm text-white-75">{{ $student->nim }}</div>
-            </div>
-          </div>
-        </a>
 
-        <ul class="list-group push">
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ trans('Program Studi') }}
-            <span class="fw-semibold text-end">{{ $student->major->name }}</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ trans('Status Mahasiswa') }}
-            <span class="fw-semibold text-end">{!! $student->statusLabel !!}</span>
-          </li>
-        </ul>
-      </div>
-    </div>
+    {{-- Student Info --}}
+    @includeIf('components.students.info')
+    {{-- Student Info --}}
 
     <div class="mb-3">
       @can('grades.export')

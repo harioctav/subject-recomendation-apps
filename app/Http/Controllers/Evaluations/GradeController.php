@@ -68,8 +68,9 @@ class GradeController extends Controller
   public function show(Student $student)
   {
     $dataTable = new GradeDataTable($student->id);
+    $detail = $this->studentService->getStudentAcademicInfo($student->id);
 
-    return $dataTable->render('evaluations.grades.show', compact('student'));
+    return $dataTable->render('evaluations.grades.show', compact('student', 'detail'));
   }
 
   /**

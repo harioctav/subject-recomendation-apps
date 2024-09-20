@@ -122,9 +122,35 @@ class StudentServiceImplement extends Service implements StudentService
         ]];
       });
 
-      $detail = Helper::getDataStudent($student->id);
+      $detail = $this->getStudentAcademicInfo($student->id);
 
       return view('academics.students.data', compact('student', 'subjects', 'detail'));
+    } catch (\Exception $e) {
+      Log::info($e->getMessage());
+      throw new InvalidArgumentException(trans('session.log.error'));
+    }
+  }
+
+  public function getSemesterRemainingData($request)
+  {
+    try {
+
+      $payload = $request->validated();
+
+      // Get student data
+      $student = $this->mainRepository->getWhere(
+        wheres: [
+          'nim' => $payload['nim']
+        ]
+      )->first();
+
+      if (empty($student)) {
+        return back()->with('error', trans('session.students.nim.not-found', ['nim' => $payload['nim']]));
+      }
+
+      $detail = $this->getStudentAcademicInfo($student->id);
+
+      return view('academics.students.semester', compact('student', 'detail'));
     } catch (\Exception $e) {
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
@@ -172,32 +198,61 @@ class StudentServiceImplement extends Service implements StudentService
     ];
   }
 
-  public function getStudentDetailedInfo($id)
+  public function getStudentAcademicInfo($id)
   {
-    $student = $this->findOrFail($id);
+    // Find student data
+    $student = $this->mainRepository->findOrFail($id);
 
+    // Get recommended subjects for the student
     $recommendedSubjects = $this->recommendationRepository->getWhere(
       wheres: [
         'student_id' => $student->id
       ]
     )->pluck('subject_id');
 
-    $passedSubjects = Grade::where('student_id', $id)
+    // Calculate total credits for recommended subjects
+    $totalRecommendedCredits = Subject::whereIn('id', $recommendedSubjects)->sum('course_credit');
+
+    // Get passed subjects (excluding grade 'E')
+    $passedSubjects = Grade::where('student_id', $student->id)
       ->whereIn('subject_id', $recommendedSubjects)
-      ->where('grade', '!=', GradeType::E->value)
-      ->pluck('subject_id');
+      ->where('grade', '!=', GradeType::E->value);
 
-    $totalCompletedCourseCredit = Subject::whereIn('id', $passedSubjects)->sum('course_credit');
+    // Calculate credits for different exam periods
+    $examPeriod55555 = $passedSubjects->clone()->where('exam_period', '55555')->pluck('subject_id');
+    $totalCourseCredit55555 = Subject::whereIn('id', $examPeriod55555)->sum('course_credit');
 
+    $examPeriodByCurriculum = $passedSubjects->clone()->where('exam_period', '!=', '55555')->pluck('subject_id');
+    $totalCourseCreditByCurriculum = Subject::whereIn('id', $examPeriodByCurriculum)->sum('course_credit');
+
+    // Calculate total completed credits
+    $totalCompletedCourseCredit = Subject::whereIn('id', $passedSubjects->pluck('subject_id'))->sum('course_credit');
     $totalCourseCredit = $student->major->total_course_credit;
 
-    return [
-      'nim' => $student->nim,
-      'major_name' => $student->major->name,
+    $totalCourseRemainder = $totalCourseCredit - $totalCompletedCourseCredit;
+
+    // Calculate GPA and quality points
+    $gpa = Helper::calculateGPA($student->id);
+    $mutu = $passedSubjects->sum('mutu');
+
+    $hasGradeE = Grade::where('student_id', $student->id)
+      ->where('grade', GradeType::E->value)
+      ->exists();
+
+    $percentace = ($gpa / 4) * 100;
+
+    return $student = [
+      'student' => $student,
+      'total_recommended_credits' => $totalRecommendedCredits,
+      'total_completed_55555' => $totalCourseCredit55555,
+      'total_completed_by_curriculum' => $totalCourseCreditByCurriculum,
+      'total_completed_course_credit' => $totalCompletedCourseCredit,
+      'total_course_remainder' => $totalCourseRemainder,
       'total_course_credit' => $totalCourseCredit,
-      'total_course_credit_done' => $totalCompletedCourseCredit,
-      'total_course_credit_remainder' => $totalCourseCredit - $totalCompletedCourseCredit,
-      'status' => $student->status
+      'gpa' => $gpa,
+      'mutu' => rtrim(rtrim(number_format($mutu, 2), '0'), '.'),
+      'percentace' => $percentace,
+      'has_grade_e' => $hasGradeE,
     ];
   }
 

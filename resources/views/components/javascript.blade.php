@@ -21,11 +21,13 @@
 <script src="{{ asset('assets/templates/src/js/plugins/flatpickr/flatpickr.min.js') }}"></script>
 <script src="{{ asset('assets/templates/src/js/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 <script src="{{ asset('assets/templates/src/js/plugins/select2/js/select2.full.min.js') }}"></script>
-<script src="{{ asset('assets/templates/src/assets/js/plugins/ckeditor5-classic/build/ckeditor.js') }}"></script>
-<script src="{{ asset('assets/templates/src/assets/js/plugins/chart.js/chart.umd.js') }}"></script>
+<script src="{{ asset('assets/templates/src/js/plugins/ckeditor5-classic/build/ckeditor.js') }}"></script>
+<script src="{{ asset('assets/templates/src/js/plugins/easy-pie-chart/jquery.easypiechart.min.js') }}"></script>
+<script src="{{ asset('assets/templates/src/js/plugins/chart.js/chart.umd.js') }}"></script>
 
 <!-- Page JS Code -->
 <script src="{{ asset('assets/templates/src/js/pages/be_tables_datatables.min.js') }}"></script>
+<script src="{{ asset('assets/templates/src/js/pages/be_comp_charts.min.js') }}"></script>
 
 <script>
   Codebase.helpersOnLoad([
@@ -33,6 +35,7 @@
     , 'jq-datepicker'
     , 'jq-select2'
     , 'js-ckeditor5'
+    , 'jq-easy-pie-chart'
   ])
 
 </script>

@@ -109,17 +109,3 @@
   </div>
 </div>
 @endsection
-@push('javascript')
-@vite('resources/js/evaluations/grades/input.js')
-
-<script>
-  var studentURL = "{{ route('api.students.index', ['student' => $student->id]) }}"
-
-  // Simpan data NIM dan Program Studi jika ada error validasi
-  @if(old('student_id'))
-  $("#student-nim").text("{{ old('student_nim', '--') }}");
-  $("#student-major").text("{{ old('student_major', '--') }}");
-  @endif
-
-</script>
-@endpush

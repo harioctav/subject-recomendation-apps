@@ -96,5 +96,32 @@
   , })
   @endif
 
+
+  function showOptions() {
+    var nim = document.getElementById("nim").value;
+    if (nim) {
+      document.getElementById("options").style.display = "block";
+      document.getElementById("next-btn").style.display = "none";
+    } else {
+      // alert('Silakan masukkan NIM terlebih dahulu');
+      Swal.fire({
+        icon: "warning"
+        , title: "Kesalahan!!"
+        , text: "Silahkan masukkan NIM terlebih dahulu"
+        , confirmButtonText: "Mengerti"
+      , });
+    }
+  }
+
+  function submitForm(action) {
+    var form = document.getElementById("nim-form");
+    if (action === "data") {
+      form.action = "{{ route('students.data') }}";
+    } else if (action === "semester-remaining") {
+      form.action = "{{ route('students.semester') }}";
+    }
+    form.submit();
+  }
+
 </script>
 @endpush

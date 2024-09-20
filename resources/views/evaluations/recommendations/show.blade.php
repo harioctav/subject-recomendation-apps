@@ -25,57 +25,9 @@
   </div>
   <div class="block-content">
 
-    <div class="row items-push">
-      <div class="col-md-6 col-xl-4">
-        <div class="block block-rounded text-center my-0">
-          <div class="block-content block-content-full bg-gd-dusk">
-            <img class="img-avatar img-avatar-thumb" src="{{ $student->getAvatar() }}" alt="{{ trans('Foto Avatar') }}">
-          </div>
-          <div class="block-content block-content-full">
-            <div class="fw-semibold mb-1">{{ $student->name }}</div>
-            <div class="fs-sm text-muted">{{ $student->nim }}</div>
-          </div>
-          <div class="block-content block-content-full block-content-sm bg-body-light mb-3">
-            <span class="fw-semibold fs-sm text-elegance">{{ $student->email ?: '--' }}</span>
-          </div>
-        </div>
-        <ul class="list-group push">
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ trans('Program Studi') }}
-            <span class="fw-semibold text-end">{{ $student->major->name }}</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ trans('Status Mahasiswa') }}
-            <span class="fw-semibold text-end">{{ $student->status }}</span>
-          </li>
-        </ul>
-      </div>
-      <div class="col-md-6 col-xl-8">
-        <div class="py-1 my-0 mb-1">
-          <p class="fs-sm text-uppercase text-primary fw-bold mb-1">
-            {{ trans('Informasi Akademik') }}
-          </p>
-        </div>
-        <ul class="list-group push">
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ trans('Total SKS WAJIB Ditempuh') }}
-            <span class="fw-semibold">{{ $data['total_course_credit'] }}</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ trans('Total SKS SUDAH Ditempuh') }}
-            <span class="fw-semibold">{{ $data['total_course_credit_done'] }}</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ trans('Sisa SKS Belum Ditempuh') }}
-            <span class="fw-semibold">{{ $data['total_course_credit_remainder'] }}</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ trans('Indeks Prestasi Kumulatif') }}
-            <span class="fw-semibold">{{ $data['gpa'] }}</span>
-          </li>
-        </ul>
-      </div>
-    </div>
+    {{-- Student Info --}}
+    @includeIf('components.students.info')
+    {{-- Student Info --}}
 
     <div class="row">
       <div class="col-md-auto">

@@ -72,6 +72,8 @@ return [
     'destroy' => 'Hapus data Mahasiswa',
     'delete' => 'Hapus Permanen data Mahasiswa',
     'restore' => 'Pulihkan kembali data Mahasiswa',
+    'data' => 'Melihat Info Nilai data Mahasiswa',
+    'semester' => 'Melihat info Sisa Semester Mahasiswa',
   ],
 
   'recommendations' => [

@@ -59,7 +59,7 @@
           <select type="text" class="form-select" name="status" id="status">
             <option value="{{ Helper::ALL }}">{{ Helper::ALL }}</option>
             @foreach ($status as $item)
-            <option value="{{ $item }}">{{ $item }}</option>
+            <option value="{{ $item }}">{{ ucfirst($item) }}</option>
             @endforeach
           </select>
         </div>
