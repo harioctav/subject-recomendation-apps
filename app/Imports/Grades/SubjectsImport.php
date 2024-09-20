@@ -40,24 +40,6 @@ class SubjectsImport implements ToCollection
       }
     });
 
-    // foreach ($collection as $row) {
-    //   if (preg_match('/^Semester (\d+)$/', $row[0], $matches)) {
-    //     $currentSemester = (int) $matches[1];
-    //     continue;
-    //   }
-
-    //   if (!empty($row[0]) && !empty($row[1])) {
-    //     $grouped[$currentSemester][] = [
-    //       'code' => trim($row[0]),
-    //       'name' => trim($row[1]),
-    //       'sks' => $row[2] ?? null,
-    //       'grade' => $row[3] ?? null,
-    //       'mutu' => $row[4] ?? null,
-    //       'exam_period' => $row[5] ? (string)$row[5] : null,
-    //     ];
-    //   }
-    // }
-
     $this->gradeImport->setSubjects($grouped);
   }
 }

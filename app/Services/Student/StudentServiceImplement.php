@@ -4,6 +4,7 @@ namespace App\Services\Student;
 
 use App\Helpers\Enums\GradeType;
 use App\Helpers\Helper;
+use App\Imports\StudentImport;
 use App\Models\Grade;
 use App\Models\Subject;
 use App\Repositories\Recommendation\RecommendationRepository;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Repositories\Student\StudentRepository;
 use App\Repositories\Village\VillageRepository;
+use Maatwebsite\Excel\Facades\Excel;
 
 use function PHPUnit\Framework\isEmpty;
 
@@ -320,6 +322,41 @@ class StudentServiceImplement extends Service implements StudentService
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
     }
+  }
+
+  public function handleImportData($request)
+  {
+    $payload = $request->validated();
+
+    $file = $payload['file'];
+    $import = new StudentImport();
+    Excel::import($import, $file);
+
+    $errors = $import->getErrors();
+    $importedCount = $import->getImportedCount();
+    $skippedCount = $import->getSkippedCount();
+
+    Helper::log(
+      trans('activity.students.import'),
+      me()->id,
+      'student_activity_import'
+    );
+
+    // Cek jika terdapat error yang valid
+    if (!empty($errors)) {
+      return redirect()->back()->withErrors($errors)->with([
+        'warning' => 'Import selesai dengan beberapa peringatan.',
+        'imported' => $importedCount,
+        'skipped' => $skippedCount
+      ]);
+    }
+
+    // Jika tidak ada error, kembalikan pesan sukses
+    return redirect()->back()->with([
+      'success' => trans('session.create'),
+      'imported' => $importedCount,
+      'skipped' => $skippedCount
+    ]);
   }
 
   public function handleRestoreData($id)

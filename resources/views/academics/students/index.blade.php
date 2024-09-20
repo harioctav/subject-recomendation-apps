@@ -11,6 +11,11 @@
 </div>
 @endsection
 @section('content')
+<div id="loading-animation" style="display:none;">
+  <div class="loading-spinner"></div>
+  <p>Loading...</p>
+</div>
+
 <div class="block block-rounded">
   <div class="block-header block-header-default">
     <h3 class="block-title">
@@ -37,6 +42,13 @@
         <i class="fa fa-plus fa-sm me-1"></i>
         {{ trans('page.students.create') }}
       </a>
+
+      @can('students.import')
+      <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modal-fadein">
+        <i class="fa fa-file-excel fa-sm me-1"></i>
+        {{ trans('button.import', ['import' => trans('page.students.title')]) }}
+      </button>
+      @endcan
     </div>
     @endcan
 
@@ -54,12 +66,27 @@
       </div>
     </div>
 
+    @if ($errors->any())
+    <div class="my-3">
+      <div class="alert alert-warning alert-dismissible d-flex align-items-center" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <i class="fa fa-sm fa-exclamation-triangle me-2"></i>
+        @foreach ($errors->all() as $error)
+        <p class="mb-0">
+          {{ $error }}
+        </p>
+        @endforeach
+      </div>
+    </div>
+    @endif
+
     <div class="my-3">
       {{ $dataTable->table() }}
     </div>
 
   </div>
 </div>
+@includeIf('academics.students.import')
 @endsection
 @push('javascript')
 {{ $dataTable->scripts() }}

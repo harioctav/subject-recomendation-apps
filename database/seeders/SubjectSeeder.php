@@ -14,7 +14,7 @@ class SubjectSeeder extends Seeder
    */
   public function run(): void
   {
-    $path = public_path('assets/excels/subjects.xlsx');
+    $path = public_path('assets/excels/template-subjects.xlsx');
     Excel::import(new SubjectImport, $path);
   }
 }

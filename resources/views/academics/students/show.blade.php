@@ -69,7 +69,7 @@
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Tempat Lahir') }}
-            <span class="fw-semibold">{{ $student->birth_place }}</span>
+            <span class="fw-semibold">{{ $student->birth_place ?: '--' }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Tanggal Lahir') }}
@@ -77,7 +77,7 @@
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Usia') }}
-            <span class="fw-semibold">{{ $student->age . " Tahun" }}</span>
+            <span class="fw-semibold">{{ $student->age }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Agama') }}
@@ -93,7 +93,7 @@
         <ul class="list-group push">
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('No. Handphone') }}
-            <span class="fw-semibold">{{ $student->phone }}</span>
+            <span class="fw-semibold">{{ $student->phone ?: '--' }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Email Pribadi') }}
@@ -125,27 +125,27 @@
         <ul class="list-group push">
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Provinsi') }}
-            <span class="fw-semibold">{{ $student->village->district->regency->province->name }}</span>
+            <span class="fw-semibold">{{ $student->province->name ?: '--' }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Kabupaten/Kota') }}
-            <span class="fw-semibold">{{ $student->village->district->regency->name }}</span>
+            <span class="fw-semibold">{{ $student->regency->name ?: '--'}}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Kecamatan') }}
-            <span class="fw-semibold">{{ $student->village->district->name }}</span>
+            <span class="fw-semibold">{{ $student->district->name ?: '--' }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Desa/Kelurahan') }}
-            <span class="fw-semibold">{{ $student->village->name }}</span>
+            <span class="fw-semibold">{{ optional($student->village)->name ?: '--' }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Kode Pos') }}
-            <span class="fw-semibold">{{ $student->village->pos_code }}</span>
+            <span class="fw-semibold">{{ optional($student->village)->pos_code ?: '--' }}</span>
           </li>
           <li class="list-group-item">
             {{ trans('Alamat') }}
-            <p class="fw-semibold mb-0 mt-1" style="text-align: justify">{{ $student->address }}</p>
+            <p class="fw-semibold mb-0 mt-1" style="text-align: justify">{{ $student->address ?: '--' }}</p>
           </li>
         </ul>
 

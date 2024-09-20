@@ -34,7 +34,7 @@
       @can('majors.import')
       <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modal-fadein">
         <i class="fa fa-file-excel sm me-1"></i>
-        {{ trans('Import Data Program Studi') }}
+        {{ trans('button.import', ['import' => trans('page.majors.title')]) }}
       </button>
       @endcan
     </div>

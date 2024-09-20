@@ -11,4 +11,5 @@ enum StudentStatusType: string
 
   case RPL = 'RPL';
   case NON_RPL = 'Non RPL';
+  case UNKNOWN = 'unknown';
 }

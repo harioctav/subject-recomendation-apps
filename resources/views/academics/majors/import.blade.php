@@ -26,7 +26,7 @@
               <span class="text-muted">
                 Silahkan download file untuk diimport yang sudah disediakan sebagai berikut :
                 <strong>
-                  <a href="{{ asset('assets/excels/majors.xlsx') }}">Download File.</a>
+                  <a href="{{ asset('assets/excels/template-majors.xlsx') }}">Download File.</a>
                 </strong>
               </span>
             </div>

@@ -88,7 +88,7 @@ class Student extends Model
    */
   public function village(): BelongsTo
   {
-    return $this->belongsTo(Village::class, 'village_id');
+    return $this->belongsTo(Village::class);
   }
 
   public function subjects(): BelongsToMany
@@ -127,7 +127,7 @@ class Student extends Model
     }
 
     // Kembalikan nilai default jika birth_day tidak ada
-    return null;
+    return '--';
   }
 
   /**
@@ -136,10 +136,10 @@ class Student extends Model
   public function getAgeAttribute()
   {
     if ($this->birth_date) {
-      return Carbon::parse($this->birth_date)->age;
+      return Carbon::parse($this->birth_date)->age . " Tahun";
     }
 
-    return null;
+    return '--';
   }
 
   public function statusLabel(): Attribute
@@ -179,6 +179,24 @@ class Student extends Model
 
     // Format menjadi XXXX.1/2
     return "{$year}.{$periodNumber}";
+  }
+
+  // Accessor untuk mendapatkan province_id
+  public function getProvinceAttribute()
+  {
+    return optional(optional(optional(optional($this->village)->district)->regency)->province);
+  }
+
+  // Accessor untuk mendapatkan regency_id
+  public function getRegencyAttribute()
+  {
+    return optional(optional(optional($this->village)->district)->regency);
+  }
+
+  // Accessor untuk mendapatkan district_id
+  public function getDistrictAttribute()
+  {
+    return optional(optional($this->village)->district);
   }
 
   public function getRemainingCredits()

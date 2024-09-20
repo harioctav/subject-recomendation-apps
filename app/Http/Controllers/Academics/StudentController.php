@@ -17,6 +17,7 @@ use App\DataTables\Scopes\UserStatusFilter;
 use App\DataTables\Academics\StudentDataTable;
 use App\Http\Requests\Academics\StudentRequest;
 use App\Http\Requests\Academics\Students\NimRequest;
+use App\Http\Requests\Imports\ImportRequest;
 use App\Services\Locations\Province\ProvinceService;
 
 class StudentController extends Controller
@@ -108,6 +109,8 @@ class StudentController extends Controller
     $religions = $this->cacheData('religions', fn() => ReligionType::toArray());
     $status = $this->cacheData('status', fn() => StudentStatusType::toArray());
 
+    // dd($student->province->name);
+
     return view('academics.students.edit', compact('majors', 'genders', 'religions', 'student', 'provinces', 'status'));
   }
 
@@ -150,5 +153,10 @@ class StudentController extends Controller
   public function data(NimRequest $request)
   {
     return $this->studentService->getStudentAllData($request);
+  }
+
+  public function import(ImportRequest $request)
+  {
+    return $this->studentService->handleImportData($request);
   }
 }

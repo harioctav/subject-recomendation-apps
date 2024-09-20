@@ -33,7 +33,7 @@
       @can('subjects.import')
       <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modal-fadein">
         <i class="fa fa-file-excel fa-sm me-1"></i>
-        {{ trans('Import Data Matakuliah') }}
+        {{ trans('button.import', ['import' => trans('page.subjects.title')]) }}
       </button>
       @endcan
     </div>

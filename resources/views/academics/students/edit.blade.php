@@ -205,10 +205,10 @@
           <div class="mb-4">
             <label for="province" class="form-label">{{ trans('Pilih Provinsi') }}</label>
             <span class="text-danger">*</span>
-            <select name="province" id="province" class="js-select2 form-select @error('province') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('province', $student->village->district->regency->province->id) }}">
+            <select name="province" id="province" class="js-select2 form-select @error('province') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('province', $student->province->id) }}">
               <option></option>
               @foreach ($provinces as $item)
-              <option value="{{ $item->id }}" @if (old('province', $student->village->district->regency->province->id)==$item->id) selected @endif>{{ $item->name }}</option>
+              <option value="{{ $item->id }}" @if (old('province', $student->province->id)==$item->id) selected @endif>{{ $item->name }}</option>
               @endforeach
             </select>
             @error('province')
@@ -219,7 +219,7 @@
           <div class="mb-4">
             <label for="regency" class="form-label">{{ trans('Pilih Kabupaten') }}</label>
             <span class="text-danger">*</span>
-            <select name="regency" id="regency" class="js-select2 form-select @error('regency') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('regency', $student->village->district->regency->id) }}">
+            <select name="regency" id="regency" class="js-select2 form-select @error('regency') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('regency', $student->regency->id) }}">
               <option></option>
 
             </select>
@@ -231,7 +231,7 @@
           <div class="mb-4">
             <label for="district" class="form-label">{{ trans('Pilih Kecamatan') }}</label>
             <span class="text-danger">*</span>
-            <select name="district" id="district" class="js-select2 form-select @error('district') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('district', $student->village->district->id) }}">
+            <select name="district" id="district" class="js-select2 form-select @error('district') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('district', $student->district->id) }}">
               <option></option>
 
             </select>
@@ -243,7 +243,7 @@
           <div class="mb-4">
             <label for="village" class="form-label">{{ trans('Pilih Kelurahan') }}</label>
             <span class="text-danger">*</span>
-            <select name="village" id="village" class="js-select2 form-select @error('village') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('village', $student->village->id) }}">
+            <select name="village" id="village" class="js-select2 form-select @error('village') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('village', $student->village_id) }}">
               <option></option>
 
             </select>
@@ -255,7 +255,7 @@
           <div class="mb-4">
             <label for="post_code" class="form-label">{{ trans('Kode Pos') }}</label>
             <span class="text-danger">*</span>
-            <input type="text" name="post_code" id="post_code" value="{{ old('post_code') }}" class="form-control @error('post_code') is-invalid @enderror" placeholder="{{ trans('Masukkan Kode Pos') }}" onkeypress="return onlyNumber(event)" data-old="{{ old('post_code', $student->village->pos_code) }}" readonly>
+            <input type="text" name="post_code" id="post_code" value="{{ old('post_code') }}" class="form-control @error('post_code') is-invalid @enderror" placeholder="{{ trans('Masukkan Kode Pos') }}" onkeypress="return onlyNumber(event)" data-old="{{ old('post_code', optional($student->village)->pos_code) }}" readonly>
             @error('post_code')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror

@@ -13,4 +13,5 @@ enum ReligionType: string
   case CHRISTIAN = 'kristen';
   case HINDU = 'hindu';
   case BUDDHA = 'buddha';
+  case UNKNOWN = 'unknown';
 }

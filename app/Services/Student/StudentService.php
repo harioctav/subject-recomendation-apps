@@ -25,4 +25,5 @@ interface StudentService extends BaseService
   public function handleDeleteData(int $id);
   public function handleRestoreData(int $id);
   public function handleForceDeleteData(int $id);
+  public function handleImportData(Request $request);
 }

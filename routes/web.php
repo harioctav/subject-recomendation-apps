@@ -76,6 +76,7 @@ Route::middleware([
     Route::prefix('students')->name('students.')
       ->controller(StudentController::class)->group(function () {
         Route::post('student-data-status', 'data')->name('data');
+        Route::post('import', 'import')->name('import');
         Route::put('{student}/restore', 'restore')->name('restore')->withTrashed();
         Route::delete('{student}/delete', 'delete')->name('delete')->withTrashed();
       });

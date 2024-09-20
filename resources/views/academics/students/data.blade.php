@@ -49,11 +49,11 @@
             </span>
             <span class="info-item">
               <span class="info-label">Alamat :</span>
-              <span class="info-value">{{ strtoupper($student->address) }}</span>
+              <span class="info-value">{{ strtoupper($student->address) ?: '--' }}</span>
             </span>
             <span class="info-item">
               <span class="info-label">Kab/Kota :</span>
-              <span class="info-value">{{ strtoupper($student->village->district->regency->type) }} {{ strtoupper($student->village->district->regency->name) }}</span>
+              <span class="info-value">{{ strtoupper($student->regency->type) ?: '--' }} {{ strtoupper($student->regency->name) ?: '--' }}</span>
             </span>
             <div class="info-item">
               <div class="info-label"></div>
@@ -61,7 +61,7 @@
             </div>
             <div class="info-item">
               <div class="info-label">Kode Pos :</div>
-              <div class="info-value">{{ $student->village->pos_code }}/{{ strtoupper($student->village->district->name) }}</div>
+              <div class="info-value">{{ optional($student->village)->pos_code ?: '--' }}/{{ strtoupper($student->district->name) ?: '--' }}</div>
             </div>
           </div>
           <div class="col-md-6">
@@ -71,19 +71,19 @@
             </span>
             <div class="info-item">
               <div class="info-label">UPBJJ :</div>
-              <div class="info-value">{{ strtoupper($student->upbjj) ?? '-' }}</div>
+              <div class="info-value">{{ strtoupper($student->upbjj) ?: '--' }}</div>
             </div>
             <div class="info-item">
               <div class="info-label">Regis :</div>
-              <div class="info-value">{{ $student->initial_registration_period ?? '-' }}</div>
+              <div class="info-value">{{ $student->initial_registration_period ?: '--' }}</div>
             </div>
             <div class="info-item">
               <div class="info-label">Jurusan Asal :</div>
-              <div class="info-value">{{ strtoupper($student->origin_department) ?? '-' }}</div>
+              <div class="info-value">{{ strtoupper($student->origin_department) ?: '--' }}</div>
             </div>
             <div class="info-item">
               <div class="info-label">Tempat, Tanggal Lahir :</div>
-              <div class="info-value">{{ $student->birth_place }}, {{ $student->formatted_birth_date }}</div>
+              <div class="info-value">{{ $student->birth_place ?: '--' }}, {{ $student->formatted_birth_date }}</div>
             </div>
           </div>
         </div>
