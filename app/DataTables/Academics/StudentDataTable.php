@@ -2,14 +2,13 @@
 
 namespace App\DataTables\Academics;
 
+use App\DataTables\Scopes\Deleted;
+use App\DataTables\Scopes\GlobalFilter;
 use App\Helpers\Helper;
 use App\Models\Student;
-use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use App\Services\Student\StudentService;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
@@ -58,7 +57,19 @@ class StudentDataTable extends DataTable
    */
   public function query(Student $model): QueryBuilder
   {
-    return $model->newQuery()->orderBy('name', 'asc')->latest();
+    $query = $model->newQuery()->orderBy('name', 'asc')->latest();
+
+    if ($this->request()->has('status')) {
+      $statusFilter = new GlobalFilter($this->request());
+      $statusFilter->apply($query);
+    }
+
+    if ($this->request()->has('deleted')) {
+      $deleteFilter = new Deleted($this->request());
+      $deleteFilter->apply($query);
+    }
+
+    return $query;
   }
 
   /**
@@ -71,8 +82,6 @@ class StudentDataTable extends DataTable
       ->columns($this->getColumns())
       ->minifiedAjax()
       ->ajax([
-        'url' => route('students.index'),
-        'type' => 'GET',
         'data' => "
           function(data) {
             data.status = $('select[name=status]').val();
@@ -96,7 +105,7 @@ class StudentDataTable extends DataTable
       ->autoWidth(false)
       ->pageLength(5)
       ->responsive(true)
-      ->lengthMenu([5, 10, 20])
+      ->lengthMenu([5, 10, 20, 100])
       ->orderBy(1);
   }
 

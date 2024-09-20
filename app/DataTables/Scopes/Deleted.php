@@ -2,8 +2,8 @@
 
 namespace App\DataTables\Scopes;
 
-use Illuminate\Http\Request;
 use Yajra\DataTables\Contracts\DataTableScope;
+use Yajra\DataTables\Utilities\Request;
 
 class Deleted implements DataTableScope
 {

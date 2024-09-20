@@ -3,7 +3,11 @@ import { showConfirmationModal } from "@/utils/helper.js";
 let table;
 
 $(() => {
-    table = $(".table").DataTable();
+    table = $("#student-table").DataTable();
+
+    $("#status").on("change", function () {
+        table.draw();
+    });
 });
 
 function deleteRole(url) {

@@ -40,7 +40,6 @@ class MajorSubjectDataTable extends DataTable
   public function query(MajorSubject $model): QueryBuilder
   {
     if (!$this->majorId) {
-      Log::error('MajorSubjectDataTable: majorId is not set');
       throw new \Exception('Major ID is not set for MajorSubjectDataTable');
     }
 
@@ -79,7 +78,7 @@ class MajorSubjectDataTable extends DataTable
       ->autoWidth(false)
       ->pageLength(5)
       ->responsive(true)
-      ->lengthMenu([5, 10, 20])
+      ->lengthMenu([5, 10, 20, 100])
       ->orderBy(1);
   }
 

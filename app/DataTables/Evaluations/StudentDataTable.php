@@ -2,13 +2,11 @@
 
 namespace App\DataTables\Evaluations;
 
+use App\DataTables\Scopes\GlobalFilter;
 use App\Helpers\Helper;
 use App\Models\Student;
-use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
@@ -54,7 +52,14 @@ class StudentDataTable extends DataTable
    */
   public function query(Student $model): QueryBuilder
   {
-    return $model->newQuery()->orderBy('name', 'asc')->latest();;
+    $query = $model->newQuery()->orderBy('name', 'asc')->latest();
+
+    if ($this->request()->has('status')) {
+      $statusFilter = new GlobalFilter($this->request());
+      $statusFilter->apply($query);
+    }
+
+    return $query;
   }
 
   /**
@@ -67,6 +72,9 @@ class StudentDataTable extends DataTable
       ->columns($this->getColumns())
       ->minifiedAjax()
       //->dom('Bfrtip')
+      ->ajax([
+        'data' => 'function(d) { d.status = $("#status").val(); }'
+      ])
       ->addTableClass([
         'table',
         'table-striped',
@@ -81,7 +89,7 @@ class StudentDataTable extends DataTable
       ->autoWidth(false)
       ->pageLength(5)
       ->responsive(true)
-      ->lengthMenu([5, 10, 20])
+      ->lengthMenu([5, 10, 20, 100])
       ->orderBy(1);
   }
 
@@ -95,9 +103,6 @@ class StudentDataTable extends DataTable
       'recommendations.create',
       'recommendations.show',
     ]);
-
-    $gradesColumn = Column::make('grades')->title(trans('Data Nilai'))->addClass('text-center');
-    $recommendationsColumn = Column::make('recommendations')->title(trans('Rekomendasi'))->addClass('text-center');
 
     return [
       Column::make('DT_RowIndex')
@@ -118,7 +123,6 @@ class StudentDataTable extends DataTable
       Column::make('status')
         ->title(trans('Status'))
         ->addClass('text-center'),
-      // request()->routeIs('recommendations.*') ? $recommendationsColumn : $gradesColumn,
       Column::computed('action')
         ->title(trans('Opsi'))
         ->exportable(false)

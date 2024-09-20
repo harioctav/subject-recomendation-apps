@@ -3,10 +3,10 @@
 namespace App\DataTables\Scopes;
 
 use App\Helpers\Helper;
-use Yajra\DataTables\Utilities\Request;
 use Yajra\DataTables\Contracts\DataTableScope;
+use Yajra\DataTables\Utilities\Request;
 
-class GradeFilter implements DataTableScope
+class GlobalFilter implements DataTableScope
 {
   public function __construct(
     protected Request $request
@@ -22,10 +22,17 @@ class GradeFilter implements DataTableScope
    */
   public function apply($query)
   {
-    if ($this->request->has('grade') && $this->request->get('grade') !== null) {
-      $grade = $this->request->get('grade');
-      if ($grade !== Helper::ALL) {
-        $query->where('grade', $grade);
+    $filters = [
+      'status',
+      'degree',
+      'grade',
+    ];
+
+    foreach ($filters as $field) {
+      if ($this->request->has($field) && $this->request->get($field) !== null) {
+        if ($this->request->get($field) !== Helper::ALL) {
+          $query->where($field, $this->request->get($field));
+        }
       }
     }
 

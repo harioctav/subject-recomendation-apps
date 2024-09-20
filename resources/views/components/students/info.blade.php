@@ -19,6 +19,14 @@
         <h3 class="block-title">{{ trans('Perkembangan Akademik Mahasiswa') }}</h3>
       </div>
       <div class="block-content">
+
+        <ul class="list-group push">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ trans('Program Studi') }}
+            <span class="badge bg-black-50">{{ $detail['student']->major->name }}</span>
+          </li>
+        </ul>
+
         <div class="row items-push text-center">
           <div class="col-6 col-md-3">
             <!-- Pie Chart Container -->

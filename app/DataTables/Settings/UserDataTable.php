@@ -2,15 +2,14 @@
 
 namespace App\DataTables\Settings;
 
+use App\DataTables\Scopes\GlobalFilter;
+use App\DataTables\Scopes\RoleFilter;
 use App\Models\User;
 use App\Helpers\Helper;
 use App\Helpers\Enums\RoleType;
-use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use App\Services\User\UserService;
 use Yajra\DataTables\EloquentDataTable;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
@@ -55,7 +54,19 @@ class UserDataTable extends DataTable
    */
   public function query(User $model): QueryBuilder
   {
-    return $this->userService->getQuery()->oldest('name')->whereNotAdmin();
+    $query = $this->userService->getQuery()->oldest('name')->whereNotAdmin();
+
+    if ($this->request()->has('status')) {
+      $statusFilter = new GlobalFilter($this->request());
+      $statusFilter->apply($query);
+    }
+
+    if ($this->request()->has('roles')) {
+      $roleFilter = new RoleFilter($this->request());
+      $roleFilter->apply($query);
+    }
+
+    return $query;
   }
 
   /**
@@ -68,8 +79,6 @@ class UserDataTable extends DataTable
       ->columns($this->getColumns())
       ->minifiedAjax()
       ->ajax([
-        'url' => route('users.index'),
-        'type' => 'GET',
         'data' => "
           function(data) {
             data.roles = $('select[name=roles]').val();
@@ -89,7 +98,7 @@ class UserDataTable extends DataTable
       ->autoWidth(false)
       ->pageLength(5)
       ->responsive(true)
-      ->lengthMenu([5, 10, 20])
+      ->lengthMenu([5, 10, 20, 100])
       ->orderBy(1);
   }
 
@@ -121,9 +130,6 @@ class UserDataTable extends DataTable
       Column::make('roles')
         ->title(trans('Peran'))
         ->addClass('text-center'),
-      // Column::make('phone')
-      //   ->title(trans('No. Hp'))
-      //   ->addClass('text-center'),
       Column::make('status')
         ->title(trans('Status'))
         ->addClass('text-center'),

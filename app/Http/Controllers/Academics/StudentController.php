@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers\Academics;
 
-use App\DataTables\Scopes\Deleted;
 use App\Models\Student;
 use App\Traits\ChacesData;
-use Illuminate\Http\Request;
 use App\Helpers\Enums\GenderType;
 use App\Helpers\Enums\ReligionType;
 use App\Http\Controllers\Controller;
 use App\Services\Major\MajorService;
-use Illuminate\Support\Facades\Cache;
 use App\Helpers\Enums\StudentStatusType;
 use App\Services\Student\StudentService;
-use App\DataTables\Scopes\UserStatusFilter;
 use App\DataTables\Academics\StudentDataTable;
 use App\Http\Requests\Academics\StudentRequest;
 use App\Http\Requests\Academics\Students\NimRequest;
@@ -56,13 +52,10 @@ class StudentController extends Controller
   /**
    * Display a listing of the resource.
    */
-  public function index(StudentDataTable $dataTable, Request $request)
+  public function index(StudentDataTable $dataTable)
   {
     $status = StudentStatusType::toArray();
-    return $dataTable->addScopes([
-      new Deleted($request),
-      new UserStatusFilter($request),
-    ])->render("academics.students.index", compact('status'));
+    return $dataTable->render('academics.students.index', compact('status'));
   }
 
   /**

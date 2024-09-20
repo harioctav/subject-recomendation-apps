@@ -39,6 +39,20 @@
       @endcan
     </div>
 
+    <div class="row">
+      <div class="col-md-4">
+        <div class="">
+          <label for="degree" class="form-label">{{ trans('Filter Berdasarkan Jenjang Prodi') }}</label>
+          <select type="text" class="form-select" name="degree" id="degree">
+            <option value="{{ Helper::ALL }}">{{ Helper::ALL }}</option>
+            @foreach (DegreeType::toArray() as $item)
+            <option value="{{ $item }}">{{ ucfirst($item) }}</option>
+            @endforeach
+          </select>
+        </div>
+      </div>
+    </div>
+
     <div class="my-3">
       {{ $dataTable->table() }}
     </div>

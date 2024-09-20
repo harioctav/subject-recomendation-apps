@@ -25,6 +25,7 @@
         "spatie/laravel-permission": "^6.9",
         "spatie/pdf-to-text": "^1.53",
         "yajra/laravel-datatables": "^10.1",
+        "yajra/laravel-datatables-oracle": "^10.11",
         "yaza/laravel-repository-service": "^4.0"
     },
     "require-dev": {

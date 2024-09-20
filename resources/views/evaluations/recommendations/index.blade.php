@@ -19,6 +19,20 @@
   </div>
   <div class="block-content">
 
+    <div class="row">
+      <div class="col-md-4">
+        <div class="">
+          <label for="status" class="form-label">{{ trans('Filter Berdasarkan Status Mahasiswa') }}</label>
+          <select type="text" class="form-select" name="status" id="status">
+            <option value="{{ Helper::ALL }}">{{ Helper::ALL }}</option>
+            @foreach (StudentStatus::toArray() as $item)
+            <option value="{{ $item }}">{{ ucfirst($item) }}</option>
+            @endforeach
+          </select>
+        </div>
+      </div>
+    </div>
+
     <div class="my-3">
       {{ $dataTable->table() }}
     </div>
@@ -29,8 +43,4 @@
 @push('javascript')
 {{ $dataTable->scripts() }}
 @vite('resources/js/evaluations/recommendations/index.js')
-{{-- <script>
-  var urlDestroy = "{{ route('recommendations.destroy', ':uuid') }}"
-
-</script> --}}
 @endpush

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Evaluations;
 
-use App\DataTables\Scopes\GradeFilter;
 use App\Http\Requests\Imports\ImportRequest;
 use App\Models\Grade;
 use App\Http\Controllers\Controller;

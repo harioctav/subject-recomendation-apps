@@ -11,12 +11,18 @@ export default defineConfig({
 
                 // Academics
                 "resources/js/academics/major_subjects/index.js",
+                // Major
                 "resources/js/academics/majors/index.js",
+
+                // Studennt
                 "resources/js/academics/students/index.js",
                 "resources/js/academics/students/input.js",
+
+                // Subject
                 "resources/js/academics/subjects/index.js",
 
                 // Evaluations
+                "resources/js/evaluations/grades/index.js",
                 "resources/js/evaluations/grades/input.js",
                 "resources/js/evaluations/grades/show.js",
 

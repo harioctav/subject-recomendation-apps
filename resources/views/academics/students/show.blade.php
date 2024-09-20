@@ -38,11 +38,37 @@
           <div class="block-content block-content-full block-content-sm bg-body-light mb-3">
             <span class="fw-semibold fs-sm text-elegance">{{ $student->email ?: '--' }}</span>
           </div>
-          <a href="javascript:void(0)" class="btn btn-sm btn-primary text-center mb-1">
-            <i class="fa fa-print fa-sm me-1"></i>
-            {{ trans('Cetak Biodata Mahasiswa') }}
-          </a>
         </div>
+
+        <div class="row justify-content-center">
+          <div class="col-md-auto mb-1">
+            @can('students.semester')
+            <a href="{{ route('students.semester') }}" class="btn btn-sm btn-secondary text-center" onclick="event.preventDefault(); document.getElementById('nim-form').submit();">
+              <i class="fa fa-file-excel fa-sm me-2"></i>
+              {{ trans('Cek Data Sisa Semester') }}
+            </a>
+
+            <form id="nim-form" action="{{ route('students.semester') }}" method="POST" class="d-none">
+              @csrf
+              <input type="text" class="d-none" value="{{ $student->nim }}" name="nim">
+            </form>
+            @endcan
+          </div>
+          <div class="col-md-auto">
+            @can('students.data')
+            <a href="{{ route('students.data') }}" class="btn btn-sm btn-primary text-center" onclick="event.preventDefault(); document.getElementById('nim-form-data').submit();">
+              <i class="fa fa-file-excel fa-sm me-2"></i>
+              {{ trans('Cek Data Nilai Matakuliah') }}
+            </a>
+
+            <form id="nim-form-data" action="{{ route('students.data') }}" method="POST" class="d-none">
+              @csrf
+              <input type="text" class="d-none" value="{{ $student->nim }}" name="nim">
+            </form>
+            @endcan
+          </div>
+        </div>
+
       </div>
       <div class="col-md-6 col-xl-9">
         <div class="py-1 my-0 mb-1">

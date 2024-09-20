@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers\Settings;
 
-use App\DataTables\Scopes\RoleFilter;
-use App\DataTables\Scopes\UserStatusFilter;
 use App\DataTables\Settings\UserDataTable;
 use App\Helpers\Enums\AccountStatusType;
 use App\Helpers\Enums\RoleType;
 use App\Models\User;
-use Illuminate\Http\Request;
 use App\Services\Role\RoleService;
 use App\Services\User\UserService;
 use App\Http\Controllers\Controller;
@@ -31,17 +28,14 @@ class UserController extends Controller
   /**
    * Display a listing of the resource.
    */
-  public function index(UserDataTable $dataTable, Request $request)
+  public function index(UserDataTable $dataTable)
   {
     $status = AccountStatusType::toArray();
     $roleTypes = $this->roleService->getQuery()->pluck('name')->reject(function ($role) {
       return $role === RoleType::ADMINISTRATOR->value;
     });
 
-    return $dataTable->addScopes([
-      new RoleFilter($request),
-      new UserStatusFilter($request),
-    ])->render('settings.users.index', compact('status', 'roleTypes'));
+    return $dataTable->render('settings.users.index', compact('status', 'roleTypes'));
   }
 
   /**

@@ -4,12 +4,9 @@ namespace App\DataTables\Academics;
 
 use App\Helpers\Helper;
 use App\Models\Subject;
-use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\EloquentDataTable;
 use App\Services\Subject\SubjectService;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
@@ -36,8 +33,8 @@ class SubjectDataTable extends DataTable
   {
     return (new EloquentDataTable($query))
       ->addIndexColumn()
-      ->addColumn('exam_time', fn ($row) => $row->exam_time ?: '--')
-      ->addColumn('course_credit', fn ($row) => $row->course_credit ?: '--')
+      ->addColumn('exam_time', fn($row) => $row->exam_time ?: '--')
+      ->addColumn('course_credit', fn($row) => $row->course_credit ?: '--')
       ->addColumn('action', 'academics.subjects.action')
       ->rawColumns([
         'action'
@@ -77,7 +74,7 @@ class SubjectDataTable extends DataTable
       ->autoWidth(false)
       ->pageLength(5)
       ->responsive(true)
-      ->lengthMenu([5, 10, 20])
+      ->lengthMenu([5, 10, 20, 100])
       ->orderBy(1);
   }
 

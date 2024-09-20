@@ -3,8 +3,8 @@
 namespace App\DataTables\Scopes;
 
 use App\Helpers\Helper;
-use Illuminate\Http\Request;
 use Yajra\DataTables\Contracts\DataTableScope;
+use Yajra\DataTables\Utilities\Request;
 
 class RoleFilter implements DataTableScope
 {

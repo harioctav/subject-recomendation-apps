@@ -2,7 +2,7 @@
 
 namespace App\DataTables\Evaluations;
 
-use App\DataTables\Scopes\GradeFilter;
+use App\DataTables\Scopes\GlobalFilter;
 use App\Helpers\Helper;
 use App\Models\Grade;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
@@ -50,9 +50,6 @@ class GradeDataTable extends DataTable
         });
       })
       ->addColumn('action', function ($row) {
-        // Periksa apakah catatan ada dan sama dengan "Perlu Perbaikan"
-        // $hasNote = optional($row->recommendations)->note;
-
         return view('evaluations.grades.option', [
           'uuid' => $row->uuid,
           'model' => $row,
@@ -71,7 +68,7 @@ class GradeDataTable extends DataTable
       ->where('student_id', $this->studentId);
 
     if ($this->request()->has('grade')) {
-      $gradeFilter = new GradeFilter($this->request());
+      $gradeFilter = new GlobalFilter($this->request());
       $gradeFilter->apply($query);
     }
 
@@ -106,7 +103,7 @@ class GradeDataTable extends DataTable
       ->autoWidth(false)
       ->pageLength(5)
       ->responsive(true)
-      ->lengthMenu([5, 10, 20])
+      ->lengthMenu([5, 10, 20, 100])
       ->orderBy(1);
   }
 

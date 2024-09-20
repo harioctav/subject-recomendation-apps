@@ -2,14 +2,12 @@
 
 namespace App\DataTables\Academics;
 
+use App\DataTables\Scopes\GlobalFilter;
 use App\Models\Major;
 use App\Helpers\Helper;
-use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use App\Services\Major\MajorService;
 use Yajra\DataTables\EloquentDataTable;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
@@ -48,7 +46,14 @@ class MajorDataTable extends DataTable
    */
   public function query(Major $model): QueryBuilder
   {
-    return $this->majorService->getQuery()->orderBy('name', 'asc')->latest();
+    $query = $this->majorService->getQuery()->orderBy('name', 'asc')->latest();
+
+    if ($this->request()->has('degree')) {
+      $filter = new GlobalFilter($this->request());
+      $filter->apply($query);
+    }
+
+    return $query;
   }
 
   /**
@@ -61,6 +66,12 @@ class MajorDataTable extends DataTable
       ->columns($this->getColumns())
       ->minifiedAjax()
       //->dom('Bfrtip')
+      ->ajax([
+        'data' => "
+          function(data) {
+            data.degree = $('select[name=degree]').val();
+          }"
+      ])
       ->addTableClass([
         'table',
         'table-striped',
@@ -76,7 +87,7 @@ class MajorDataTable extends DataTable
       ->autoWidth(false)
       ->pageLength(5)
       ->responsive(true)
-      ->lengthMenu([5, 10, 20])
+      ->lengthMenu([5, 10, 20, 100])
       ->orderBy(1);
   }
 

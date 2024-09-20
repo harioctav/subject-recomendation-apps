@@ -22,7 +22,7 @@ class NimRequest extends FormRequest
   public function rules(): array
   {
     return [
-      'nim' => 'nullable|numeric',
+      'nim' => 'nullable|numeric|exists:students,nim',
     ];
   }
 
