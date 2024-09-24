@@ -21,13 +21,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
   return $request->user();
 });
 
-Route::prefix('locations')->group(function () {
-  Route::get('provinces', [LocationController::class, 'provinces'])->name('locations.provinces');
-  Route::get('regencies/{province_id}', [LocationController::class, 'regencies'])->name('locations.regencies');
-  Route::get('districts/{regency_id}', [LocationController::class, 'districts'])->name('locations.districts');
-  Route::get('villages/{disctrict_id}', [LocationController::class, 'villages'])->name('locations.villages');
-  Route::get('villages/post_code/{village_id}', [LocationController::class, 'postCode'])->name('locations.postCodes');
-});
+Route::prefix('locations')
+  ->controller(LocationController::class)
+  ->name('locations.')
+  ->group(function () {
+    Route::get('provinces', 'provinces')->name('provinces');
+    Route::get('regencies/{province_id}', 'regencies')->name('regencies');
+    Route::get('districts/{regency_id}', 'districts')->name('districts');
+    Route::get('villages/{disctrict_id}', 'villages')->name('villages');
+    Route::get('villages/post_code/{village_id}', 'postCode')->name('postCode');
+  });
 
 Route::name('api.')->group(function () {
   Route::prefix('students')->group(function () {

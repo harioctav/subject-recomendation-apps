@@ -1,11 +1,44 @@
 $(() => {
-    var today = new Date();
+    const today = new Date();
+
+    // Initialize flatpickr for birth_date
     flatpickr("#birth_date", {
         dateFormat: "Y-m-d",
         maxDate: today,
     });
 
-    // Function to load old values
+    // Function to handle AJAX requests and populate options
+    function populateSelect(
+        url,
+        $select,
+        defaultOption,
+        oldVal = null,
+        callback = null
+    ) {
+        $.ajax({
+            url: url,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                $select
+                    .empty()
+                    .append(`<option value="">${defaultOption}</option>`);
+                $.each(data, function (key, value) {
+                    const optionText = value.type
+                        ? `${value.type} ${value.name}`
+                        : value.name; // Include type if available
+                    $select.append(
+                        `<option value="${value.id}" ${
+                            value.id == oldVal ? "selected" : ""
+                        }>${optionText}</option>`
+                    );
+                });
+                if (callback) callback();
+            },
+        });
+    }
+
+    // Load regency, district, and village based on old values
     function loadOldValues() {
         const oldProvince = $("#province").data("old");
         const oldRegency = $("#regency").data("old");
@@ -15,219 +48,119 @@ $(() => {
 
         if (oldProvince) {
             $("#province").val(oldProvince).trigger("change");
-        }
-
-        // Load regency if old value exists
-        if (oldRegency) {
-            let url = regencies_url.replace(":province_id", oldProvince);
-            $.ajax({
-                url: url,
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    $("#regency")
-                        .empty()
-                        .append('<option value="">Pilih Kabupaten</option>');
-                    $.each(data, function (key, value) {
-                        $("#regency").append(
-                            `<option value="${value.id}" ${
-                                value.id == oldRegency ? "selected" : ""
-                            }>${value.type} ${value.name}</option>`
-                        );
-                    });
-                    $("#regency").trigger("change");
-
-                    // Load district if old value exists
-                    if (oldDistrict) {
-                        let url = districts_url.replace(
-                            ":regency_id",
-                            oldRegency
-                        );
-                        $.ajax({
-                            url: url,
-                            type: "GET",
-                            dataType: "json",
-                            success: function (data) {
-                                $("#district")
-                                    .empty()
-                                    .append(
-                                        '<option value="">Pilih Kecamatan</option>'
-                                    );
-                                $.each(data, function (key, value) {
-                                    $("#district").append(
-                                        `<option value="${value.id}" ${
-                                            value.id == oldDistrict
-                                                ? "selected"
-                                                : ""
-                                        }>${value.name}</option>`
-                                    );
-                                });
-                                $("#district").trigger("change");
-
-                                // Load village if old value exists
-                                if (oldVillage) {
-                                    let url = villages_url.replace(
-                                        ":district_id",
-                                        oldDistrict
-                                    );
-                                    $.ajax({
-                                        url: url,
-                                        type: "GET",
-                                        dataType: "json",
-                                        success: function (data) {
-                                            $("#village")
-                                                .empty()
-                                                .append(
-                                                    '<option value="">Pilih Kelurahan</option>'
-                                                );
-                                            $.each(data, function (key, value) {
-                                                $("#village").append(
-                                                    `<option value="${
-                                                        value.id
-                                                    }" ${
-                                                        value.id == oldVillage
-                                                            ? "selected"
-                                                            : ""
-                                                    }>${value.name}</option>`
-                                                );
-                                            });
-                                            $("#village").trigger("change");
-
-                                            // Set post_code if old value exists
-                                            if (oldPostCode) {
-                                                $("#post_code").val(
-                                                    oldPostCode
-                                                );
-                                            }
-                                        },
-                                    });
-                                }
-                            },
-                        });
-                    }
-                },
-            });
+            loadRegency(
+                oldProvince,
+                oldRegency,
+                oldDistrict,
+                oldVillage,
+                oldPostCode
+            );
         }
     }
 
-    // Call the function to load old values
-    loadOldValues();
+    // Load regency, district, and village based on the provided old values
+    function loadRegency(
+        province_id,
+        oldRegency,
+        oldDistrict,
+        oldVillage,
+        oldPostCode
+    ) {
+        const url = regencies_url.replace(":province_id", province_id);
+        populateSelect(
+            url,
+            $("#regency"),
+            "Pilih Kabupaten",
+            oldRegency,
+            function () {
+                if (oldRegency)
+                    loadDistrict(
+                        oldRegency,
+                        oldDistrict,
+                        oldVillage,
+                        oldPostCode
+                    );
+            }
+        );
+    }
 
-    // Event handlers for dropdown changes
+    function loadDistrict(regency_id, oldDistrict, oldVillage, oldPostCode) {
+        const url = districts_url.replace(":regency_id", regency_id);
+        populateSelect(
+            url,
+            $("#district"),
+            "Pilih Kecamatan",
+            oldDistrict,
+            function () {
+                if (oldDistrict)
+                    loadVillage(oldDistrict, oldVillage, oldPostCode);
+            }
+        );
+    }
+
+    function loadVillage(district_id, oldVillage, oldPostCode) {
+        const url = villages_url.replace(":district_id", district_id);
+        populateSelect(
+            url,
+            $("#village"),
+            "Pilih Kelurahan",
+            oldVillage,
+            function () {
+                if (oldPostCode) $("#post_code").val(oldPostCode);
+            }
+        );
+    }
+
+    // Event handler for province change
     $("#province").on("change", function () {
-        var province_id = $(this).val();
-        let url = regencies_url.replace(":province_id", province_id);
-
-        if (province_id) {
-            $.ajax({
-                url: url,
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    $("#regency")
-                        .empty()
-                        .append('<option value="">Pilih Kabupaten</option>');
-                    $.each(data, function (key, value) {
-                        $("#regency").append(
-                            `<option value="${value.id}">${value.type} ${value.name}</option>`
-                        );
-                    });
-                },
-            });
-        } else {
-            $("#regency")
-                .empty()
-                .append('<option value="">Pilih Kabupaten</option>');
-        }
-        $("#district")
-            .empty()
-            .append('<option value="">Pilih Kecamatan</option>');
-        $("#village")
-            .empty()
-            .append('<option value="">Pilih Kelurahan</option>');
-        $("#post_code").val("");
+        const province_id = $(this).val();
+        resetSelects(["#regency", "#district", "#village"], "#post_code");
+        if (province_id) loadRegency(province_id);
     });
 
+    // Event handler for regency change
     $("#regency").on("change", function () {
-        var regency_id = $(this).val();
-        let url = districts_url.replace(":regency_id", regency_id);
-
-        if (regency_id) {
-            $.ajax({
-                url: url,
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    $("#district")
-                        .empty()
-                        .append('<option value="">Pilih Kecamatan</option>');
-                    $.each(data, function (key, value) {
-                        $("#district").append(
-                            `<option value="${value.id}">${value.name}</option>`
-                        );
-                    });
-                },
-            });
-        } else {
-            $("#district")
-                .empty()
-                .append('<option value="">Pilih Kecamatan</option>');
-        }
-
-        $("#village")
-            .empty()
-            .append('<option value="">Pilih Kelurahan</option>');
-        $("#post_code").val("");
+        const regency_id = $(this).val();
+        resetSelects(["#district", "#village"], "#post_code");
+        if (regency_id) loadDistrict(regency_id);
     });
 
+    // Event handler for district change
     $("#district").on("change", function () {
-        var district_id = $(this).val();
-        let url = villages_url.replace(":district_id", district_id);
-
-        if (district_id) {
-            $.ajax({
-                url: url,
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    $("#village")
-                        .empty()
-                        .append('<option value="">Pilih Kelurahan</option>');
-                    $.each(data, function (key, value) {
-                        $("#village").append(
-                            `<option value="${value.id}">${value.name}</option>`
-                        );
-                    });
-                },
-            });
-        } else {
-            $("#village")
-                .empty()
-                .append('<option value="">Pilih Kelurahan</option>');
-        }
-
-        $("#post_code").val("");
+        const district_id = $(this).val();
+        resetSelects(["#village"], "#post_code");
+        if (district_id) loadVillage(district_id);
     });
 
+    // Event handler for village change
     $("#village").on("change", function () {
-        var village_id = $(this).val();
-        let url = pos_code_url.replace(":village_id", village_id);
-
+        const village_id = $(this).val();
+        $("#post_code").val(""); // Reset post_code
         if (village_id) {
+            const url = pos_code_url.replace(":village_id", village_id);
             $.ajax({
                 url: url,
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
-                    if (data && data.post_code) {
-                        $("#post_code").val(data.post_code);
-                    } else {
-                        $("#post_code").val("");
-                    }
+                    $("#post_code").val(data.post_code || "");
                 },
             });
-        } else {
-            $("#post_code").val("");
         }
     });
+
+    // Reset selected elements
+    function resetSelects(selectors, postCodeSelector) {
+        selectors.forEach((selector) => {
+            $(selector)
+                .empty()
+                .append(
+                    `<option value="">Pilih ${$(selector).attr("id")}</option>`
+                );
+        });
+        $(postCodeSelector).val("");
+    }
+
+    // Load old values if they exist
+    loadOldValues();
 });
