@@ -24,7 +24,7 @@
 
             <div class="mb-4">
               <span class="text-muted">
-                Silahkan download file untuk diimport yang sudah disediakan sebagai berikut :
+                {{ trans('page.import') }}
                 <strong>
                   <a href="{{ asset('assets/excels/template-subjects.xlsx') }}">Download File.</a>
                 </strong>

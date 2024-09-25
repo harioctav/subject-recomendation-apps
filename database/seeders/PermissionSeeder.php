@@ -57,6 +57,7 @@ class PermissionSeeder extends Seeder
       'majors.subjects.create',
       'majors.subjects.store',
       'majors.subjects.destroy',
+      'majors.subjects.import',
 
       // Halaman Student
       'students.index',

@@ -55,17 +55,24 @@ Route::middleware([
   Route::get('users/show/{user}', [UserController::class, 'show'])->name('users.show');
 
   Route::prefix('academics')->group(function () {
-    // Major management
-    Route::post('majors/import', [MajorController::class, 'import'])->name('majors.import');
 
     // Major to Subject Management
     Route::prefix('majors/{major}/subjects')->name('majors.subjects.')->group(function () {
-      Route::post('/', [MajorSubjectController::class, 'store'])->name('store');
-      Route::get('create', [MajorSubjectController::class, 'create'])->name('create');
-      Route::delete('{subject}', [MajorSubjectController::class, 'destroy'])->name('destroy');
+      Route::controller(MajorSubjectController::class)
+        ->group(function () {
+          Route::post('/', 'store')->name('store');
+          Route::get('create', 'create')->name('create');
+          Route::delete('{subject}', 'destroy')->name('destroy');
+        });
     });
 
     // Major
+    Route::prefix('majors.subjects')->name('majors.subjects.import')
+      ->controller(MajorSubjectController::class)
+      ->group(function () {
+        Route::post('import', 'import');
+      });
+    Route::post('majors/import', [MajorController::class, 'import'])->name('majors.import');
     Route::resource('majors', MajorController::class);
 
     // Subject management

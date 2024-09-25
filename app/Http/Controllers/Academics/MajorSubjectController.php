@@ -10,6 +10,7 @@ use App\Services\Major\MajorService;
 use App\Helpers\Enums\SemesterLevelType;
 use App\Services\Subject\SubjectService;
 use App\Http\Requests\Academics\MajorSubjectRequest;
+use App\Http\Requests\Imports\ImportRequest;
 use Maatwebsite\Excel\Facades\Excel;
 
 class MajorSubjectController extends Controller
@@ -62,5 +63,10 @@ class MajorSubjectController extends Controller
   public function destroy(Major $major, Subject $subject)
   {
     return $this->majorService->handleDestroySubjectToMajorData($major, $subject);
+  }
+
+  public function import(ImportRequest $request)
+  {
+    return $this->majorService->handleImportSubjectToMajorData($request);
   }
 }

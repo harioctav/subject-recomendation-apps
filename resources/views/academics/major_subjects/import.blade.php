@@ -1,11 +1,11 @@
-<div class="modal fade" id="modal-fadein" tabindex="-1" role="dialog" aria-labelledby="modal-fadein" aria-hidden="true">
+<div class="modal fade" id="modal-import-subjects" tabindex="-1" role="dialog" aria-labelledby="modal-fadein" aria-hidden="true">
   <div class="modal-dialog" role="document">
-    <form action="{{ route('majors.import') }}" enctype="multipart/form-data" method="POST" onsubmit="return disableSubmitButton()">
+    <form action="{{ route('majors.subjects.import') }}" enctype="multipart/form-data" method="POST" onsubmit="return disableSubmitButton()">
       @csrf
       <div class="modal-content">
         <div class="block block-rounded shadow-none mb-0">
           <div class="block-header block-header-default">
-            <h3 class="block-title">{{ trans('Import Data Jurusan') }}</h3>
+            <h3 class="block-title">{{ trans('Import Data Matakuliah Program Studi') }}</h3>
             <div class="block-options">
               <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
                 <i class="fa fa-times"></i>
@@ -26,7 +26,7 @@
               <span class="text-muted">
                 {{ trans('page.import') }}
                 <strong>
-                  <a href="{{ asset('assets/excels/template-majors.xlsx') }}">Download File.</a>
+                  <a href="{{ asset('assets/excels/template-subjects-to-major.xlsx') }}">Download File.</a>
                 </strong>
               </span>
             </div>

@@ -24,5 +24,6 @@ interface MajorService extends BaseService
 
   // Subject to Major
   public function handleStoreSubjectToMajorData(Request $request, Major $major);
+  public function handleImportSubjectToMajorData(Request $request);
   public function handleDestroySubjectToMajorData(Major $major, Subject $subject);
 }

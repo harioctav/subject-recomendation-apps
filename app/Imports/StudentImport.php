@@ -2,6 +2,8 @@
 
 namespace App\Imports;
 
+use App\Helpers\Enums\GenderType;
+use App\Helpers\Enums\StudentStatusType;
 use App\Models\Major;
 use App\Models\Student;
 use App\Models\Village;
@@ -36,16 +38,39 @@ class StudentImport implements ToCollection, WithHeadingRow
       $existingNims = Student::pluck('nim')->flip();
 
       foreach ($collection as $row) {
-        $villageName = $row['village'];
-        $majorName = trim($row['major']);
-        $name = trim($row['name']);
-        $nim = trim($row['nim']);
 
-        // Auto skip jika kolom major atau name kosong
-        if (empty($majorName) || empty($name) || empty($nim)) {
-          $this->skipped++;
+        // Abaikan baris jika semua kolom kosong
+        if ($row->filter()->isEmpty()) {
+          // Semua kolom di baris ini kosong, lanjutkan ke baris berikutnya
           continue;
         }
+
+        $majorName = trim($row['jurusan']);
+        $villageName = trim($row['kelurahan']);
+        $nim = trim($row['nim']);
+        $nik = trim($row['nik']) ?: null;
+        $name = trim($row['nama']);
+        $email = trim($row['email']) ?: null;
+        $birthDate = trim($row['tanggal_lahir']);
+        $birthPlace = trim($row['tempat_lahir']);
+        $gender = trim($row['jenis_kelamin']) ?: 'unknown';
+        $phoneNumber = trim($row['nomor_wa']) ?: null;
+        $religion = trim($row['agama']) ?: 'unknown';
+        $initialRegistrationPeriod = trim($row['regis']);
+        $originDepartment = trim($row['jurusan_asal']);
+        $upbjj = trim($row['upbjj']);
+        $address = trim($row['alamat_lengkap']);
+        $studentStatus = trim($row['status_kemahasiswaan']) ?: 1;
+        $regisStatus = trim($row['status_pendaftaran']) ?: 'unknown';
+        $parentName = trim($row['nama_wali']);
+        $parentPhoneNumber = trim($row['nomor_telepon_wali']) ?: null;
+
+        // Skip jika tidak mengisi jurusan dan nim
+        if (empty($majorName) || empty($nim) || empty($name)) :
+          $this->errors = "Kolom 'JURUSAN' dan 'NIM' tidak boleh dikosongkan";
+          $this->skipped++;
+          continue;
+        endif;
 
         // Check if NIM already exists
         if ($existingNims->has($nim)) {
@@ -69,35 +94,52 @@ class StudentImport implements ToCollection, WithHeadingRow
 
         // Convert birth_date
         try {
-          $birthDate = $this->convertDate($row['birth_date']);
+          $checkBirthDate = $this->convertDate($birthDate);
         } catch (\Exception $e) {
-          $this->errors[] = "Format tanggal lahir tidak valid untuk NIM $nim: " . $row['birth_date'];
+          $this->errors[] = "Format tanggal lahir tidak valid untuk NIM $nim: " . $birthDate;
           continue;
         }
 
-        $import = [
-          'nim' => $nim,
-          'name' => strtoupper($name),
-          'email' => $row['email'],
-          'birth_date' => $birthDate,
-          'birth_place' => strtoupper($row['birth_place']),
-          'gender' => $row['gender'] ? strtolower($row['gender']) : 'unknown',
-          'phone' => $row['phone'],
-          'religion' => $row['religion'] ? strtolower($row['religion']) : 'unknown',
-          'initial_registration_period' => $row['initial_registration_period'],
-          'origin_department' => strtoupper($row['origin_department']),
-          'upbjj' => strtoupper($row['upbjj']),
-          'address' => $row['address'],
-          'status' => $row['status'] ?? 'unknown',
-          'student_status' => $row['student_status'] ?? 1,
-          'parent_name' => $row['parent_name'],
-          'parent_phone_number' => $row['parent_phone_name'],
-          'major_id' => $majorCache->get($majorName),
-          'village_id' => $villageId,
-        ];
+        $gender = !empty($gender) ? match ($gender) {
+          'Laki - Laki' => GenderType::MALE->value,
+          'Perempuan' => GenderType::FEMALE->value,
+          default => GenderType::UNKNOWN->value,
+        } : $gender;
+
+        $studentStatus = !empty($studentStatus) ? match ($studentStatus) {
+          'Aktif' => 1,
+          'Tidak Aktif' => 0,
+          default => 1,
+        } : $studentStatus;
+
+        $regisStatus = !empty($regisStatus) ? match ($regisStatus) {
+          'RPL' => StudentStatusType::RPL->value,
+          'Non RPL' => StudentStatusType::NON_RPL->value,
+          default => StudentStatusType::UNKNOWN->value,
+        } : $regisStatus;
 
         // Create new student
-        Student::create($import);
+        Student::create([
+          'major_id' => $majorCache->get($majorName),
+          'village_id' => $villageId,
+          'nim' => $nim,
+          'nik' => $nik,
+          'name' => strtoupper($name),
+          'email' => $email,
+          'birth_date' => $checkBirthDate,
+          'birth_place' => strtoupper($birthPlace),
+          'gender' => $gender,
+          'phone' => $phoneNumber,
+          'religion' => strtolower($religion),
+          'initial_registration_period' => strtoupper($initialRegistrationPeriod),
+          'origin_department' => strtoupper($originDepartment),
+          'upbjj' => strtoupper($upbjj),
+          'address' => strtoupper($address),
+          'status' => $regisStatus,
+          'student_status' => $studentStatus,
+          'parent_name' => $parentName,
+          'parent_phone_number' => $parentPhoneNumber,
+        ]);
 
         $this->imported++;
         $existingNims->put($nim, true);
@@ -110,7 +152,6 @@ class StudentImport implements ToCollection, WithHeadingRow
       $this->errors[] = 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage();
     }
   }
-
 
   protected function getVillageId($villageName)
   {

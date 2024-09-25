@@ -37,6 +37,12 @@
         {{ trans('button.import', ['import' => trans('page.majors.title')]) }}
       </button>
       @endcan
+      @can('majors.subjects.import')
+      <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-import-subjects">
+        <i class="fa fa-file-excel sm me-1"></i>
+        {{ trans('button.import', ['import' => trans('Matakuliah ke Prodi')]) }}
+      </button>
+      @endcan
     </div>
 
     <div class="row">
@@ -53,6 +59,8 @@
       </div>
     </div>
 
+    @includeIf('components.warning-alert')
+
     <div class="my-3">
       {{ $dataTable->table() }}
     </div>
@@ -61,6 +69,8 @@
 </div>
 
 @includeIf('academics.majors.import')
+@includeIf('academics.major_subjects.import')
+
 @endsection
 @push('javascript')
 {{ $dataTable->scripts() }}

@@ -5,6 +5,7 @@ namespace App\Services\Major;
 use App\Helpers\Helper;
 use Illuminate\Support\Str;
 use App\Imports\MajorImport;
+use App\Imports\Majors\SubjectToMajorImport;
 use InvalidArgumentException;
 use Illuminate\Support\Facades\DB;
 use LaravelEasyRepository\Service;
@@ -128,27 +129,35 @@ class MajorServiceImplement extends Service implements MajorService
    */
   public function handleImportData($request)
   {
-    try {
-      DB::beginTransaction();
+    // Fetch request data
+    $payload = $request->validated();
 
-      // Fetch request data
-      $payload = $request->validated();
+    // Get file
+    $file = $payload['file'];
 
-      // Save data to database
-      Excel::import(new MajorImport, $payload['file']);
+    // Inisiate import ddata
+    $import = new MajorImport();
+    Excel::import($import, $file);
 
-      Helper::log(
-        trans('activity.majors.import'),
-        me()->id,
-        'major_activity_import'
-      );
+    $errors = $import->getFails();
 
-      DB::commit();
-    } catch (\Exception $e) {
-      DB::rollBack();
-      Log::info($e->getMessage());
-      throw new InvalidArgumentException(trans('session.log.error'));
+    // Cek jika terdapat error yang valid
+    if (!empty($errors)) {
+      return redirect()->back()->withErrors($errors)->with([
+        'warning' => 'Import selesai dengan beberapa peringatan.',
+      ]);
     }
+
+    Helper::log(
+      trans('activity.majors.import'),
+      me()->id,
+      'major_activity_import'
+    );
+
+    // Jika tidak ada error, kembalikan pesan sukses
+    return redirect()->back()->with([
+      'success' => trans('session.create'),
+    ]);
   }
 
   public function handleDestroyData(int $id)
@@ -176,7 +185,6 @@ class MajorServiceImplement extends Service implements MajorService
       );
 
       $this->mainRepository->delete($major->id);
-
 
       DB::commit();
 
@@ -274,7 +282,7 @@ class MajorServiceImplement extends Service implements MajorService
         ->delete();
 
       if (!$deleted) {
-        throw new \Exception('Gagal menghapus mata kuliah dari program studi.');
+        throw new \Exception('Gagal menghapus matakuliah dari program studi.');
       }
 
       DB::commit();
@@ -292,5 +300,28 @@ class MajorServiceImplement extends Service implements MajorService
         'message' => 'Terjadi kesalahan saat menghapus mata kuliah dari program studi.'
       ], 500);
     }
+  }
+
+  public function handleImportSubjectToMajorData($request)
+  {
+    $payload = $request->validated();
+
+    $file = $payload['file'];
+    $import = new SubjectToMajorImport;
+    Excel::import($import, $file);
+
+    $errors = $import->getErrors();
+
+    // Cek jika terdapat error yang valid
+    if (!empty($errors)) {
+      return redirect()->back()->withErrors($errors)->with([
+        'warning' => 'Import selesai dengan beberapa peringatan.',
+      ]);
+    }
+
+    // Jika tidak ada error, kembalikan pesan sukses
+    return redirect()->back()->with([
+      'success' => trans('session.create'),
+    ]);
   }
 }

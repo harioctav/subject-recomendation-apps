@@ -71,6 +71,8 @@
     </div>
   </div>
 </div>
+
+@includeIf('academics.major_subjects.import')
 @endsection
 @push('javascript')
 {{ $dataTable->scripts(attributes: ['type' => 'module']) }}

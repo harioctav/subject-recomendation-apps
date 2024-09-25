@@ -141,7 +141,6 @@ class SubjectController extends Controller
    */
   public function Import(ImportRequest $request)
   {
-    $this->subjectService->handleImportData($request);
-    return redirect(route('subjects.index'))->withSuccess(trans('session.create'));
+    return $this->subjectService->handleImportData($request);
   }
 }

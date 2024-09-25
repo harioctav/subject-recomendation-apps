@@ -14,8 +14,8 @@ class GradeImport implements WithMultipleSheets
   public function sheets(): array
   {
     return [
-      'Sheet1' => new SubjectsImport($this),
-      'Sheet2' => new StudentImport($this)
+      'Nilai' => new SubjectsImport($this),
+      'Mahasiswa' => new StudentImport($this)
     ];
   }
 

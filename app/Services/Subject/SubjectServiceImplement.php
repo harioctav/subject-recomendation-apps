@@ -141,25 +141,31 @@ class SubjectServiceImplement extends Service implements SubjectService
    */
   public function handleImportData($request)
   {
-    try {
-      DB::beginTransaction();
+    // Fetch request data
+    $payload = $request->validated();
 
-      // Fetch request data
-      $payload = $request->validated();
+    $file = $payload['file'];
+    $import = new SubjectImport;
+    Excel::import($import, $file);
 
-      // Save data to database
-      Excel::import(new SubjectImport, $payload['file']);
-      Helper::log(
-        trans('activity.subjects.import'),
-        me()->id,
-        'subject_activity_import'
-      );
+    $errors = $import->getErrors();
 
-      DB::commit();
-    } catch (\Exception $e) {
-      DB::rollBack();
-      Log::info($e->getMessage());
-      throw new InvalidArgumentException(trans('session.log.error'));
+    // Cek jika terdapat error yang valid
+    if (!empty($errors)) {
+      return redirect()->back()->withErrors($errors)->with([
+        'warning' => 'Import selesai dengan beberapa peringatan.',
+      ]);
     }
+
+    Helper::log(
+      trans('activity.subjects.import'),
+      me()->id,
+      'subject_activity_import'
+    );
+
+    // Jika tidak ada error, kembalikan pesan sukses
+    return redirect()->back()->with([
+      'success' => trans('session.create'),
+    ]);
   }
 }

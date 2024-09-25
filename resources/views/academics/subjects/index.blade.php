@@ -38,6 +38,8 @@
       @endcan
     </div>
 
+    @includeIf('components.warning-alert')
+
     <div class="my-3">
       {{ $dataTable->table() }}
     </div>

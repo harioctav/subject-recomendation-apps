@@ -9,5 +9,3 @@
   <i class="fa fa-sm fa-trash"></i>
 </a>
 @endcan
-
-{{-- @dd($model->student->recommendations()->where('note', "Perlu Perbaikan")->exists()) --}}

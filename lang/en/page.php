@@ -6,6 +6,8 @@ return [
     'password' => "Secara default password atau kata sandi pengguna ini adalah <b>password@baru123.</b> Beritahu pengguna untuk mengubah kata sandi secara berkala untuk menjaga keamanan akun Pengguna."
   ],
 
+  'import' => 'Silahkan download template file untuk diimport yang sudah disediakan sebagai berikut :',
+
   'overview' => [
     'title' => 'Beranda',
   ],
