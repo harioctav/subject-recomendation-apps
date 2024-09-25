@@ -312,7 +312,7 @@
   var regencies_url = "{{ route('locations.regencies', ':province_id') }}"
   var districts_url = "{{ route('locations.districts', ':regency_id') }}"
   var villages_url = "{{ route('locations.villages', ':district_id') }}"
-  var pos_code_url = "{{ route('locations.postCodes', ':village_id') }}"
+  var pos_code_url = "{{ route('locations.postCode', ':village_id') }}"
 
 </script>
 @endpush
