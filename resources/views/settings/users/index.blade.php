@@ -35,7 +35,7 @@
           <select type="text" class="form-select" name="status" id="status">
             <option value="{{ Helper::ALL }}">{{ Helper::ALL }}</option>
             @foreach ($status as $item)
-            <option value="{{ $item }}">{{ $item ? ucfirst('Active') : ucfirst('Inactive') }}</option>
+            <option value="{{ $item }}">{{ $item ? ucfirst('Aktif') : ucfirst('Tidak Aktif') }}</option>
             @endforeach
           </select>
         </div>

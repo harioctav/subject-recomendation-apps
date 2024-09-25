@@ -64,6 +64,17 @@
           </select>
         </div>
       </div>
+      <div class="col-md-4">
+        <div class="">
+          <label for="student-status" class="form-label">{{ trans('Filter Berdasarkan Status Keaktifan') }}</label>
+          <select type="text" class="form-select" name="student_status" id="student-status">
+            <option value="{{ Helper::ALL }}">{{ Helper::ALL }}</option>
+            @foreach (AccountStatus::toArray() as $item)
+            <option value="{{ $item }}">{{ $item ? ucfirst('Aktif') : ucfirst('Tidak Aktif') }}</option>
+            @endforeach
+          </select>
+        </div>
+      </div>
     </div>
 
     @includeIf('components.warning-alert')

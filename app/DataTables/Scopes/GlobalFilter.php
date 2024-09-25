@@ -26,6 +26,7 @@ class GlobalFilter implements DataTableScope
       'status',
       'degree',
       'grade',
+      'student_status'
     ];
 
     foreach ($filters as $field) {

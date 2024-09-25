@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Student;
+use App\Imports\StudentImport;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentSeeder extends Seeder
 {
@@ -13,6 +14,7 @@ class StudentSeeder extends Seeder
    */
   public function run(): void
   {
-    Student::factory()->count(30)->create();
+    $path = public_path('assets/excels/template-students.xlsx');
+    Excel::import(new StudentImport, $path);
   }
 }

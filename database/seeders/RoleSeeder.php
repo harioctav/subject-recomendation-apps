@@ -89,5 +89,17 @@ class RoleSeeder extends Seeder
         'grades.export',
       ])->get()
     );
+
+    $finance = $roles->firstWhere('name', RoleType::ADMIN_FINANCE->value);
+    $finance->syncPermissions(
+      Permission::whereIn(
+        'name',
+        [
+          'users.show',
+          'users.password',
+          'users.update',
+        ]
+      )->get()
+    );
   }
 }

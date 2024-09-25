@@ -312,6 +312,13 @@ class MajorServiceImplement extends Service implements MajorService
 
     $errors = $import->getErrors();
 
+    // Log
+    Helper::log(
+      trans('activity.majors.subjects.import'),
+      me()->id,
+      'major_subject_activity_import'
+    );
+
     // Cek jika terdapat error yang valid
     if (!empty($errors)) {
       return redirect()->back()->withErrors($errors)->with([

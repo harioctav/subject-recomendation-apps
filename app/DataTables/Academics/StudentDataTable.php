@@ -64,6 +64,11 @@ class StudentDataTable extends DataTable
       $statusFilter->apply($query);
     }
 
+    if ($this->request()->has('student_status')) {
+      $studentStatusFilter = new GlobalFilter($this->request());
+      $studentStatusFilter->apply($query);
+    }
+
     if ($this->request()->has('deleted')) {
       $deleteFilter = new Deleted($this->request());
       $deleteFilter->apply($query);
@@ -85,6 +90,7 @@ class StudentDataTable extends DataTable
         'data' => "
           function(data) {
             data.status = $('select[name=status]').val();
+            data.student_status = $('select[name=student_status]').val();
             data.deleted = $('#isTrash-switch').is(':checked');
           }"
       ])

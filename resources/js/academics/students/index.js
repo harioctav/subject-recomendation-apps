@@ -10,6 +10,11 @@ $(() => {
         e.preventDefault();
     });
 
+    $("#student-status").on("change", function (e) {
+        table.draw();
+        e.preventDefault();
+    });
+
     $("#isTrash-switch").on("change", function (e) {
         table.draw();
         e.preventDefault();

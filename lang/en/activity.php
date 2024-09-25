@@ -24,6 +24,7 @@ return [
     'subjects' => [
       'create' => 'Menambahkan Matakuliah: :subject ke Prodi: :major',
       'destroy' => 'Menghapus Matakuliah: :subject dari Prodi: :major',
+      'import' => 'Mengimport data Matakuliah ke Semua Jurusan'
     ],
   ],
 
