@@ -56,6 +56,31 @@
       </div>
     </div>
 
+    <div class="row">
+      <div class="col-md-4">
+        <div class="">
+          <label for="note" class="form-label">{{ trans('Filter Berdasarkan Catatan') }}</label>
+          <select type="text" class="form-select" name="note" id="note">
+            <option value="{{ Helper::ALL }}">{{ Helper::ALL }}</option>
+            @foreach (RecommendationStatus::toArray() as $item)
+            <option value="{{ $item }}">{{ $item }}</option>
+            @endforeach
+          </select>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="">
+          <label for="semester" class="form-label">{{ trans('Filter Berdasarkan Semester') }}</label>
+          <select type="text" class="form-select" name="semester" id="semester">
+            <option value="{{ Helper::ALL }}">{{ Helper::ALL }}</option>
+            @foreach (range(1, 8) as $semester)
+            <option value="{{ $semester }}">Semester {{ $semester }}</option>
+            @endforeach
+          </select>
+        </div>
+      </div>
+    </div>
+
     <div class="my-3">
       {{ $dataTable->table() }}
     </div>

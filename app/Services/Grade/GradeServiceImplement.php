@@ -12,6 +12,7 @@ use LaravelEasyRepository\Service;
 use Illuminate\Support\Facades\Log;
 use App\Repositories\Grade\GradeRepository;
 use App\Helpers\Enums\RecommendationNoteType;
+use App\Helpers\Enums\RecommendationStatusType;
 use App\Imports\Grades\GradeImport;
 use App\Repositories\Major\MajorRepository;
 use App\Repositories\Student\StudentRepository;
@@ -81,51 +82,60 @@ class GradeServiceImplement extends Service implements GradeService
       // Fetch Data
       $payload = $request->validated();
 
-      // Find subject
-      $subject = $this->subjectRepository->findOrFail($payload['subject_id']);
+      foreach ($payload['subjects'] as $subjectId) {
+        // Find subject
+        $subject = $this->subjectRepository->findOrFail($subjectId);
 
-      // Find Recommendation Data
-      $recommendation = $this->recommendationRepository->getWhere(
-        wheres: [
+        // Find Recommendation Data
+        $recommendation = $this->recommendationRepository->getWhere(
+          wheres: [
+            'student_id' => $payload['student_id'],
+            'subject_id' => $subjectId,
+          ]
+        )->first();
+
+        // Change Note Recommendation
+        if ($payload['grade'] == GradeType::E->value) {
+          $recommendation->update([
+            'note' => RecommendationStatusType::PERLU_PERBAIKAN->value,
+          ]);
+          $note = "Nilai perlu perbaikan.";
+        } else {
+          $recommendation->update([
+            'note' => RecommendationStatusType::LULUS->value,
+          ]);
+          $note = "Nilai sudah memenuhi standar kelulusan.";
+        }
+
+        // Tambahkan Nilai Mutu Mahasiswa
+        $quality = Helper::generateQuality($payload['grade']);
+
+        // Store Data
+        $gradeData = [
           'student_id' => $payload['student_id'],
-          'subject_id' => $payload['subject_id'],
-        ]
-      )->first();
+          'subject_id' => $subjectId,
+          'grade' => $payload['grade'],
+          'mutu' => $payload['mutu'],
+          'exam_period' => $recommendation->exam_period,
+          'quality' => $quality,
+          'note' => $note,
+        ];
 
-      // Change Note Recommendation
-      if ($payload['grade'] == GradeType::E->value) {
-        $recommendation->update([
-          'note' => RecommendationNoteType::SECOND->value,
-        ]);
-      } else {
-        $recommendation->update([
-          'note' => RecommendationNoteType::PASSED->value,
-        ]);
+        $grade = $this->mainRepository->create($gradeData);
 
-        $payload['note'] = "Nilai sudah memenuhi standar kelulusan.";
+        // Activity Log
+        Helper::log(
+          trans('activity.grades.create', [
+            'grade' => $subject->name
+          ]),
+          me()->id,
+          'grade_activity_store',
+          [
+            'subject' => $subject,
+            'data' => $grade,
+          ]
+        );
       }
-
-      // Tambahkan Nilai Mutu Mahasiswa
-      $quality = Helper::generateQuality($payload['grade']);
-
-      // Store Data
-      $payload['exam_period'] = $recommendation->exam_period;
-      $payload['quality'] = $quality;
-
-      $grade = $this->mainRepository->create($payload);
-
-      // Activity Log
-      Helper::log(
-        trans('activity.grades.create', [
-          'grade' => $subject->name
-        ]),
-        me()->id,
-        'grade_activity_store',
-        [
-          'subject' => $subject,
-          'data' => $grade,
-        ]
-      );
 
       DB::commit();
     } catch (\Exception $e) {
@@ -148,50 +158,56 @@ class GradeServiceImplement extends Service implements GradeService
       DB::beginTransaction();
       $payload = $request->validated();
 
-      // Find Grade Data
-      $grade = $this->mainRepository->findOrFail($id);
-      $subject = $this->subjectRepository->findOrFail($grade->subject_id);
+      foreach ($payload['subjects'] as $subjectId) {
+        // Find Grade Data
+        $grade = $this->mainRepository->findOrFail($id);
+        $subject = $this->subjectRepository->findOrFail($grade->subject_id);
 
-      // Find Data Recommendation
-      $recommendation = $this->recommendationRepository->getWhere(
-        wheres: [
-          'student_id' => $payload['student_id'],
-          'subject_id' => $payload['subject_id'],
-        ]
-      )->first();
+        // Find Data Recommendation
+        $recommendation = $this->recommendationRepository->getWhere(
+          wheres: [
+            'student_id' => $payload['student_id'],
+            'subject_id' => $subjectId,
+          ]
+        )->first();
 
-      // Change Note Recommendation
-      if ($grade->grade == GradeType::E->value) {
-        $recommendation->update([
-          'note' => RecommendationNoteType::DONE->value
-        ]);
-        $payload['note'] = "Perbaikan nilai dari {$grade->grade} menjadi {$payload['grade']}.";
-      } else {
-        $recommendation->update([
-          'note' => RecommendationNoteType::PASSED->value
-        ]);
-        $payload['note'] = "Nilai sudah memenuhi standar kelulusan";
+        // Change Note Recommendation
+        if ($grade->grade == GradeType::E->value) {
+          $recommendation->update([
+            'note' => RecommendationStatusType::SUDAH_DIPERBAIKI->value
+          ]);
+          $payload['note'] = "Perbaikan nilai dari {$grade->grade} menjadi {$payload['grade']}.";
+        } else if ($grade->grade !== GradeType::E->value && $recommendation->note === RecommendationStatusType::REQUEST_PERBAIKAN->value) {
+          $recommendation->update([
+            'note' => RecommendationStatusType::SUDAH_DIPERBAIKI->value
+          ]);
+          $payload['note'] = "Perbaikan nilai dari {$grade->grade} menjadi {$payload['grade']}.";
+        } else {
+          $recommendation->update([
+            'note' => RecommendationStatusType::LULUS->value
+          ]);
+          $payload['note'] = "Nilai sudah memenuhi standar kelulusan";
+        }
+
+        // Tambahkan Nilai Mutu Mahasiswa
+        $quality = Helper::generateQuality($payload['grade']);
+        $payload['quality'] = $quality;
+
+        $grade->update($payload);
+
+        // Activity Log
+        Helper::log(
+          trans('activity.grades.edit', [
+            'grade' => $subject->name
+          ]),
+          me()->id,
+          'grade_activity_update',
+          [
+            'subject' => $subject,
+            'data' => $grade,
+          ]
+        );
       }
-
-      // Tambahkan Nilai Mutu Mahasiswa
-      $quality = Helper::generateQuality($payload['grade']);
-      $payload['quality'] = $quality;
-
-      // $this->mainRepository->update($grade->id, $payload);
-      $grade->update($payload);
-
-      // Activity Log
-      Helper::log(
-        trans('activity.grades.edit', [
-          'grade' => $subject->name
-        ]),
-        me()->id,
-        'grade_activity_update',
-        [
-          'subject' => $subject,
-          'data' => $grade,
-        ]
-      );
 
       DB::commit();
     } catch (\Exception $e) {
@@ -307,10 +323,10 @@ class GradeServiceImplement extends Service implements GradeService
             }
 
             if ($course['grade'] === GradeType::E->value || $course['grade'] === GradeType::D->value) {
-              $recommendationNote = RecommendationNoteType::SECOND->value;
+              $recommendationNote = RecommendationStatusType::PERLU_PERBAIKAN->value;
               $gradeNote = "Nilai perlu dilakukan direkomendasikan ulang dan diperbaiki";
             } else {
-              $recommendationNote = RecommendationNoteType::PASSED->value;
+              $recommendationNote = RecommendationStatusType::LULUS->value;
               $gradeNote = "Nilai sudah memenuhi standar kelulusan matakuliah";
             }
 
@@ -395,9 +411,9 @@ class GradeServiceImplement extends Service implements GradeService
         ]
       )->first();
 
-      if ($recommendation->note === RecommendationNoteType::PASSED->value || $grade->grade === GradeType::E->value  || $recommendation->note === RecommendationNoteType::DONE->value) :
+      if ($recommendation->note === RecommendationStatusType::LULUS->value || $grade->grade === GradeType::E->value  || $recommendation->note === RecommendationStatusType::SUDAH_DIPERBAIKI->value) :
         $recommendation->update([
-          'note' => RecommendationNoteType::FIRST->value
+          'note' => RecommendationStatusType::DIREKOMENDASIKAN->value
         ]);
       endif;
 

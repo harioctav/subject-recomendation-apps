@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use App\Repositories\Grade\GradeRepository;
 use App\Repositories\Major\MajorRepository;
 use App\Helpers\Enums\RecommendationNoteType;
+use App\Helpers\Enums\RecommendationStatusType;
 use App\Helpers\Helper;
 use App\Models\Grade;
 use App\Models\Subject;
@@ -74,131 +75,187 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
   public function getRecommendedSubjects($student, $sksFilter, $gradeFilter)
   {
     $majorId = $student->major->id;
-    $recommendedSubjects = $this->getRecommendedSubjectsForStudent($student->id);
-    $subjectsWithEGrade = $this->getSubjectsWithEGrade($student->id, $recommendedSubjects->pluck('subject_id'))->pluck('subject_id');
 
-    $subjects = $this->getSubjectsForMajor($majorId);
-    $subjectsBySemester = $this->groupSubjectsBySemester($subjects, $majorId);
+    // Mengambil data matakuliah yang sudah direkomendasikan
+    $recommendedSubjects = $this->mainRepository->getWhere(
+      wheres: [
+        'student_id' => $student->id
+      ],
+      columns: [
+        'subject_id',
+        'note'
+      ]
+    )->get();
+
+    // Dari data matakuliah tersebut kita ambil subject_id nya dan di cari apakah ada data matakuliah yang mendapatkan nilai E
+    $subjectsWithEGrade = Grade::where('student_id', $student->id)
+      ->whereIn('subject_id', $recommendedSubjects->pluck('subject_id'))
+      ->where('grade', GradeType::E->value)
+      ->pluck('subject_id');
+
+
+    // Mengambil data matakuliah yang ada di prodi tsb
+    $subjects = Subject::whereHas('majors', function ($query) use ($majorId) {
+      $query->where('majors.id', $majorId);
+    })->with(['majors' => function ($query) use ($majorId) {
+      $query->where('majors.id', $majorId);
+    }])->get();
+
+    // Kemudian matakuliahnya di grouping berdasarkan semester
+    $subjectsBySemester = $subjects->groupBy(function ($subject) {
+      return $subject->majors->first()->pivot->semester;
+    })->sortKeys();
 
     return $this->formatSubjectsBySemester($subjectsBySemester, $student, $recommendedSubjects, $subjectsWithEGrade, $sksFilter, $gradeFilter);
   }
 
+  public function getRecommendations($student)
+  {
+    $majorId = $student->major_id;
+    $studentId = $student->id;
+
+    $subjects = DB::table('subjects')
+      ->join('major_subject', 'subjects.id', '=', 'major_subject.subject_id')
+      ->leftJoin('grades', function ($join) use ($studentId) {
+        $join->on('subjects.id', '=', 'grades.subject_id')
+          ->where('grades.student_id', '=', $studentId);
+      })
+      ->leftJoin('recommendations', function ($join) use ($studentId) {
+        $join->on('subjects.id', '=', 'recommendations.subject_id')
+          ->where('recommendations.student_id', '=', $studentId);
+      })
+      ->select(
+        'subjects.id',
+        'subjects.name',
+        'subjects.code',
+        'subjects.note',
+        DB::raw('CAST(subjects.course_credit AS SIGNED) as course_credit'),
+        'subjects.status',
+        'major_subject.semester',
+        'grades.grade',
+        'recommendations.id as recommendation_id'
+      )
+      ->where('major_subject.major_id', $majorId)
+      ->where(function ($query) {
+        $query->whereNull('recommendations.id')
+          ->orWhere('grades.grade', 'E');
+      })
+      ->orderBy('major_subject.semester')
+      ->orderBy('subjects.name')
+      ->get();
+
+    return $subjects;
+  }
+
   public function handleStoreData($request)
   {
+    DB::beginTransaction();
     try {
-      // Fetch request
       $payload = $request->validated();
-
-      DB::beginTransaction();
-
-      // Fetch student and its major
       $student = $this->studentRepository->findOrFail($payload['student_id']);
       $major_id = $student->major->id;
-
-      // cek apakah nilainya adalah "E"
       $isGradeE = $this->getSubjectsWithEGrade($student->id, $payload['courses'])->exists();
-
-      // Array untuk menyimpan mata kuliah yang ditambahkan
       $addedSubjects = [];
 
-      // Store to database
-      foreach ($payload['courses'] as $subject_id) :
-        // Get the semester from the pivot table
-        $semester = DB::table('major_subject')
-          ->where('major_id', $major_id)
-          ->where('subject_id', $subject_id)
-          ->value('semester');
+      foreach ($payload['courses'] as $subject_id) {
+        $semester = $this->getSemesterForSubject($major_id, $subject_id);
+        $recommendation = $this->getOrCreateRecommendation($student->id, $subject_id, $semester, $payload);
+        $subject = $this->subjectRepository->findOrFail($subject_id);
+        $addedSubjects[] = $this->formatAddedSubject($subject, $semester, $recommendation->note);
+      }
 
-        // apakah data rekomendasi tersedia
-        $isRecommendations = $this->mainRepository->getWhere(
-          wheres: [
-            'student_id' => $student->id,
-            'subject_id' => $subject_id,
-          ],
-        )->first();
-
-        if ($isRecommendations == null):
-          // Store recommendations
-          $recommendation = $this->mainRepository->create([
-            'uuid' => Str::uuid(),
-            'student_id' => $student->id,
-            'subject_id' => (int) $subject_id,
-            'semester' => $semester,
-            'exam_period' => $payload['exam_period'],
-            'note' => RecommendationNoteType::FIRST->value,
-          ]);
-
-          // Tambahkan mata kuliah ke array
-          $subject = $this->subjectRepository->findOrFail($subject_id);
-          $addedSubjects[] = [
-            'id' => $subject_id,
-            'name' => $subject->name,
-            'semester' => $semester,
-            'note' => RecommendationNoteType::FIRST->value,
-          ];
-        else :
-          if ($isGradeE):
-            $this->mainRepository->update($isRecommendations->id, [
-              'note' => RecommendationNoteType::REPAIR->value,
-            ]);
-
-            // Tambahkan mata kuliah ke array
-            $subject = $this->subjectRepository->findOrFail($subject_id);
-            $addedSubjects[] = [
-              'id' => $subject_id,
-              'name' => $subject->name,
-              'semester' => $semester,
-              'note' => RecommendationNoteType::REPAIR->value,
-            ];
-          endif;
-        endif;
-      endforeach;
-
-      // Activity Log
-      Helper::log(
-        trans('activity.recommendations.create', [
-          'student' => $student->name,
-          'recommendation' => implode(', ', array_column($addedSubjects, 'name')),
-        ]),
-        auth()->id(),
-        'recommendation_activity_store',
-        [
-          'student' => [
-            'id' => $student->id,
-            'name' => $student->name,
-          ],
-          'subjects' => $addedSubjects,
-          'exam_period' => $payload['exam_period'],
-        ]
-      );
+      $this->logActivity($student, $addedSubjects, $payload['exam_period']);
 
       DB::commit();
     } catch (\Exception $e) {
+      DB::rollBack();
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
     }
   }
 
+  private function getSemesterForSubject($major_id, $subject_id)
+  {
+    return DB::table('major_subject')
+      ->where('major_id', $major_id)
+      ->where('subject_id', $subject_id)
+      ->value('semester');
+  }
+
+  private function getOrCreateRecommendation($student_id, $subject_id, $semester, $payload)
+  {
+    $recommendation = $this->mainRepository->getWhere([
+      'student_id' => $student_id,
+      'subject_id' => $subject_id,
+    ])->first();
+
+    if (!$recommendation) {
+      return $this->mainRepository->create([
+        'uuid' => Str::uuid(),
+        'student_id' => $student_id,
+        'subject_id' => (int) $subject_id,
+        'semester' => $semester,
+        'exam_period' => $payload['exam_period'],
+        'note' => $payload['note']
+      ]);
+    }
+
+    $note = $this->getSubjectsWithEGrade($student_id, [$subject_id])->exists()
+      ? RecommendationStatusType::DALAM_PERBAIKAN->value
+      : RecommendationStatusType::REQUEST_PERBAIKAN->value;
+
+    $this->mainRepository->update($recommendation->id, ['note' => $note]);
+    return $recommendation;
+  }
+
+  private function formatAddedSubject($subject, $semester, $note)
+  {
+    return [
+      'id' => $subject->id,
+      'name' => $subject->name,
+      'semester' => $semester,
+      'note' => $note
+    ];
+  }
+
+  private function logActivity($student, $addedSubjects, $exam_period)
+  {
+    Helper::log(
+      trans('activity.recommendations.create', [
+        'student' => $student->name,
+        'recommendation' => implode(', ', array_column($addedSubjects, 'name')),
+      ]),
+      auth()->id(),
+      'recommendation_activity_store',
+      [
+        'student' => [
+          'id' => $student->id,
+          'name' => $student->name,
+        ],
+        'subjects' => $addedSubjects,
+        'exam_period' => $exam_period,
+      ]
+    );
+  }
+
   public function handleExportData($student)
   {
     try {
-      // Ambil mata kuliah yang direkomendasikan untuk mahasiswa
+      // Fetch only recommended subjects that haven't been graded
       $recommendedSubjects = $student->recommendations
+        ->whereNotIn('subject_id', $student->grades->pluck('subject_id'))
         ->unique('subject_id')
         ->groupBy('semester')
-        ->map(function ($recommendations, $semester) use ($student) {
-          $subjects = $recommendations->map(function ($recommendation) use ($student) {
+        ->map(function ($recommendations, $semester) {
+          $subjects = $recommendations->map(function ($recommendation) {
             $subject = $recommendation->subject;
-            $grade = $student->grades->firstWhere('subject_id', $subject->id);
-            $kelulusan = $grade && $grade->grade !== GradeType::E->value ? 'LL' : 'BL';
-
             return [
               'id' => $subject->id,
               'code' => $subject->code,
               'name' => $subject->name,
-              'grade' => $grade ? $grade->grade : '-',
+              'grade' => '-',
               'sks' => $subject->course_credit,
-              'kelulusan' => $kelulusan,
+              'kelulusan' => 'BL',
               'waktu_ujian' => $subject->exam_time,
               'masa_ujian' => $recommendation->exam_period,
               'status' => $subject->status,
@@ -216,14 +273,11 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
         })
         ->values();
 
-      // Hitung total SKS yang sudah ditempuh (hanya untuk mata kuliah dengan nilai selain 'E')
-      $totalCompletedCourseCredit = $student->grades->filter(function ($grade) {
-        return $grade->grade !== GradeType::E->value;
-      })->sum('subject.course_credit');
-
+      // Calculate total course credits
       $totalCourseCredit = $student->major->total_course_credit;
+      $totalCompletedCourseCredit = $student->grades->sum('subject.course_credit');
 
-      $formattedDate = Carbon::now()->locale('id')->isoFormat('D MMMM YYYY');
+      $formattedDate = Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY');
       $fileTitle = "{$formattedDate}-{$student->name}-HASIL-REKOMENDASI.pdf";
 
       $data = [
@@ -242,7 +296,6 @@ class RecommendationServiceImplement extends Service implements RecommendationSe
       throw new InvalidArgumentException(trans('session.log.error'));
     }
   }
-
   public function handleDestroyData($id)
   {
     try {

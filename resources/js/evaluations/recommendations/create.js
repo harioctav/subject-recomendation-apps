@@ -20,6 +20,7 @@ $(document).ready(function () {
                 {
                     data: null,
                     orderable: false,
+                    searchable: false,
                     className: "text-center",
                     render: function (data, type, row) {
                         // Jika mata kuliah sudah direkomendasikan, jangan tampilkan checkbox

@@ -52,60 +52,79 @@
             </li>
           </ul>
 
-          <div class="mb-4">
+          {{-- <div class="mb-4">
             <label for="subject_id" class="form-label">{{ trans('Pilih Matakuliah') }}</label>
-            <span class="text-danger">*</span>
-            <select name="subject_id" id="subject_id" class="js-select2 form-select @error('subject_id') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;">
-              <option></option>
-              @foreach ($recommendations['subjects'] as $group)
-              <optgroup label="{{ $group['semester'] }}">
-                @foreach ($group['subjects'] as $subject)
-                <option value="{{ $subject['id'] }}" {{ old('subject_id') == $subject['id'] ? 'selected' : '' }}>
-                  {{ $subject['code'] }} - {{ $subject['name'] }} - {{ $subject['exam_period'] }}
-                </option>
-                @endforeach
-              </optgroup>
+          <span class="text-danger">*</span>
+          <select name="subject_id" id="subject_id" class="js-select2 form-select @error('subject_id') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;">
+            <option></option>
+            @foreach ($recommendations['subjects'] as $group)
+            <optgroup label="{{ $group['semester'] }}">
+              @foreach ($group['subjects'] as $subject)
+              <option value="{{ $subject['id'] }}" {{ old('subject_id') == $subject['id'] ? 'selected' : '' }}>
+                {{ $subject['code'] }} - {{ $subject['name'] }} - {{ $subject['exam_period'] }}
+              </option>
               @endforeach
-            </select>
-            @error('subject_id')
-            <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-          </div>
+            </optgroup>
+            @endforeach
+          </select>
+          @error('subject_id')
+          <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
+        </div> --}}
 
-          <div class="mb-4">
-            <label for="grade" class="form-label">{{ trans('Nilai') }}</label>
-            <span class="text-danger">*</span>
-            <select name="grade" id="grade" class="js-select2 form-select @error('grade') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;">
-              <option></option>
-              @foreach ($grades as $value)
-              <option value="{{ $value }}" @if (old('grade')==$value) selected @endif>{{ ucfirst(trans($value)) }}</option>
+        <div class="mb-4">
+          <label for="subjects" class="form-label">{{ trans('Matakuliah') }}</label>
+          <span class="text-danger">*</span>
+          <select class="js-select2 form-select @error('subjects.*') is-invalid @enderror" id="subjects" name="subjects[]" style="width: 100%;" data-placeholder="{{ trans('Pilih Matakuliah..') }}" multiple>
+            <option></option>
+            @foreach ($recommendations['subjects'] as $group)
+            <optgroup label="{{ $group['semester'] }}">
+              @foreach ($group['subjects'] as $subject)
+              <option value="{{ $subject['id'] }}" {{ (is_array(old('subjects')) && in_array($subject['id'], old('subjects'))) ? 'selected' : '' }}>
+                {{ $subject['code'] }} - {{ $subject['name'] }} - {{ $subject['exam_period'] }}
+              </option>
               @endforeach
-            </select>
-            @error('grade')
-            <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-          </div>
-
-          <div class="mb-4">
-            <label for="mutu" class="form-label">{{ trans('Nilai Mutu') }}</label>
-            <span class="text-danger">*</span>
-            <input type="number" min="1" step="0.5" name="mutu" id="mutu" value="{{ old('mutu') }}" class="form-control @error('mutu') is-invalid @enderror" placeholder="{{ trans('Nilai Mutu Ujian') }}">
-            @error('mutu')
-            <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-          </div>
-
-          <div class="mb-4">
-            <button type="submit" class="btn btn-alt-primary w-100" id="submit-button">
-              <i class="fa fa-fw fa-circle-check me-1"></i>
-              {{ trans('button.create') }}
-            </button>
-          </div>
-
+            </optgroup>
+            @endforeach
+          </select>
+          @error('subjects')
+          <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
         </div>
-      </div>
 
-    </form>
+        <div class="mb-4">
+          <label for="grade" class="form-label">{{ trans('Nilai') }}</label>
+          <span class="text-danger">*</span>
+          <select name="grade" id="grade" class="js-select2 form-select @error('grade') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;">
+            <option></option>
+            @foreach ($grades as $value)
+            <option value="{{ $value }}" @if (old('grade')==$value) selected @endif>{{ ucfirst(trans($value)) }}</option>
+            @endforeach
+          </select>
+          @error('grade')
+          <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
+        </div>
+
+        <div class="mb-4">
+          <label for="mutu" class="form-label">{{ trans('Nilai Mutu') }}</label>
+          <input type="number" min="1" step="0.5" name="mutu" id="mutu" value="{{ old('mutu') }}" class="form-control @error('mutu') is-invalid @enderror" placeholder="{{ trans('Nilai Mutu Ujian') }}">
+          @error('mutu')
+          <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
+        </div>
+
+        <div class="mb-4">
+          <button type="submit" class="btn btn-alt-primary w-100" id="submit-button">
+            <i class="fa fa-fw fa-circle-check me-1"></i>
+            {{ trans('button.create') }}
+          </button>
+        </div>
+
+      </div>
   </div>
+
+  </form>
+</div>
 </div>
 @endsection

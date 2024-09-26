@@ -24,7 +24,8 @@ class GradeRequest extends FormRequest
   {
     return [
       'student_id' => 'required|exists:students,id',
-      'subject_id' => 'required|exists:subjects,id',
+      'subjects' => 'required|array|min:1|max:9',
+      'subjects.*' => 'exists:subjects,id',
       'grade' => [
         'required',
         'string',
@@ -36,7 +37,7 @@ class GradeRequest extends FormRequest
           }
         },
       ],
-      'mutu' => 'required|string',
+      'mutu' => 'nullable|string',
     ];
   }
 
@@ -47,7 +48,7 @@ class GradeRequest extends FormRequest
   {
     return [
       '*.required' => ':attribute harus tidak boleh dikosongkan',
-      '*.min' => ':attribute maksimal :min karakter',
+      '*.min' => ':attribute maksimal :min',
       '*.in' => ':attribute harus salah satu dari jenis berikut: :values',
       '*.unique' => ':attribute sudah digunakan, silahkan pilih yang lain',
       '*.exists' => ':attribute tidak ditemukan atau tidak bisa diubah',
@@ -55,7 +56,7 @@ class GradeRequest extends FormRequest
       '*.image' => ':attribute tidak valid, pastikan memilih gambar',
       '*.mimes' => ':attribute tidak valid, masukkan gambar dengan format jpg atau png',
       '*.regex' => ':attribute dimasukkan tidak valid',
-      '*.max' => ':attribute terlalu besar, maksimal :max karakter',
+      '*.max' => ':attribute terlalu besar, maksimal :max',
       '*.date' => ':attribute harus berupa tanggal',
       '*.digits' => ':attribute harus memiliki :digits angka',
       '*.between' => ':attribute harus berada diantara tahun :min sampai :max',

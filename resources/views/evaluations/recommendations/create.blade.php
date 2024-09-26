@@ -33,36 +33,13 @@
       @includeIf('components.students.info')
       {{-- Student info --}}
 
-      <div class="row">
-        <div class="col-lg-6">
+      <div class="row justify-content-end">
+        <div class="col-lg-8">
           <div class="mb-3">
             <label for="course_credit_selected" class="form-label">{{ trans('Jumlah SKS Diambil') }}</label>
             <input type="number" max="24" step="1" min="3" name="course_credit_selected" id="course_credit_selected" value="{{ old('course_credit_selected') }}" class="form-control @error('course_credit_selected') is-invalid @enderror" placeholder="{{ trans('Jumlah SKS Dipilih') }}" readonly disabled>
           </div>
-
-          <div class="mb-3">
-            <label for="course_credit" class="form-label">{{ trans('Filter Berdasarkan Jumlah SKS') }}</label>
-            <input type="number" max="24" step="1" min="3" name="course_credit" id="course_credit" value="{{ old('course_credit') }}" class="form-control @error('course_credit') is-invalid @enderror" placeholder="{{ trans('Masukkan Jumlah SKS') }}">
-          </div>
-
-          <div class="alert alert-danger d-none" id="sks-error-message">Total SKS tidak boleh melebihi 24. Mohon kurangi pilihan mata kuliah.</div>
-
-        </div>
-        <div class="col-lg-4">
-          <div class="mb-0">
-            <label for="grade_filter" class="form-label">{{ trans('Filter Berdasarkan Nilai') }}</label>
-            <select class="form-select" name="grade_filter" id="grade_filter">
-              <option value="">All</option>
-              @foreach (GradeType::toArray() as $item)
-              <option value="{{ $item }}">{{ $item }}</option>
-              @endforeach
-            </select>
-          </div>
-        </div>
-      </div>
-      @if($detail['has_grade_e'])
-      <div class="row">
-        <div class="col-md-12">
+          @if($detail['has_grade_e'])
           <div class="alert alert-warning d-flex align-items-center alert-dismissible" role="alert">
             <div class="flex-shrink-0">
               <i class="fa fa-fw fa-exclamation"></i>
@@ -74,16 +51,33 @@
             </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
+          @endif
+        </div>
+        <div class="col-lg-4">
+          <div class="mb-3">
+            <label for="search_custom" class="form-label">Cari Berdasarkan Kode Matakuliah</label>
+            <input type="text" class="form-control" id="search_custom" name="search_custom" placeholder="Search...">
+          </div>
+          <div class="mb-0">
+            <label for="grade_filter" class="form-label">{{ trans('Filter Berdasarkan Nilai') }}</label>
+            <select class="form-select" name="grade_filter" id="grade_filter">
+              <option value="">All</option>
+              @foreach (GradeType::toArray() as $item)
+              <option value="{{ $item }}">{{ $item }}</option>
+              @endforeach
+            </select>
+          </div>
         </div>
       </div>
-      @endif
+
+
       <div class="my-3">
-        <table id="coursesTable" class="table table-bordered table-vcenter table-hover">
+        {{-- <table id="coursesTable" class="table table-bordered table-vcenter table-hover">
           <thead>
             <tr>
               <th><input type="checkbox" id="select-all"></th>
               <th>Semester</th>
-              {{-- <th>Kode</th> --}}
+              <th>Kode</th>
               <th>Matakuliah</th>
               <th>Nilai</th>
               <th>SKS</th>
@@ -93,7 +87,9 @@
             </tr>
           </thead>
           <tbody></tbody>
-        </table>
+        </table> --}}
+
+        {{ $dataTable->table() }}
       </div>
 
       <div class="row">
@@ -103,9 +99,30 @@
             <span class="text-danger">*</span>
             <input type="text" name="exam_period" id="exam_period" value="{{ old('exam_period', $student->initial_registration_period ? $student->formatted_registration_period : null) }}" class="form-control @error('exam_period') is-invalid @enderror" placeholder="{{ trans('Masukkan Masa Ujian') }}">
             <span class="text-muted">
-              <small><em>{{ __('Ubah masa ujian sesuai waktu saat ini akan menambahkan Rekomendasi.') }}</em></small>
+              <small>
+                <em>{{ __('Ubah masa ujian sesuai waktu Semester Berjalan atau Semester Berikutnya') }}</em>
+              </small>
             </span>
             @error('exam_period')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="mb-4">
+            <label for="note" class="form-label">{{ trans('Catatan Rekomendasi') }}</label>
+            <span class="text-danger">*</span>
+            <select name="note" id="note" class="js-select2 form-select @error('note') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;">
+              <option></option>
+              @foreach (RecommendationStatus::toArray(0, 1, 3, 6) as $value)
+              <option value="{{ $value }}" @if (old('note')==$value) selected @endif>{{ ucfirst($value) }}</option>
+              @endforeach
+            </select>
+            <span class="text-muted">
+              <small>
+                <em>{{ __('Pilih sesuai dengan Masa Ujian yang anda masukkan') }}</em>
+              </small>
+            </span>
+            @error('note')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror
           </div>
@@ -124,11 +141,6 @@
 </div>
 @endsection
 @push('javascript')
-@vite('resources/js/evaluations/recommendations/create.js')
-
-<script>
-  var datatableURL = "{{ route('api.students.courses', ['student' => $student]) }}"
-  var statusRecommendation = "{{ RecommendationNote::REPAIR->value }}"
-
-</script>
+@vite('resources/js/evaluations/recommendations/input.js')
+{{ $dataTable->scripts() }}
 @endpush

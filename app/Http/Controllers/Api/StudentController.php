@@ -36,17 +36,6 @@ class StudentController extends Controller
   }
 
   /**
-   * Display the specified student.
-   *
-   * @param int $student_id
-   * @return \Illuminate\Http\JsonResponse
-   */
-  public function show($student_id)
-  {
-    // 
-  }
-
-  /**
    * Display a listing of the recommended subjects for the specified student.
    *
    * @param \Illuminate\Http\Request $request
@@ -58,7 +47,8 @@ class StudentController extends Controller
     $sksFilter = $request->input('sks');
     $gradeFilter = $request->input('grade', '');
 
-    $recommendedSubjects = $this->recommendationService->getRecommendedSubjects($student, $sksFilter, $gradeFilter);
+    // $recommendedSubjects = $this->recommendationService->getRecommendedSubjects($student, $sksFilter, $gradeFilter);
+    $recommendedSubjects = $this->recommendationService->getRecommendations($student);
 
     return response()->json($recommendedSubjects);
   }

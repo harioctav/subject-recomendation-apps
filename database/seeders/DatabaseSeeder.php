@@ -21,10 +21,8 @@ class DatabaseSeeder extends Seeder
       RegencySeeder::class,
       DistrictSeeder::class,
       VillageSeeder::class,
-      // MajorSeeder::class,
-      // SubjectSeeder::class,
-      // MajorSubjectSeeder::class,
-      // StudentSeeder::class
+      MasterSeeder::class,
+      StudentSeeder::class
     ]);
   }
 }

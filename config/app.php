@@ -194,6 +194,7 @@ return [
     'StatusSubject' => App\Helpers\Enums\StatusSubjectType::class,
     'StudentStatus' => App\Helpers\Enums\StudentStatusType::class,
     'RecommendationNote' => App\Helpers\Enums\RecommendationNoteType::class,
+    'RecommendationStatus' => App\Helpers\Enums\RecommendationStatusType::class,
     'GradeType' => App\Helpers\Enums\GradeType::class,
     'DegreeType' => App\Helpers\Enums\DegreeType::class
   ])->toArray(),

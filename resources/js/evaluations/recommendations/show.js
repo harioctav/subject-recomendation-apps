@@ -3,7 +3,15 @@ import { showConfirmationModal } from "@/utils/helper.js";
 let table;
 
 $(() => {
-    table = $(".table").DataTable();
+    table = $("#recommendation-table").DataTable();
+
+    $("#note").on("change", function () {
+        table.draw();
+    });
+
+    $("#semester").on("change", function () {
+        table.draw();
+    });
 });
 
 function deleteRecommendation(url) {

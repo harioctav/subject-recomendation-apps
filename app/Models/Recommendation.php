@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\Enums\RecommendationNoteType;
+use App\Helpers\Enums\RecommendationStatusType;
 use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -70,37 +71,24 @@ class Recommendation extends Model
     return $this->belongsTo(Student::class);
   }
 
-  // Accessor untuk kolom semester
-  public function getSemesterAttribute($value)
-  {
-    $semesters = [
-      1 => 'Semester 1',
-      2 => 'Semester 2',
-      3 => 'Semester 3',
-      4 => 'Semester 4',
-      5 => 'Semester 5',
-      6 => 'Semester 6',
-      7 => 'Semester 7',
-      8 => 'Semester 8',
-    ];
-
-    return $semesters[$value] ?? 'Unknown Semester';
-  }
-
   public function noteLabel(): Attribute
   {
-    $first = RecommendationNoteType::FIRST->value;
-    $second = RecommendationNoteType::SECOND->value;
-    $repair = RecommendationNoteType::REPAIR->value;
-    $done = RecommendationNoteType::DONE->value;
-    $passed = RecommendationNoteType::PASSED->value;
+    $current = RecommendationStatusType::SEMESTER_BERJALAN->value;
+    $recommended = RecommendationStatusType::DIREKOMENDASIKAN->value;
+    $improvement = RecommendationStatusType::PERLU_PERBAIKAN->value;
+    $inRepair = RecommendationStatusType::DALAM_PERBAIKAN->value;
+    $passed = RecommendationStatusType::LULUS->value;
+    $alreadyRepaired = RecommendationStatusType::SUDAH_DIPERBAIKI->value;
+    $request = RecommendationStatusType::REQUEST_PERBAIKAN->value;
 
     $noteLabel = [
-      $first => "<span class='badge text-primary'>{$first}</span>",
-      $second => "<span class='badge text-danger'>{$second}</span>",
-      $repair => "<span class='badge text-warning'>{$repair}</span>",
-      $done => "<span class='badge text-success'>{$done}</span>",
+      $current => "<span class='badge text-primary'>{$current}</span>",
+      $recommended => "<span class='badge text-corporate'>{$recommended}</span>",
+      $improvement => "<span class='badge text-danger'>{$improvement}</span>",
+      $inRepair => "<span class='badge text-warning'>{$inRepair}</span>",
+      $alreadyRepaired => "<span class='badge text-success'>{$alreadyRepaired}</span>",
       $passed => "<span class='badge text-success'>{$passed}</span>",
+      $request => "<span class='badge text-elegance'>{$request}</span>",
     ];
 
     return Attribute::make(

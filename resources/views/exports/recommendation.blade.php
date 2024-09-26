@@ -165,10 +165,7 @@
   </table>
 
   <div class="footer">
-    Sukabumi, {{ $datetime }}<br>
-    a.n. Direktur UNIVERSITAS TERBUKA SUKABUMI<br>
-    Ketua Program Studi<br><br><br><br>
-    (Nama Ketua Program Studi)
+    Tanggal Cetak: {{ $datetime }}
   </div>
 </body>
 </html>

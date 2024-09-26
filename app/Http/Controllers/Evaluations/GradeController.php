@@ -12,10 +12,8 @@ use App\DataTables\Evaluations\GradeDataTable;
 use App\DataTables\Evaluations\StudentDataTable;
 use App\Helpers\Enums\GradeType;
 use App\Http\Requests\Evaluations\GradeRequest;
-use App\Http\Requests\Evaluations\RecommendationExportRequest;
 use App\Models\Student;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class GradeController extends Controller
 {

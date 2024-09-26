@@ -64,8 +64,14 @@ class GradeDataTable extends DataTable
   public function query(Grade $model): QueryBuilder
   {
     $query = $model->newQuery()
-      ->latest()
-      ->where('student_id', $this->studentId);
+      ->select('grades.*', 'recommendations.note as recommendation_note')
+      ->leftJoin('recommendations', function ($join) {
+        $join->on('grades.student_id', '=', 'recommendations.student_id')
+          ->on('grades.subject_id', '=', 'recommendations.subject_id');
+      })
+      ->with(['student', 'subject.majors'])
+      ->latest('grades.created_at')
+      ->where('grades.student_id', $this->studentId);
 
     if ($this->request()->has('grade')) {
       $gradeFilter = new GlobalFilter($this->request());

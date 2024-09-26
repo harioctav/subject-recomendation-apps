@@ -30,7 +30,7 @@
 
       <input type="hidden" name="major_id" value="{{ $grade->student->major->id }}">
       <input type="hidden" name="student_id" value="{{ $grade->student->id }}">
-      <input type="hidden" name="subject_id" value="{{ $grade->subject->id }}">
+      <input type="hidden" name="subjects[]" value="{{ $grade->subject->id }}">
 
       <div class="row items-push justify-content-center">
         <div class="col-lg-6">

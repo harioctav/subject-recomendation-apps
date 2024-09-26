@@ -2,6 +2,7 @@
 
 namespace App\DataTables\Evaluations;
 
+use App\DataTables\Scopes\GlobalFilter;
 use App\Helpers\Helper;
 use App\Models\Recommendation;
 use Yajra\DataTables\Html\Column;
@@ -67,7 +68,18 @@ class RecommendationDataTable extends DataTable
    */
   public function query(Recommendation $model): QueryBuilder
   {
-    return $model->newQuery()->latest()->where('student_id', $this->studentId);
+    $query = $model->newQuery()->latest()->where('student_id', $this->studentId);
+
+    $filterableFields = ['note', 'semester'];
+
+    foreach ($filterableFields as $field) {
+      if ($this->request()->has($field)) {
+        $filter = new GlobalFilter($this->request());
+        $filter->apply($query);
+      }
+    }
+
+    return $query;
   }
 
   /**
@@ -80,6 +92,12 @@ class RecommendationDataTable extends DataTable
       ->columns($this->getColumns())
       ->minifiedAjax()
       //->dom('Bfrtip')
+      ->ajax([
+        'data' => 'function(d) {
+          d.note = $("#note").val(); 
+          d.semester = $("#semester").val(); 
+        }'
+      ])
       ->addTableClass([
         'table',
         'table-striped',
