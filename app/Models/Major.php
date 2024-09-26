@@ -62,8 +62,54 @@ class Major extends Model
 
   public function updateTotalCourseCredit()
   {
-    $totalCredits = $this->subjects()->sum('course_credit');
-    $this->total_course_credit = $totalCredits;
-    $this->save();
+    $subjects = $this->subjects;
+
+    // Grup matakuliah berdasarkan note 'PILIH SALAH SATU' yang ada di model Subject
+    $groupedSubjects = $subjects->groupBy(function ($subject) {
+      return strpos($subject->note, 'PILIH SALAH SATU') !== false ? 'pilih_satu' : 'lainnya';
+    });
+
+    // Hitung semua matakuliah yang bukan 'PILIH SALAH SATU'
+    $totalCredit = $groupedSubjects->get('lainnya', collect())->sum('course_credit');
+
+    // Jika ada matakuliah dengan 'PILIH SALAH SATU', ambil yang course_credit terbesar
+    if ($groupedSubjects->has('pilih_satu')) {
+      // Kelompokkan berdasarkan grup yang sama (misalnya 'BPR | PILIH SALAH SATU | P')
+      $subGroups = $groupedSubjects->get('pilih_satu')->groupBy('note');
+
+      // Pilih matakuliah dengan SKS terbesar dari setiap grup yang ada
+      foreach ($subGroups as $subGroup) {
+        $maxCredit = $subGroup->max('course_credit');
+        $totalCredit += $maxCredit;
+      }
+    }
+
+    // Update nilai total_course_credit pada tabel majors
+    $this->update(['total_course_credit' => $totalCredit]);
+  }
+
+  public function getElectiveSubjectsBySemester()
+  {
+    // Ambil semua matakuliah yang terkait dengan major ini
+    $subjects = $this->subjects;
+
+    // Filter matakuliah yang memiliki note 'PILIH SALAH SATU'
+    $electiveSubjects = $subjects->filter(function ($subject) {
+      return strpos($subject->note, 'PILIH SALAH SATU') !== false;
+    });
+
+    // Kelompokkan matakuliah pilihan berdasarkan semester
+    $groupedBySemester = $electiveSubjects->groupBy('pivot.semester');
+
+    // Bentuk array dengan nama matakuliah dan jumlahnya per semester
+    $result = $groupedBySemester->map(function ($subjectsInSemester, $semester) {
+      return [
+        'semester' => $semester,
+        'subjects' => $subjectsInSemester, // Ambil nama matakuliah
+        'count' => $subjectsInSemester->count(), // Hitung jumlah matakuliah
+      ];
+    });
+
+    return $result;
   }
 }

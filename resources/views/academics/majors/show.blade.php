@@ -46,6 +46,28 @@
           </li>
         </ul>
       </div>
+      <div class="col-lg-5">
+        <h6 class="mb-3">{{ trans('Matakuliah Pilihan') }}</h6>
+        <div class="table-responsive text-center">
+          <table class="table table-striped table-vcenter table-bordered">
+            <thead>
+              <tr>
+                <th>Semester</th>
+                <th>Jumlah</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach($major->getElectiveSubjectsBySemester() as $elective)
+              <tr>
+                <td>Semester {{ $elective['semester'] }}</td>
+                <td>{{ $elective['count'] }} Matakuliah</td>
+              </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+
+      </div>
     </div>
   </div>
 </div>

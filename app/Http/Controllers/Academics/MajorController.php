@@ -57,6 +57,7 @@ class MajorController extends Controller
   public function show(Major $major)
   {
     $dataTable = new MajorSubjectDataTable($major->id);
+
     return $dataTable->render('academics.majors.show', compact('major', 'dataTable'));
   }
 

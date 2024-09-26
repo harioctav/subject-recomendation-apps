@@ -3,7 +3,7 @@ import { showConfirmationModal } from "@/utils/helper.js";
 let table;
 
 $(() => {
-    table = $(".table").DataTable();
+    table = $("#major-subject-table").DataTable();
 
     initializeDeleteButtons();
 });

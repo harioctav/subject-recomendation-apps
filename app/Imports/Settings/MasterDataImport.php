@@ -131,6 +131,8 @@ class MasterDataImport implements ToCollection, WithHeadingRow
         $majorId = $majors[$relation['major_code']] ?? null;
         $subjectId = $subjects[$relation['subject_code']] ?? null;
 
+        $major = Major::findOrFail($majorId);
+
         if ($majorId && $subjectId) {
           $updated = DB::table('major_subject')->updateOrInsert(
             [
@@ -150,6 +152,8 @@ class MasterDataImport implements ToCollection, WithHeadingRow
           } else {
             $newRelationsCount++;
           }
+
+          $major->updateTotalCourseCredit();
         } else {
           $this->errors[] = "Relation not created: Major {$relation['major_code']} or Subject {$relation['subject_code']} not found.";
         }
