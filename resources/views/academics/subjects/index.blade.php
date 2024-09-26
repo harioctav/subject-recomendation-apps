@@ -11,10 +11,6 @@
 </div>
 @endsection
 @section('content')
-<div id="loading-animation" style="display:none;">
-  <div class="loading-spinner"></div>
-  <p>Loading...</p>
-</div>
 <div class="block block-rounded">
   <div class="block-header block-header-default">
     <h3 class="block-title">
@@ -30,12 +26,6 @@
         {{ trans('page.subjects.create') }}
       </a>
       @endcan
-      @can('subjects.import')
-      <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modal-fadein">
-        <i class="fa fa-file-excel fa-sm me-1"></i>
-        {{ trans('button.import', ['import' => trans('page.subjects.title')]) }}
-      </button>
-      @endcan
     </div>
 
     @includeIf('components.warning-alert')
@@ -46,7 +36,6 @@
 
   </div>
 </div>
-@includeIf('academics.subjects.import')
 @endsection
 @push('javascript')
 {{ $dataTable->scripts() }}

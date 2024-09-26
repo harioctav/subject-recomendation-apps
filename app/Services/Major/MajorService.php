@@ -19,11 +19,9 @@ interface MajorService extends BaseService
   );
   public function handleStoreData(Request $request);
   public function handleUpdateData(Request $request, int $id);
-  public function handleImportData(Request $request);
   public function handleDestroyData(int $id);
 
   // Subject to Major
   public function handleStoreSubjectToMajorData(Request $request, Major $major);
-  public function handleImportSubjectToMajorData(Request $request);
   public function handleDestroySubjectToMajorData(Major $major, Subject $subject);
 }

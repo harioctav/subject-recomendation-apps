@@ -93,4 +93,9 @@ return [
     'index' => 'Daftar Log Aktivitas',
     'show' => 'Detail Log Aktivitas',
   ],
+
+  'imports' => [
+    'title' => 'Import Master Data',
+    'index' => 'Import Master Data',
+  ],
 ];

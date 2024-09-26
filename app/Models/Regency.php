@@ -53,4 +53,13 @@ class Regency extends Model
   {
     return $this->hasMany(District::class, 'regency_id');
   }
+
+  public function getFormattedNameAttribute()
+  {
+    $type = $this->attributes['type'];
+    $name = $this->attributes['name'];
+
+
+    return "{$type} {$name}";
+  }
 }

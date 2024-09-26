@@ -4,13 +4,10 @@ namespace App\Services\Major;
 
 use App\Helpers\Helper;
 use Illuminate\Support\Str;
-use App\Imports\MajorImport;
-use App\Imports\Majors\SubjectToMajorImport;
 use InvalidArgumentException;
 use Illuminate\Support\Facades\DB;
 use LaravelEasyRepository\Service;
 use Illuminate\Support\Facades\Log;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Repositories\Major\MajorRepository;
 use App\Repositories\Subject\SubjectRepository;
 
@@ -121,43 +118,6 @@ class MajorServiceImplement extends Service implements MajorService
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
     }
-  }
-
-  /**
-   * Import data to database
-   * 
-   */
-  public function handleImportData($request)
-  {
-    // Fetch request data
-    $payload = $request->validated();
-
-    // Get file
-    $file = $payload['file'];
-
-    // Inisiate import ddata
-    $import = new MajorImport();
-    Excel::import($import, $file);
-
-    $errors = $import->getFails();
-
-    // Cek jika terdapat error yang valid
-    if (!empty($errors)) {
-      return redirect()->back()->withErrors($errors)->with([
-        'warning' => 'Import selesai dengan beberapa peringatan.',
-      ]);
-    }
-
-    Helper::log(
-      trans('activity.majors.import'),
-      me()->id,
-      'major_activity_import'
-    );
-
-    // Jika tidak ada error, kembalikan pesan sukses
-    return redirect()->back()->with([
-      'success' => trans('session.create'),
-    ]);
   }
 
   public function handleDestroyData(int $id)
@@ -300,35 +260,5 @@ class MajorServiceImplement extends Service implements MajorService
         'message' => 'Terjadi kesalahan saat menghapus mata kuliah dari program studi.'
       ], 500);
     }
-  }
-
-  public function handleImportSubjectToMajorData($request)
-  {
-    $payload = $request->validated();
-
-    $file = $payload['file'];
-    $import = new SubjectToMajorImport;
-    Excel::import($import, $file);
-
-    $errors = $import->getErrors();
-
-    // Log
-    Helper::log(
-      trans('activity.majors.subjects.import'),
-      me()->id,
-      'major_subject_activity_import'
-    );
-
-    // Cek jika terdapat error yang valid
-    if (!empty($errors)) {
-      return redirect()->back()->withErrors($errors)->with([
-        'warning' => 'Import selesai dengan beberapa peringatan.',
-      ]);
-    }
-
-    // Jika tidak ada error, kembalikan pesan sukses
-    return redirect()->back()->with([
-      'success' => trans('session.create'),
-    ]);
   }
 }

@@ -12,6 +12,7 @@ use App\Http\Controllers\Academics\MajorSubjectController;
 use App\Http\Controllers\Evaluations\GradeController;
 use App\Http\Controllers\Evaluations\RecommendationController;
 use App\Http\Controllers\Settings\ActivityController;
+use App\Http\Controllers\Settings\ImportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +48,14 @@ Route::middleware([
     // User management.
     Route::patch('users/status/{user}', [UserController::class, 'status'])->name('users.status');
     Route::resource('users', UserController::class)->except('show');
+
+    // Import Management
+    Route::controller(ImportController::class)
+      ->prefix('imports')
+      ->name('imports.')
+      ->group(function () {
+        Route::post('store', 'store')->name('store');
+      });
   });
 
   // Management password users.
@@ -67,16 +76,9 @@ Route::middleware([
     });
 
     // Major
-    Route::prefix('majors.subjects')->name('majors.subjects.import')
-      ->controller(MajorSubjectController::class)
-      ->group(function () {
-        Route::post('import', 'import');
-      });
-    Route::post('majors/import', [MajorController::class, 'import'])->name('majors.import');
     Route::resource('majors', MajorController::class);
 
     // Subject management
-    Route::post('subjects/import', [SubjectController::class, 'import'])->name('subjects.import');
     Route::resource('subjects', SubjectController::class);
 
     // Student management

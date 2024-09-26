@@ -11,11 +11,6 @@
 </div>
 @endsection
 @section('content')
-<div id="loading-animation" style="display:none;">
-  <div class="loading-spinner"></div>
-  <p>Loading...</p>
-</div>
-
 <div class="block block-rounded">
   <div class="block-header block-header-default">
     <h3 class="block-title">
@@ -30,18 +25,6 @@
         <i class="fa fa-plus fa-sm me-1"></i>
         {{ trans('page.majors.create') }}
       </a>
-      @endcan
-      @can('majors.import')
-      <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modal-fadein">
-        <i class="fa fa-file-excel sm me-1"></i>
-        {{ trans('button.import', ['import' => trans('page.majors.title')]) }}
-      </button>
-      @endcan
-      @can('majors.subjects.import')
-      <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-import-subjects">
-        <i class="fa fa-file-excel sm me-1"></i>
-        {{ trans('button.import', ['import' => trans('Matakuliah ke Prodi')]) }}
-      </button>
       @endcan
     </div>
 
@@ -67,9 +50,6 @@
 
   </div>
 </div>
-
-@includeIf('academics.majors.import')
-@includeIf('academics.major_subjects.import')
 
 @endsection
 @push('javascript')

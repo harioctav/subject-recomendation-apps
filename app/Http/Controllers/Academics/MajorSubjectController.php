@@ -64,9 +64,4 @@ class MajorSubjectController extends Controller
   {
     return $this->majorService->handleDestroySubjectToMajorData($major, $subject);
   }
-
-  public function import(ImportRequest $request)
-  {
-    return $this->majorService->handleImportSubjectToMajorData($request);
-  }
 }

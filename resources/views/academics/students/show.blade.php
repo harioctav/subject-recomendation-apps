@@ -155,7 +155,7 @@
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Kabupaten/Kota') }}
-            <span class="fw-semibold">{{ $student->regency->name ?: '--'}}</span>
+            <span class="fw-semibold">{{ $student->regency->formatted_name ?: '--'}}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ trans('Kecamatan') }}

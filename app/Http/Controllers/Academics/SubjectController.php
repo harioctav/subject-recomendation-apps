@@ -134,13 +134,4 @@ class SubjectController extends Controller
       throw new InvalidArgumentException(trans('session.log.error'));
     }
   }
-
-  /**
-   * Import Data to Database.
-   *
-   */
-  public function Import(ImportRequest $request)
-  {
-    return $this->subjectService->handleImportData($request);
-  }
 }

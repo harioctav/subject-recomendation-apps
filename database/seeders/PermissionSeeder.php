@@ -41,7 +41,6 @@ class PermissionSeeder extends Seeder
       'majors.show',
       'majors.edit',
       'majors.update',
-      'majors.import',
       'majors.destroy',
 
       // Halaman Matakuliah
@@ -50,14 +49,12 @@ class PermissionSeeder extends Seeder
       'subjects.store',
       'subjects.edit',
       'subjects.update',
-      'subjects.import',
       'subjects.destroy',
 
       // Halaman Menambahkan Data Matakuliah ke Jurusan
       'majors.subjects.create',
       'majors.subjects.store',
       'majors.subjects.destroy',
-      'majors.subjects.import',
 
       // Halaman Student
       'students.index',
@@ -95,6 +92,9 @@ class PermissionSeeder extends Seeder
       // Halaman Activity
       'activities.index',
       'activities.show',
+
+      // Master Data Import
+      'imports.store',
     ];
 
     $guardName = 'web';
@@ -107,6 +107,7 @@ class PermissionSeeder extends Seeder
       'recommendations' => 6,
       'grades' => 7,
       'activities' => 8,
+      'imports' => 9
     ];
 
     foreach ($permissions as $permission) :

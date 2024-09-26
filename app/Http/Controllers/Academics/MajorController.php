@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers\Academics;
 
-use App\DataTables\Academics\MajorSubjectDataTable;
 use App\Models\Major;
-use Illuminate\Http\Request;
 use App\Helpers\Enums\DegreeType;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Services\Major\MajorService;
 use App\Services\Subject\SubjectService;
 use App\DataTables\Academics\MajorDataTable;
-use App\Http\Requests\Imports\ImportRequest;
 use App\Http\Requests\Academics\MajorRequest;
-use Illuminate\View\View;
+use App\DataTables\Academics\MajorSubjectDataTable;
 
 class MajorController extends Controller
 {
@@ -88,14 +84,5 @@ class MajorController extends Controller
   public function destroy(Major $major)
   {
     return $this->majorService->handleDestroyData($major->id);
-  }
-
-  /**
-   * Import Data to Database.
-   */
-  public function Import(ImportRequest $request)
-  {
-    $this->majorService->handleImportData($request);
-    return redirect(route('majors.index'))->withSuccess(trans('session.create'));
   }
 }

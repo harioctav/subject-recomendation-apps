@@ -4,7 +4,6 @@ namespace App\Services\Subject;
 
 use App\Helpers\Helper;
 use InvalidArgumentException;
-use App\Imports\SubjectImport;
 use Illuminate\Support\Facades\DB;
 use LaravelEasyRepository\Service;
 use Illuminate\Support\Facades\Log;
@@ -133,39 +132,5 @@ class SubjectServiceImplement extends Service implements SubjectService
       Log::info($e->getMessage());
       throw new InvalidArgumentException(trans('session.log.error'));
     }
-  }
-
-  /**
-   * Import data to database
-   * 
-   */
-  public function handleImportData($request)
-  {
-    // Fetch request data
-    $payload = $request->validated();
-
-    $file = $payload['file'];
-    $import = new SubjectImport;
-    Excel::import($import, $file);
-
-    $errors = $import->getErrors();
-
-    // Cek jika terdapat error yang valid
-    if (!empty($errors)) {
-      return redirect()->back()->withErrors($errors)->with([
-        'warning' => 'Import selesai dengan beberapa peringatan.',
-      ]);
-    }
-
-    Helper::log(
-      trans('activity.subjects.import'),
-      me()->id,
-      'subject_activity_import'
-    );
-
-    // Jika tidak ada error, kembalikan pesan sukses
-    return redirect()->back()->with([
-      'success' => trans('session.create'),
-    ]);
   }
 }

@@ -87,9 +87,13 @@
           <div class="mb-4">
             <label class="form-label">{{ trans('Keterangan') }}</label>
             <div class="space-x">
+              @php
+              $subjectNotes = old('notes', $subject->note ? explode(' | ', $subject->note) : []);
+              $subjectNotes = array_map('trim', $subjectNotes);
+              @endphp
               @foreach ($notes as $index => $note)
               <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" value="{{ $note }}" id="checkbox-{{ $index }}" name="notes[]" @if(is_array(old('notes', explode(',', $subject->note))) && in_array($note, old('notes', explode(',', $subject->note)))) checked @endif>
+                <input class="form-check-input" type="checkbox" value="{{ $note }}" id="checkbox-{{ $index }}" name="notes[]" @if(in_array($note, $subjectNotes)) checked @endif>
                 <label class="form-check-label" for="checkbox-{{ $index }}">{{ $note }}</label>
               </div>
               @endforeach

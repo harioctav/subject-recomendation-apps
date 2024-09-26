@@ -107,4 +107,10 @@ return [
     'index' => 'Menampilkan daftar Aktivitas Log',
     'show' => 'Menampilkan Detail Aktivitas Log',
   ],
+
+  'imports' => [
+    'name' => 'Management Master Data',
+    'index' => 'Menampilkan Halaman Import Master Data',
+    'store' => 'Menambahkan Master Data Jurusan & Matakuliah'
+  ]
 ];

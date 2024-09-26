@@ -8,12 +8,12 @@ enum SubjectNoteType: string
 {
   use EnumsToArray;
 
-  case T = 'T';
+  case T = 'TAP';
   case P = 'P';
   case PR = 'PR';
   case E = 'E';
   case BW = 'BW';
-  case PS = 'PS';
+  case PS = 'PILIH SALAH SATU';
   case BPR = 'BPR';
   case PRO = 'PRO';
   case TW = 'TW';

@@ -17,5 +17,4 @@ interface SubjectService extends BaseService
   );
   public function handleStoreData(Request $request);
   public function handleUpdateData(Request $request, int $id);
-  public function handleImportData(Request $request);
 }

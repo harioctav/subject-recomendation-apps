@@ -12,6 +12,10 @@
 </div>
 @endsection
 @section('content')
+<div id="loading-animation" style="display:none;">
+  <div class="loading-spinner"></div>
+  <p>Loading...</p>
+</div>
 @if (session('status'))
 <div class="row items-push">
   <div class="col-6 col-xl-6">
@@ -19,9 +23,16 @@
   </div>
 </div>
 @endif
+
+@if (session('success'))
+<div class="alert alert-success">
+  {!! nl2br(e(session('success'))) !!}
+</div>
+@endif
+
 <div class="row items-push">
   <div class="col-6 col-xl-3">
-    <a class="block block-rounded block-link-shadow text-end" href="javascript:void(0)">
+    <a class="block block-rounded block-link-shadow text-end" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#modal-form-import-master-data">
       <div class="block-content block-content-full d-sm-flex justify-content-between align-items-center">
         <div class="d-none d-sm-block">
           <i class="fa fa-school-circle-check fa-2x opacity-25"></i>
@@ -51,7 +62,7 @@
     </a>
   </div>
   <div class="col-6 col-xl-3">
-    <a class="block block-rounded block-link-shadow text-end" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#modal-fadein">
+    <a class="block block-rounded block-link-shadow text-end" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#modal-form-input-nim">
       <div class="block-content block-content-full d-sm-flex justify-content-between align-items-center">
         <div class="d-none d-sm-block">
           <i class="fa fa-graduation-cap fa-2x opacity-25"></i>
@@ -82,6 +93,7 @@
   </div>
 </div>
 @includeIf('components.form-input-nim')
+@includeIf('settings.imports.import')
 @endsection
 @vite('resources/js/home.js')
 @push('javascript')
