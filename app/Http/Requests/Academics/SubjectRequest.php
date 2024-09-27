@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Academics;
 
 use App\Helpers\Enums\StatusSubjectType;
+use App\Helpers\Enums\SubjectNoteType;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SubjectRequest extends FormRequest
@@ -31,7 +32,7 @@ class SubjectRequest extends FormRequest
       'status' => "required|string|{$statusValidation}",
       'exam_time' => 'required|string|regex:/^\d+\.\d+$/',
       'notes' => 'nullable|array',
-      'notes.*' => 'string|in:T,P,PR,E,BW,PS,BPR,PRO,TW,BPRO,L'
+      'notes.*' => 'string|' . SubjectNoteType::toValidation(),
     ];
   }
 

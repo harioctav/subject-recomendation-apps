@@ -27,6 +27,7 @@ class StudentDataTable extends DataTable
       ->editColumn('major_id', fn($row) => $row->major->name)
       ->editColumn('email', fn($row) => $row->email ?? "--")
       ->editColumn('status', fn($row) => $row->statusLabel)
+      ->editColumn('student_status', fn($row) => $row->studentStatusLabel)
       ->addColumn('recommendations', fn($row) => $row->recommendations->count() . ' Data')
       ->addColumn('grades', fn($row) => $row->grades->count())
       ->filterColumn('major_id', function ($query, $keyword) {
@@ -43,7 +44,8 @@ class StudentDataTable extends DataTable
       })
       ->rawColumns([
         'action',
-        'status'
+        'status',
+        'student_status'
       ]);
   }
 
@@ -122,6 +124,10 @@ class StudentDataTable extends DataTable
         ->addClass('text-center'),
       Column::make('status')
         ->title(trans('Status'))
+        ->addClass('text-center'),
+      Column::make('student_status')
+        ->title(trans('Keaktifan'))
+        ->orderable(false)
         ->addClass('text-center'),
       Column::computed('action')
         ->title(trans('Opsi'))

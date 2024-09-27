@@ -70,7 +70,7 @@ class SubjectServiceImplement extends Service implements SubjectService
       $payload = $request->validated();
 
       if (isset($payload['notes']) && is_array($payload['notes'])) :
-        $payload['note'] = implode(',', array_filter($payload['notes']));
+        $payload['note'] = implode(' | ', array_filter($payload['notes']));
       else :
         $payload['note'] = null;
       endif;
@@ -107,7 +107,7 @@ class SubjectServiceImplement extends Service implements SubjectService
       $payload = $request->validated();
 
       if (isset($payload['notes']) && is_array($payload['notes'])) :
-        $payload['note'] = implode(',', array_filter($payload['notes']));
+        $payload['note'] = implode(' | ', array_filter($payload['notes']));
       else :
         $payload['note'] = null;
       endif;

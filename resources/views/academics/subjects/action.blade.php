@@ -10,13 +10,13 @@
     </a>
     @endcan
     @can('subjects.show')
-    <a class="dropdown-item" href="{{ route('subjects.show', $uuid) }}">
+    <a class="dropdown-item show-subjects" href="javascript:void(0)" data-uuid="{{ $uuid }}">
       <i class="fa fa-eye fa-fw me-2"></i>
       {{ trans('page.subjects.show', ['subjects' => '']) }}
     </a>
     @endcan
     @can('subjects.destroy')
-    <a class="dropdown-item text-danger delete-subjects" href="javascript:void(0)" data-uuid="{{ $uuid }}">
+    <a class="dropdown-item delete-subjects" href="javascript:void(0)" data-uuid="{{ $uuid }}">
       <i class="fa fa-trash fa-fw me-2"></i>
       {{ trans('page.subjects.delete', ['subjects' => '']) }}
     </a>

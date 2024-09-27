@@ -81,7 +81,6 @@
               <div class="col-md-8">
                 <div class="mb-0">
                   <label for="birth_place" class="form-label">{{ trans('Tempat Lahir') }}</label>
-                  <span class="text-danger">*</span>
                   <input type="text" name="birth_place" id="birth_place" value="{{ old('birth_place') }}" class="form-control @error('birth_place') is-invalid @enderror" placeholder="{{ trans('Masukkan Tempat Lahir') }}" onkeypress="return onlyLetter(event)">
                   @error('birth_place')
                   <div class="invalid-feedback">{{ $message }}</div>
@@ -91,7 +90,6 @@
               <div class="col-md-4">
                 <div class="mb-0">
                   <label class="form-label" for="birth_date">{{ trans('Tanggal Lahir') }}</label>
-                  <span class="text-danger">*</span>
                   <input type="text" class="js-flatpickr form-control @error('birth_date') is-invalid @enderror" id="birth_date" name="birth_date" value="{{ old('birth_date') }}" placeholder="Y-m-d" data-date-format="Y-m-d">
                   @error('birth_date')
                   <div class="invalid-feedback">{{ $message }}</div>
@@ -184,8 +182,7 @@
           </div>
 
           <div class="mb-4">
-            <label for="status" class="form-label">{{ trans('Status Mahasiswa') }}</label>
-            <span class="text-danger">*</span>
+            <label for="status" class="form-label">{{ trans('Status Registrasi Mahasiswa') }}</label>
             <select name="status" id="status" class="js-select2 form-select @error('status') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;">
               <option></option>
               @foreach ($status as $value)
@@ -213,7 +210,6 @@
 
           <div class="mb-4">
             <label for="province" class="form-label">{{ trans('Pilih Provinsi') }}</label>
-            <span class="text-danger">*</span>
             <select name="province" id="province" class="js-select2 form-select @error('province') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('province') }}">
               <option></option>
               @foreach ($provinces as $item)
@@ -227,7 +223,6 @@
 
           <div class="mb-4">
             <label for="regency" class="form-label">{{ trans('Pilih Kabupaten') }}</label>
-            <span class="text-danger">*</span>
             <select name="regency" id="regency" class="js-select2 form-select @error('regency') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('regency') }}">
               <option></option>
 
@@ -239,7 +234,6 @@
 
           <div class="mb-4">
             <label for="district" class="form-label">{{ trans('Pilih Kecamatan') }}</label>
-            <span class="text-danger">*</span>
             <select name="district" id="district" class="js-select2 form-select @error('district') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('district') }}">
               <option></option>
 
@@ -251,7 +245,6 @@
 
           <div class="mb-4">
             <label for="village" class="form-label">{{ trans('Pilih Kelurahan') }}</label>
-            <span class="text-danger">*</span>
             <select name="village" id="village" class="js-select2 form-select @error('village') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('village') }}">
               <option></option>
 
@@ -263,7 +256,6 @@
 
           <div class="mb-4">
             <label for="post_code" class="form-label">{{ trans('Kode Pos') }}</label>
-            <span class="text-danger">*</span>
             <input type="text" name="post_code" id="post_code" value="{{ old('post_code') }}" class="form-control @error('post_code') is-invalid @enderror" placeholder="{{ trans('Masukkan Kode Pos') }}" onkeypress="return onlyNumber(event)" data-old="{{ old('post_code') }}" readonly>
             @error('post_code')
             <div class="invalid-feedback">{{ $message }}</div>
@@ -272,7 +264,6 @@
 
           <div class="mb-4">
             <label class="form-label" for="address">{{ trans('Alamat Lengkap') }}</label>
-            <span class="text-danger">*</span>
             <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address" rows="4" placeholder="{{ trans('Masukkan Alamat lengkap') }}">{{ old('address') }}</textarea>
             @error('address')
             <div class="invalid-feedback">{{ $message }}</div>
@@ -323,7 +314,7 @@
   var regencies_url = "{{ route('locations.regencies', ':province_id') }}"
   var districts_url = "{{ route('locations.districts', ':regency_id') }}"
   var villages_url = "{{ route('locations.villages', ':district_id') }}"
-  var pos_code_url = "{{ route('locations.postCodes', ':village_id') }}"
+  var pos_code_url = "{{ route('locations.postCode', ':village_id') }}"
 
 </script>
 @endpush

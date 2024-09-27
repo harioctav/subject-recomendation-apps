@@ -40,6 +40,7 @@ class StudentDataTable extends DataTable
       ->editColumn('major_id', fn($row) => $row->major->name)
       ->editColumn('email', fn($row) => $row->email ?? "--")
       ->editColumn('status', fn($row) => $row->statusLabel)
+      ->editColumn('student_status', fn($row) => $row->studentStatusLabel)
       ->filterColumn('major_id', function ($query, $keyword) {
         $query->whereHas('major', function ($query) use ($keyword) {
           $query->where('name', 'LIKE', "%{$keyword}%");
@@ -48,7 +49,8 @@ class StudentDataTable extends DataTable
       ->addColumn('action', 'academics.students.action')
       ->rawColumns([
         'action',
-        'status'
+        'status',
+        'student_status'
       ]);
   }
 
@@ -145,9 +147,13 @@ class StudentDataTable extends DataTable
         ->title(trans('Program Studi'))
         ->addClass('text-center'),
       Column::make('status')
-        ->title(trans('Status'))
+        ->title(trans('Status Regis'))
         ->orderable(false)
-        ->addClass('text-center',),
+        ->addClass('text-center'),
+      Column::make('student_status')
+        ->title(trans('Keaktifan'))
+        ->orderable(false)
+        ->addClass('text-center'),
       Column::computed('action')
         ->title(trans('Opsi'))
         ->exportable(false)

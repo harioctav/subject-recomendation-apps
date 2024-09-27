@@ -86,12 +86,14 @@
   </div>
 </div>
 @includeIf('academics.students.import')
+@includeIf('academics.students.show')
 @endsection
 @push('javascript')
 {{ $dataTable->scripts() }}
 @vite('resources/js/academics/students/index.js')
 <script>
-  var urlDestroy = "{{ route('students.destroy', ':uuid') }}"
+  var urlDetailed = "{{ route('students.show', ':uuid') }}";
+  var urlDestroy = "{{ route('students.destroy', ':uuid') }}";
   var urlRestore = "{{ route('students.restore', ':uuid') }}";
   var urlForceDelete = "{{ route('students.delete', ':uuid') }}";
 

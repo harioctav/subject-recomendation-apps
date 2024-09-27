@@ -175,8 +175,7 @@
           </div>
 
           <div class="mb-4">
-            <label for="status" class="form-label">{{ trans('Status Mahasiswa') }}</label>
-            <span class="text-danger">*</span>
+            <label for="status" class="form-label">{{ trans('Status Registrasi Mahasiswa') }}</label>
             <select name="status" id="status" class="js-select2 form-select @error('status') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;">
               <option></option>
               @foreach ($status as $value)
@@ -184,6 +183,19 @@
               @endforeach
             </select>
             @error('status')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="mb-4">
+            <label for="student_status" class="form-label">{{ trans('Status Keaktifan Mahasiswa') }}</label>
+            <select name="student_status" id="student_status" class="js-select2 form-select @error('student_status') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;">
+              <option></option>
+              @foreach (AccountStatus::toArray() as $value)
+              <option value="{{ $value }}" @if (old('student_status', $student->student_status)==$value) selected @endif>{{ $value == 1 ? 'Aktif' : 'Non Aktif' }}</option>
+              @endforeach
+            </select>
+            @error('student_status')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror
           </div>
@@ -204,7 +216,6 @@
 
           <div class="mb-4">
             <label for="province" class="form-label">{{ trans('Pilih Provinsi') }}</label>
-            <span class="text-danger">*</span>
             <select name="province" id="province" class="js-select2 form-select @error('province') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('province', $student->province->id) }}">
               <option></option>
               @foreach ($provinces as $item)
@@ -218,7 +229,6 @@
 
           <div class="mb-4">
             <label for="regency" class="form-label">{{ trans('Pilih Kabupaten') }}</label>
-            <span class="text-danger">*</span>
             <select name="regency" id="regency" class="js-select2 form-select @error('regency') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('regency', $student->regency->id) }}">
               <option></option>
 
@@ -230,7 +240,6 @@
 
           <div class="mb-4">
             <label for="district" class="form-label">{{ trans('Pilih Kecamatan') }}</label>
-            <span class="text-danger">*</span>
             <select name="district" id="district" class="js-select2 form-select @error('district') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('district', $student->district->id) }}">
               <option></option>
 
@@ -242,7 +251,6 @@
 
           <div class="mb-4">
             <label for="village" class="form-label">{{ trans('Pilih Kelurahan') }}</label>
-            <span class="text-danger">*</span>
             <select name="village" id="village" class="js-select2 form-select @error('village') is-invalid @enderror" data-placeholder="{{ trans('Pilih Salah Satu') }}" style="width: 100%;" data-old="{{ old('village', $student->village_id) }}">
               <option></option>
 
@@ -254,7 +262,6 @@
 
           <div class="mb-4">
             <label for="post_code" class="form-label">{{ trans('Kode Pos') }}</label>
-            <span class="text-danger">*</span>
             <input type="text" name="post_code" id="post_code" value="{{ old('post_code') }}" class="form-control @error('post_code') is-invalid @enderror" placeholder="{{ trans('Masukkan Kode Pos') }}" onkeypress="return onlyNumber(event)" data-old="{{ old('post_code', optional($student->village)->pos_code) }}" readonly>
             @error('post_code')
             <div class="invalid-feedback">{{ $message }}</div>

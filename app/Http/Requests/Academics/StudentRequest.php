@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Academics;
 
+use App\Helpers\Enums\AccountStatusType;
 use Illuminate\Validation\Rule;
 use App\Helpers\Enums\GenderType;
 use App\Helpers\Enums\ReligionType;
@@ -27,34 +28,41 @@ class StudentRequest extends FormRequest
   {
     return [
       'nim' => [
-        'required', 'numeric',
+        'required',
+        'numeric',
         Rule::unique('students', 'nim')->ignore($this->student),
       ],
       'nik' => [
-        'nullable', 'numeric', 'digits:16',
+        'nullable',
+        'numeric',
+        'digits:16',
         Rule::unique('students', 'nik')->ignore($this->student),
       ],
       'name' => 'required|string|max:100',
       'email' => [
-        'nullable', 'email:dns', 'max:100',
+        'nullable',
+        'email:dns',
+        'max:100',
         Rule::unique('students', 'email')->ignore($this->student),
       ],
-      'birth_place' => 'required|string|max:50',
-      'birth_date' => 'required|date',
+      'birth_place' => 'nullable|string|max:50',
+      'birth_date' => 'nullable|date',
       'gender' => "required|string|" . GenderType::toValidation(),
       'religion' => "required|string|" . ReligionType::toValidation(),
       'status' => "nullable|string|" . StudentStatusType::toValidation(),
+      'student_status' => "nullable|string|" . AccountStatusType::toValidation(),
       'phone' => [
-        'required', 'numeric',
+        'required',
+        'numeric',
         Rule::unique('students', 'phone')->ignore($this->student),
       ],
       'major_id' => 'required|exists:majors,id',
-      'province' => 'required|exists:provinces,id',
-      'regency' => 'required|exists:regencies,id',
-      'district' => 'required|exists:districts,id',
-      'village' => 'required|exists:villages,id',
-      'post_code' => 'required|numeric',
-      'address' => 'required|string',
+      'province' => 'nullable|exists:provinces,id',
+      'regency' => 'nullable|exists:regencies,id',
+      'district' => 'nullable|exists:districts,id',
+      'village' => 'nullable|exists:villages,id',
+      'post_code' => 'nullable|numeric',
+      'address' => 'nullable|string',
       'file' => 'nullable|mimes:jpg,png|max:3048',
       'initial_registration_period' => [
         'nullable',

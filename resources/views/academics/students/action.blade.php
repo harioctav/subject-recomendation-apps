@@ -11,12 +11,12 @@
     </a>
     @endcan
     @can('students.show')
-    <a class="dropdown-item" href="{{ route('students.show', $uuid) }}">
+    <a class="dropdown-item show-students" href="javascript:void(0)" data-uuid="{{ $uuid }}">
       <i class="fa fa-eye fa-fw me-2"></i>
       {{ trans('page.students.show', ['students' => '']) }}
     </a>
     @endcan
-    @if(!$model->recommendations()->exists())
+    @if($model->student_status == 0 && !$model->recommendations()->exists())
     @can('students.destroy')
     <a class="dropdown-item delete-students" href="javascript:void(0)" data-uuid="{{ $uuid }}">
       <i class="fa fa-trash fa-fw me-2"></i>
@@ -25,6 +25,7 @@
     @endcan
     @endif
     @else
+    <!-- Rest of the code remains unchanged -->
     @can('students.restore')
     <a class="dropdown-item restore-students" href="javascript:void(0)" data-uuid="{{ $uuid }}">
       <i class="fa fa-undo fa-fw me-2"></i>

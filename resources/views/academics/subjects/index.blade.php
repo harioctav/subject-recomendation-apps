@@ -36,11 +36,14 @@
 
   </div>
 </div>
+
+@includeIf('academics.subjects.show')
 @endsection
 @push('javascript')
 {{ $dataTable->scripts() }}
 @vite('resources/js/academics/subjects/index.js')
 <script>
+  var urlDetail = "{{ route('subjects.show', ':uuid') }}"
   var urlDestroy = "{{ route('subjects.destroy', ':uuid') }}"
 
 </script>

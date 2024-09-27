@@ -18,6 +18,7 @@
 <script src="{{ asset('assets/templates/src/js/plugins/datatables-buttons/buttons.print.min.js') }}"></script>
 <script src="{{ asset('assets/templates/src/js/plugins/datatables-buttons/buttons.html5.min.js') }}"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
 <script src="{{ asset('assets/templates/src/js/plugins/flatpickr/flatpickr.min.js') }}"></script>
 <script src="{{ asset('assets/templates/src/js/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 <script src="{{ asset('assets/templates/src/js/plugins/select2/js/select2.full.min.js') }}"></script>

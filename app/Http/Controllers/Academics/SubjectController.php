@@ -76,7 +76,7 @@ class SubjectController extends Controller
    */
   public function show(Subject $subject)
   {
-    return view('academics.subjects.show', compact('subject'));
+    return response()->json($subject);
   }
 
   /**

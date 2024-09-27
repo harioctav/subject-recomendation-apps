@@ -87,7 +87,14 @@ class StudentController extends Controller
    */
   public function show(Student $student)
   {
-    return view('academics.students.show', compact('student'));
+    $student->major;
+    $student->grades;
+    optional($student->province);
+    $student->avatar = $student->getAvatar();
+
+    return response()->json([
+      'student' => $student
+    ], 201);
   }
 
   /**

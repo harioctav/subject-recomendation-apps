@@ -262,8 +262,12 @@ class StudentServiceImplement extends Service implements StudentService
       // Fetch request form
       $payload = $request->validated();
 
-      // handle get data province, regency, district & village
-      $village = $this->villageRepository->findOrFail($payload['village']);
+      if (!empty($payload['village'])) {
+        $village = $this->villageRepository->findOrFail($payload['village']);
+        $payload['village_id'] = $village->id;
+      } else {
+        $payload['village_id'] = null;
+      }
 
       // handle file upload
       $avatar = Helper::uploadFile(
@@ -311,10 +315,14 @@ class StudentServiceImplement extends Service implements StudentService
       $student = $this->mainRepository->findOrFail($id);
       $avatar = Helper::uploadFile($request, "images/students", $student->avatar);
 
-      $village = $this->villageRepository->findOrFail($payload['village']);
+      if (!empty($payload['village'])) {
+        $village = $this->villageRepository->findOrFail($payload['village']);
+        $payload['village_id'] = $village->id;
+      } else {
+        $payload['village_id'] = optional($student->village)->id;
+      }
 
       $payload['avatar'] = $avatar;
-      $payload['village_id'] = $village->id;
       $payload['birth_place'] = strtoupper($payload['birth_place']);
       $payload['parent_name'] = strtoupper($payload['parent_name']);
 

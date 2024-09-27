@@ -125,7 +125,7 @@ class Student extends Model
     }
 
     // Kembalikan nilai default jika birth_day tidak ada
-    return '--';
+    return '-';
   }
 
   /**
@@ -137,7 +137,7 @@ class Student extends Model
       return Carbon::parse($this->birth_date)->age . " Tahun";
     }
 
-    return '--';
+    return '-';
   }
 
   public function statusLabel(): Attribute
@@ -152,6 +152,18 @@ class Student extends Model
 
     return Attribute::make(
       get: fn() => $statusLabel[$this->status] ?? "<span class='badge bg-danger'>Tidak Diketahui</span>",
+    );
+  }
+
+  public function studentStatusLabel(): Attribute
+  {
+    $statusLabel = [
+      0 => "<span class='badge bg-danger'>Non Aktif</span>",
+      1 => "<span class='badge bg-success'>Aktif</span>",
+    ];
+
+    return Attribute::make(
+      get: fn() => $statusLabel[$this->student_status] ?? 'Tidak Diketahui',
     );
   }
 
