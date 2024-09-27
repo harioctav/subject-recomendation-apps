@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\Enums\DegreeType;
+use App\Helpers\Enums\SubjectNoteType;
 use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -62,30 +63,34 @@ class Major extends Model
 
   public function updateTotalCourseCredit()
   {
+    $totalCourseCredit = 0;
     $subjects = $this->subjects;
+    $subjectsBySemester = $subjects->groupBy('pivot.semester');
 
-    // Grup matakuliah berdasarkan note 'PILIH SALAH SATU' yang ada di model Subject
-    $groupedSubjects = $subjects->groupBy(function ($subject) {
-      return strpos($subject->note, 'PILIH SALAH SATU') !== false ? 'pilih_satu' : 'lainnya';
-    });
+    foreach ($subjectsBySemester as $semester => $subjects) {
+      // Pisahkan mata kuliah berdasarkan "PILIH SALAH SATU"
+      $withPilihSalahSatu = $subjects->filter(function ($subject) {
+        return str_contains($subject->note, SubjectNoteType::PS->value);
+      });
 
-    // Hitung semua matakuliah yang bukan 'PILIH SALAH SATU'
-    $totalCredit = $groupedSubjects->get('lainnya', collect())->sum('course_credit');
+      $withoutPilihSalahSatu = $subjects->filter(function ($subject) {
+        return !str_contains($subject->note, SubjectNoteType::PS->value);
+      });
 
-    // Jika ada matakuliah dengan 'PILIH SALAH SATU', ambil yang course_credit terbesar
-    if ($groupedSubjects->has('pilih_satu')) {
-      // Kelompokkan berdasarkan grup yang sama (misalnya 'BPR | PILIH SALAH SATU | P')
-      $subGroups = $groupedSubjects->get('pilih_satu')->groupBy('note');
+      // Tambahkan total SKS dari mata kuliah tanpa "PILIH SALAH SATU"
+      foreach ($withoutPilihSalahSatu as $subject) {
+        $totalCourseCredit += $subject->course_credit; // Mengambil SKS dari kolom course_credit di tabel subjects
+      }
 
-      // Pilih matakuliah dengan SKS terbesar dari setiap grup yang ada
-      foreach ($subGroups as $subGroup) {
-        $maxCredit = $subGroup->max('course_credit');
-        $totalCredit += $maxCredit;
+      // Jika ada mata kuliah "PILIH SALAH SATU", hanya tambahkan salah satu dari grup ini
+      if ($withPilihSalahSatu->isNotEmpty()) {
+        $totalCourseCredit += $withPilihSalahSatu->max()->course_credit; // Ambil salah satu SKS dari mata kuliah pilihan
+        // $totalCourseCredit += $withPilihSalahSatu->first()->course_credit; // Ambil salah satu SKS dari mata kuliah pilihan
       }
     }
 
     // Update nilai total_course_credit pada tabel majors
-    $this->update(['total_course_credit' => $totalCredit]);
+    $this->update(['total_course_credit' => $totalCourseCredit]);
   }
 
   public function getElectiveSubjectsBySemester()

@@ -129,8 +129,6 @@
     var form = document.getElementById("nim-form");
     if (action === "data") {
       form.action = "{{ route('students.data') }}";
-    } else if (action === "semester-remaining") {
-      form.action = "{{ route('students.semester') }}";
     }
     form.submit();
   }

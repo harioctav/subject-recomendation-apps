@@ -66,7 +66,6 @@ class PermissionSeeder extends Seeder
       'students.destroy',
       'students.import',
       'students.data',
-      'students.semester',
       'students.restore',
       'students.delete',
 

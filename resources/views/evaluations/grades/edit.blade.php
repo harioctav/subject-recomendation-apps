@@ -81,7 +81,7 @@
           <div class="mb-4">
             <label for="mutu" class="form-label">{{ trans('Nilai Mutu') }}</label>
             <span class="text-danger">*</span>
-            <input type="number" min="1" step="0.5" name="mutu" id="mutu" value="{{ old('mutu', $grade->mutu) }}" class="form-control @error('mutu') is-invalid @enderror" placeholder="{{ trans('Nilai Mutu Ujian') }}">
+            <input type="number" step="0.5" name="mutu" id="mutu" value="{{ old('mutu', $grade->mutu) }}" class="form-control @error('mutu') is-invalid @enderror" placeholder="{{ trans('Nilai Mutu Ujian') }}">
             @error('mutu')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror

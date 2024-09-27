@@ -14,6 +14,7 @@ use App\DataTables\Evaluations\RecommendationDataTable;
 use App\DataTables\Evaluations\SubjectDataTable;
 use App\Http\Requests\Evaluations\RecommendationRequest;
 use App\Services\Grade\GradeService;
+use App\Services\Subject\SubjectService;
 
 class RecommendationController extends Controller
 {
@@ -26,7 +27,7 @@ class RecommendationController extends Controller
     protected StudentService $studentService,
     protected RecommendationService $recommendationService,
     protected GradeService $gradeService,
-    protected SubjectRepository $subjectRepository
+    protected SubjectService $subjectService
   ) {
     // 
   }

@@ -153,11 +153,6 @@ class StudentController extends Controller
     return $this->studentService->getStudentAllData($request);
   }
 
-  public function semester(NimRequest $request)
-  {
-    return $this->studentService->getSemesterRemainingData($request);
-  }
-
   public function import(ImportRequest $request)
   {
     return $this->studentService->handleImportData($request);

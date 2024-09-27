@@ -28,9 +28,6 @@
                 <button type="button" class="btn btn-alt-primary btn-block" onclick="submitForm('data')">
                   {{ trans('Lihat Data Mahasiswa') }}
                 </button>
-                <button type="button" class="btn btn-alt-secondary btn-block" onclick="submitForm('semester-remaining')">
-                  {{ trans('Lihat Sisa Semester') }}
-                </button>
               </div>
             </div>
           </div>

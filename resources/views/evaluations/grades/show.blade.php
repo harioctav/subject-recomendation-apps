@@ -24,6 +24,10 @@
     </h3>
   </div>
   <div class="block-content">
+    <div id="loading-animation" style="display:none;">
+      <div class="loading-spinner"></div>
+      <p>Loading...</p>
+    </div>
 
     {{-- Student Info --}}
     @includeIf('components.students.info')

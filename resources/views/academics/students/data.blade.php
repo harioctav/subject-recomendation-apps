@@ -104,12 +104,13 @@
                 <th>Ket</th>
                 <th>Masa</th>
                 <th>ST</th>
+                <th>PR</th>
               </tr>
             </thead>
             <tbody>
               @foreach ($subjects as $semester => $subject)
               <tr>
-                <td colspan="9" class="semester-header">SEMESTER {{ strtoupper($semester) }}</td>
+                <td colspan="10" class="semester-header">SEMESTER {{ strtoupper($semester) }}</td>
               </tr>
               @foreach ($subject as $key => $value)
               <tr>
@@ -122,6 +123,7 @@
                 <td class="text-center">{{ $value['has_grade'] ? ($value['grade']->grade == GradeType::E->value ? 'BL' : 'LL') : 'BL' }}</td>
                 <td class="text-center">{{ $value['exam_period'] ?? '-' }}</td>
                 <td class="text-center">{{ $value['subject']->status == StatusSubject::I->value ? 'I' : 'N' }}</td>
+                <td class="text-center">{{ $value['subject']->note ?: '-' }}</td>
               </tr>
               @endforeach
               @endforeach
@@ -133,15 +135,15 @@
           <ol>
             <li>
               <span class="info-label">Jumlah SKS Dalam Kurikulum Yang Ditempuh :</span>
-              <span class="info-value">{{ $detail['total_completed_by_curriculum'] }} SKS</span>
+              <span class="info-value">{{ $detail['credit_by_curriculum'] }} SKS</span>
             </li>
             <li>
               <span class="info-label">Jumlah SKS Alih Kredit :</span>
-              <span class="info-value">{{ $detail['total_completed_55555'] }} SKS</span>
+              <span class="info-value">{{ $detail['transfer_credit'] }} SKS</span>
             </li>
             <li>
               <span class="info-label">Jumlah SKS Total Yang Ditempuh Untuk Perhitungan IPK :</span>
-              <span class="info-value">{{ $detail['total_completed_course_credit'] }} SKS</span>
+              <span class="info-value">{{ $detail['credit_has_been_taken'] }} SKS</span>
             </li>
             <li>
               <span class="info-label">Jumlah Total Nilai Mutu :</span>

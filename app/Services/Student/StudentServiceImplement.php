@@ -3,10 +3,13 @@
 namespace App\Services\Student;
 
 use App\Helpers\Enums\GradeType;
+use App\Helpers\Enums\RecommendationStatusType;
+use App\Helpers\Enums\SubjectNoteType;
 use App\Helpers\Helper;
 use App\Imports\StudentImport;
 use App\Models\Grade;
 use App\Models\Subject;
+use App\Repositories\Grade\GradeRepository;
 use App\Repositories\Recommendation\RecommendationRepository;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
@@ -23,7 +26,8 @@ class StudentServiceImplement extends Service implements StudentService
   public function __construct(
     protected StudentRepository $mainRepository,
     protected VillageRepository $villageRepository,
-    protected RecommendationRepository $recommendationRepository
+    protected RecommendationRepository $recommendationRepository,
+    protected GradeRepository $gradeRepository
   ) {
     // 
   }
@@ -129,32 +133,6 @@ class StudentServiceImplement extends Service implements StudentService
     }
   }
 
-  public function getSemesterRemainingData($request)
-  {
-    try {
-
-      $payload = $request->validated();
-
-      // Get student data
-      $student = $this->mainRepository->getWhere(
-        wheres: [
-          'nim' => $payload['nim']
-        ]
-      )->first();
-
-      if (empty($student)) {
-        return back()->with('error', trans('session.students.nim.not-found', ['nim' => $payload['nim']]));
-      }
-
-      $detail = $this->getStudentAcademicInfo($student->id);
-
-      return view('academics.students.semester', compact('student', 'detail'));
-    } catch (\Exception $e) {
-      Log::info($e->getMessage());
-      throw new InvalidArgumentException(trans('session.log.error'));
-    }
-  }
-
   public function getStudentDataWithRecommendations($student)
   {
     $studentData = [
@@ -198,60 +176,167 @@ class StudentServiceImplement extends Service implements StudentService
 
   public function getStudentAcademicInfo($id)
   {
-    // Find student data
+    // 1. Data mahasiswa
     $student = $this->mainRepository->findOrFail($id);
 
+    $allSubjects = $student->major->subjects;
+    $totalCourseCredit = $this->countTotalCourseCredit($allSubjects);
+
+    // Filter Rekomendasi
+    $statusFilters = [
+      'passed' => [
+        RecommendationStatusType::LULUS->value,
+        RecommendationStatusType::SUDAH_DIPERBAIKI->value,
+      ],
+      'ongoing' => [
+        RecommendationStatusType::DIREKOMENDASIKAN->value,
+        RecommendationStatusType::SEMESTER_BERJALAN->value,
+      ],
+      'improvement' => [
+        RecommendationStatusType::PERLU_PERBAIKAN->value,
+      ],
+    ];
+
+    // Menghitung informasi kredit dan nilai mutu
+    $creditInfo = $this->calculateCreditInfo($student->id, $statusFilters);
+
+    // Perhitungan IPK
+    $gpa = Helper::calculateGPA($student->id);
+    $percentage = ($gpa / 4) * 100;
+
+    // Menghitung SKS yang benar-benar sudah lulus (tidak termasuk 'Perlu Perbaikan')
+    $actualPassedCredits = $creditInfo['passed'];
+
+    // Menghitung estimasi sisa semester
+    $remainingSemesters = $this->estimateRemainingSemesters($actualPassedCredits, $totalCourseCredit);
+
     // Get recommended subjects for the student
-    $recommendedSubjects = $this->recommendationRepository->getWhere(
+    $recommendationByStudentId = $this->recommendationRepository->getWhere(
       wheres: [
         'student_id' => $student->id
       ]
     )->pluck('subject_id');
 
-    // Calculate total credits for recommended subjects
-    $totalRecommendedCredits = Subject::whereIn('id', $recommendedSubjects)->sum('course_credit');
+    $gradeByStudentId = $this->gradeRepository->getWhere(
+      wheres: [
+        'student_id' => $student->id
+      ]
+    );
 
-    // Get passed subjects (excluding grade 'E')
-    $passedSubjects = Grade::where('student_id', $student->id)
-      ->whereIn('subject_id', $recommendedSubjects)
-      ->where('grade', '!=', GradeType::E->value);
+    $mutu = $gradeByStudentId->whereIn('subject_id', $recommendationByStudentId)
+      ->where('grade', '!=', GradeType::E->value)
+      ->sum('mutu');
 
-    // Calculate credits for different exam periods
-    $examPeriod55555 = $passedSubjects->clone()->where('exam_period', '55555')->pluck('subject_id');
-    $totalCourseCredit55555 = Subject::whereIn('id', $examPeriod55555)->sum('course_credit');
-
-    $examPeriodByCurriculum = $passedSubjects->clone()->where('exam_period', '!=', '55555')->pluck('subject_id');
-    $totalCourseCreditByCurriculum = Subject::whereIn('id', $examPeriodByCurriculum)->sum('course_credit');
-
-    // Calculate total completed credits
-    $totalCompletedCourseCredit = Subject::whereIn('id', $passedSubjects->pluck('subject_id'))->sum('course_credit');
-    $totalCourseCredit = $student->major->total_course_credit;
-
-    $totalCourseRemainder = $totalCourseCredit - $totalCompletedCourseCredit;
-
-    // Calculate GPA and quality points
-    $gpa = Helper::calculateGPA($student->id);
-    $mutu = $passedSubjects->sum('mutu');
-
-    $hasGradeE = Grade::where('student_id', $student->id)
-      ->where('grade', GradeType::E->value)
+    $hasGradeE = $gradeByStudentId->where('grade', GradeType::E->value)
       ->exists();
 
-    $percentace = ($gpa / 4) * 100;
-
-    return $student = [
+    return [
       'student' => $student,
-      'total_recommended_credits' => $totalRecommendedCredits,
-      'total_completed_55555' => $totalCourseCredit55555,
-      'total_completed_by_curriculum' => $totalCourseCreditByCurriculum,
-      'total_completed_course_credit' => $totalCompletedCourseCredit,
-      'total_course_remainder' => $totalCourseRemainder,
-      'total_course_credit' => $totalCourseCredit,
+      'credit_has_been_taken' => $creditInfo['total'], // total SKS yang sudah ditempuh atau di ambil
+      'credit_has_been_passed' => $creditInfo['passed'], // Total SKS yang sudah lulus
+      'credit_being_taken' => $creditInfo['ongoing'], // Total SKS yang sedang diambil
+      'credit_need_improvement' => $creditInfo['improvement'], // Total SKS yang perlu perbaikan atau dalam perbaikan
+      'transfer_credit' => $creditInfo['transfer'], // alih kredit
+      'credit_by_curriculum' => $creditInfo['curriculum'], // berdasarkan kurikulum
+      'total_credit_not_yet_taken' => $totalCourseCredit - $creditInfo['total'], // total sks yang belum di tempuh
+      'total_credit_not_yet_taken_by_passed' => $totalCourseCredit - $creditInfo['passed'], // total sks yang belum ditempuh berdasarkan kelulusan
+      'total_course_credit' => $totalCourseCredit, // total sks wajib tempuh
       'gpa' => $gpa,
-      'mutu' => rtrim(rtrim(number_format($mutu, 2), '0'), '.'),
-      'percentace' => $percentace,
+      'percentage' => $percentage,
+      'estimated_remaining_semesters' => $remainingSemesters,
       'has_grade_e' => $hasGradeE,
+      'mutu' => rtrim(rtrim(number_format($mutu, 2), '0'), '.'), // Total nilai mutu
     ];
+  }
+
+  private function calculateCreditInfo($studentId, $statusFilters)
+  {
+    $query = $this->recommendationRepository->getQuery()
+      ->where('student_id', $studentId)
+      ->join('subjects', 'recommendations.subject_id', '=', 'subjects.id')
+      ->select('recommendations.note', 'recommendations.exam_period', 'subjects.course_credit');
+
+    $results = $query->get();
+
+    $creditInfo = [
+      'total' => 0,
+      'passed' => 0,
+      'ongoing' => 0,
+      'improvement' => 0,
+      'transfer' => 0,
+      'curriculum' => 0,
+    ];
+
+    foreach ($results as $result) {
+      $credit = $result->course_credit;
+      $creditInfo['total'] += $credit;
+
+      if ($result->exam_period == '55555') {
+        $creditInfo['transfer'] += $credit;
+      } else {
+        $creditInfo['curriculum'] += $credit;
+      }
+
+      foreach ($statusFilters as $key => $statuses) {
+        if (in_array($result->note, $statuses)) {
+          $creditInfo[$key] += $credit;
+          break;
+        }
+      }
+    }
+
+    // Tidak perlu mengurangi $creditInfo['improvement'] dari $creditInfo['passed']
+
+    return $creditInfo;
+  }
+
+  private function estimateRemainingSemesters($passedCredits, $totalCredits)
+  {
+    $remainingCredits = $totalCredits - $passedCredits;
+    if ($remainingCredits <= 0) {
+      return 0;
+    }
+
+    $semesters = 0;
+    $creditsPerSemester = [20, 20]; // Semester 1 dan 2
+
+    while ($remainingCredits > 0) {
+      $semesters++;
+      $maxCredits = ($semesters <= 2) ? $creditsPerSemester[$semesters - 1] : 24;
+      $remainingCredits -= min($remainingCredits, $maxCredits);
+    }
+
+    return $semesters;
+  }
+
+  private function countTotalCourseCredit($subjects)
+  {
+    $totalCourseCredit = 0;
+    $subjectsBySemester = $subjects->groupBy('pivot.semester');
+
+    foreach ($subjectsBySemester as $semester => $subjects) {
+      // Pisahkan mata kuliah berdasarkan "PILIH SALAH SATU"
+      $withPilihSalahSatu = $subjects->filter(function ($subject) {
+        return str_contains($subject->note, SubjectNoteType::PS->value);
+      });
+
+      $withoutPilihSalahSatu = $subjects->filter(function ($subject) {
+        return !str_contains($subject->note, SubjectNoteType::PS->value);
+      });
+
+      // Tambahkan total SKS dari mata kuliah tanpa "PILIH SALAH SATU"
+      foreach ($withoutPilihSalahSatu as $subject) {
+        $totalCourseCredit += $subject->course_credit; // Mengambil SKS dari kolom course_credit di tabel subjects
+      }
+
+      // Jika ada mata kuliah "PILIH SALAH SATU", hanya tambahkan salah satu dari grup ini
+      if ($withPilihSalahSatu->isNotEmpty()) {
+        $totalCourseCredit += $withPilihSalahSatu->max()->course_credit; // Ambil salah satu SKS dari mata kuliah pilihan
+        // $totalCourseCredit += $withPilihSalahSatu->first()->course_credit; // Ambil salah satu SKS dari mata kuliah pilihan
+      }
+    }
+
+    return $totalCourseCredit;
   }
 
   public function handleStoreData($request)

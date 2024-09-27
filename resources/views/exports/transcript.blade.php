@@ -200,10 +200,10 @@
   </table>
 
   <ol>
-    <li>Jumlah sks dalam Kurikulum yang ditempuh : {{ $detail['total_completed_by_curriculum'] }} SKS</li>
-    <li>Jumlah sks Alih Kredit : {{ $detail['total_completed_55555'] }} SKS</li>
-    <li>Jumlah sks Total yang ditempuh untuk perhitungan IPK : {{ $detail['total_completed_course_credit'] }} SKS</li>
-    <li>Jumlah total nilai mutu : {{ $detail['mutu'] }}</li>
+    <li>Jumlah sks dalam Kurikulum yang ditempuh : {{ $detail['credit_by_curriculum'] }} SKS</li>
+    <li>Jumlah sks Alih Kredit : {{ $detail['transfer_credit'] }} SKS</li>
+    <li>Jumlah sks Total yang ditempuh untuk perhitungan IPK : {{ $detail['credit_has_been_taken'] }} SKS</li>
+    {{-- <li>Jumlah total nilai mutu : {{ $detail['mutu'] }}</li> --}}
     <li>Jumlah Total sks keseluruhan : {{ $detail['total_course_credit'] }} SKS</li>
     <li>IPK : {{ $detail['gpa'] }}</li>
   </ol>

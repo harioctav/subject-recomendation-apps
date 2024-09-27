@@ -39,6 +39,7 @@
             <label for="course_credit_selected" class="form-label">{{ trans('Jumlah SKS Diambil') }}</label>
             <input type="number" max="24" step="1" min="3" name="course_credit_selected" id="course_credit_selected" value="{{ old('course_credit_selected') }}" class="form-control @error('course_credit_selected') is-invalid @enderror" placeholder="{{ trans('Jumlah SKS Dipilih') }}" readonly disabled>
           </div>
+
           @if($detail['has_grade_e'])
           <div class="alert alert-warning d-flex align-items-center alert-dismissible" role="alert">
             <div class="flex-shrink-0">
@@ -52,6 +53,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
           @endif
+
         </div>
         <div class="col-lg-4">
           <div class="mb-3">
