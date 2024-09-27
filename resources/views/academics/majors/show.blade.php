@@ -20,7 +20,7 @@
 <div class="block block-rounded">
   <div class="block-header block-header-default">
     <h3 class="block-title">
-      {{ trans('page.majors.show') }}
+      {{ trans('page.majors.show', ['majors' => trans('page.majors.title')]) }}
     </h3>
   </div>
   <div class="block-content">
@@ -63,6 +63,17 @@
                 <td>{{ $elective['count'] }} Matakuliah</td>
               </tr>
               @endforeach
+
+              @forelse ($major->getElectiveSubjectsBySemester() as $elective)
+              <tr>
+                <td>Semester {{ $elective['semester'] }}</td>
+                <td>{{ $elective['count'] }} Matakuliah</td>
+              </tr>
+              @empty
+              <tr>
+                <td colspan="2">Data Kosong</td>
+              </tr>
+              @endforelse
             </tbody>
           </table>
         </div>

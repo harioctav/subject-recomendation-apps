@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', trans('page.users.show'))
+@section('title', trans('page.users.title'))
 @section('hero')
 <!-- User Info -->
 <div class="bg-image bg-image-top" style="background-image: url({{ asset('assets/images/backgrounds/bg-profile.png') }});">
@@ -36,7 +36,9 @@
   <div class="block-header block-header-default">
     <h3 class="block-title">
       <i class="fa fa-user-circle me-2 text-muted"></i>
-      {{ trans('page.users.show') }}
+      {{ trans('page.users.show', [
+        'users' => trans('page.users.title')
+      ]) }}
     </h3>
   </div>
   <div class="block-content">

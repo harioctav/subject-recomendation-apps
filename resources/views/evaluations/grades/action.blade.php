@@ -1,5 +1,13 @@
-@can('grades.show')
-<a href="{{ route('grades.show', $row) }}" class="text-success me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ trans('page.grades.show') }}"><i class="fa fa-sm fa-eye"></i></a>
-@endcan
-
-@vite('resources/js/utils/tooltip.js')
+<div class="dropdown">
+  <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" id="dropdown-default-outline-primary" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <i class="fa fa-fw fa-ellipsis-v"></i>
+  </button>
+  <div class="dropdown-menu fs-sm" aria-labelledby="dropdown-default-outline-primary">
+    @can('grades.show')
+    <a href="{{ route('grades.show', $row) }}" class="dropdown-item">
+      <i class="fa fa-eye fa-sm me-2"></i>
+      {{ trans('Detail Mahasiswa') }}
+    </a>
+    @endcan
+  </div>
+</div>

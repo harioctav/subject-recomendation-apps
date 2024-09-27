@@ -20,7 +20,7 @@
 <div class="block block-rounded">
   <div class="block-header block-header-default">
     <h3 class="block-title">
-      {{ trans('page.subjects.create') }}
+      {{ trans('page.subjects.create', ['subjects' => trans('page.subjects.title')]) }}
     </h3>
   </div>
   <div class="block-content">

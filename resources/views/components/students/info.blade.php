@@ -6,7 +6,9 @@
       </div>
       <div class="block-content block-content-full">
         <div class="fw-semibold mb-1">{{ $detail['student']->name }}</div>
-        <div class="fs-sm text-muted">{{ $detail['student']->nim }}</div>
+        <div class="fs-sm text-muted mb-3">{{ $detail['student']->nim }}</div>
+        <div class="fs-sm text-muted">{{ __('Program Studi') }}</div>
+        <div class="fw-semibold">{{ $detail['student']->major->name }}</div>
       </div>
       <div class="block-content block-content-full block-content-sm bg-body-light mb-3">
         <span class="fw-semibold fs-sm text-elegance">{{ $detail['student']->email ?: '--' }}</span>
@@ -20,44 +22,38 @@
       </div>
       <div class="block-content">
 
-        <ul class="list-group push">
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ trans('Program Studi') }}
-            <span class="badge bg-black-50">{{ $detail['student']->major->name }}</span>
-          </li>
-        </ul>
-
         <div class="row items-push text-center">
           <div class="col-6 col-md-3">
             <!-- Pie Chart Container -->
             <div class="js-pie-chart pie-chart my-3" data-percent="{{ $detail['percentace'] }}" data-line-width="4" data-size="100" data-bar-color="#65a30d" data-track-color="#e9e9e9">
               <span>IPK<br><small class="text-muted">{{ $detail['gpa'] }}</small></span>
             </div>
-
           </div>
-          <div class="col-6 col-md-3">
+          <div class="col-6 col-md">
             <div class="block-content block-content-full">
-              <div class="fs-2 fw-bold">{{ $detail['total_recommended_credits'] }}</div>
-              <div class="fs-sm fw-semibold text-uppercase text-muted">{{ trans('Jumlah SKS Diambil') }}</div>
+              <div class="fs-2 fw-bold">{{ $detail['total_recommended_credits'] }}
+              </div>
+              <div class="fs-sm fw-semibold text-muted">{{ trans('Jumlah SKS Diambil') }}</div>
             </div>
           </div>
-          <div class="col-6 col-md-3">
+          <div class="col-6 col-md">
             <div class="block block-rounded block-link-shadow">
               <div class="block-content block-content-full">
                 <div class="fs-2 fw-bold text-success">{{ $detail['total_completed_course_credit'] }}</div>
-                <div class="fs-sm fw-semibold text-uppercase text-muted">{{ trans('Jumlah SKS Lulus') }}</div>
+                <div class="fs-sm fw-semibold text-muted">{{ trans('Jumlah SKS Lulus') }}</div>
               </div>
             </div>
           </div>
-          <div class="col-6 col-md-3">
+          <div class="col-6 col-md">
             <div class="block block-rounded block-link-shadow">
               <div class="block-content block-content-full">
                 <div class="fs-2 fw-bold">{{ $detail['total_course_remainder'] }}</div>
-                <div class="fs-sm fw-semibold text-uppercase text-muted">{{ trans('Jumlah SKS Belum Ditempuh') }}</div>
+                <div class="fs-sm fw-semibold text-muted">SKS Belum Ditempuh <span class="text-success">Kelulusan</span></div>
               </div>
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </div>

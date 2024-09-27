@@ -1,18 +1,34 @@
-@can('users.edit')
-@if (me()->id == $id)
-<span class="badge text-danger">{{ trans('Ubah Data Diri Di Halaman Profil') }}</span>
-@else
-<a href="{{ route('users.edit', $uuid) }}" class="text-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ trans('page.users.edit') }}"><i class="fa fa-sm fa-pencil"></i></a>
-@endif
-@endcan
-@can('users.destroy')
-@if ($model->hasRole(RoleType::ADMINISTRATOR->value))
-<span class="badge text-danger">{{ trans('Tidak Bisa Dihapus') }}</span>
-@else
-@if (!$status)
-<a href="javascript:void(0)" data-uuid="{{ $uuid }}" class="text-danger delete-users" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ trans('page.users.delete') }}"><i class="fa fa-sm fa-trash"></i></a>
-@endif
-@endif
-@endcan
+<div class="dropdown">
+  <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" id="dropdown-actions" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <i class="fa fa-fw fa-ellipsis-v"></i>
+  </button>
+  <div class="dropdown-menu fs-sm" aria-labelledby="dropdown-actions">
+    @can('users.edit')
+    @if (me()->id == $id)
+    <span class="dropdown-item-text text-danger">{{ trans('Ubah Data Diri Di Halaman Profil') }}</span>
+    @else
+    <a class="dropdown-item" href="{{ route('users.edit', $uuid) }}">
+      <i class="fa fa-pencil fa-fw me-2"></i>
+      {{ trans('page.users.edit', [
+        'users' => ''
+      ]) }}
+    </a>
+    @endif
+    @endcan
 
-@vite('resources/js/utils/tooltip.js')
+    @can('users.destroy')
+    @if ($model->hasRole(RoleType::ADMINISTRATOR->value))
+    <span class="dropdown-item-text text-danger">{{ trans('Tidak Bisa Dihapus') }}</span>
+    @else
+    @if (!$status)
+    <a class="dropdown-item delete-users" href="javascript:void(0)" data-uuid="{{ $uuid }}">
+      <i class="fa fa-trash fa-fw me-2"></i>
+      {{ trans('page.users.delete', [
+        'users' => ''
+      ]) }}
+    </a>
+    @endif
+    @endif
+    @endcan
+  </div>
+</div>

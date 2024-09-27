@@ -43,6 +43,7 @@ class SubjectDataTable extends DataTable
         return $row->grade ?: '-';
       })
       ->editColumn('note', fn($row) => $row->note ?: '-')
+      ->editColumn('recommendation_note', fn($row) => $row->recommendation_note ?: '-')
       ->addColumn('select', 'evaluations.recommendations.select')
       ->rawColumns([
         'select',
@@ -169,9 +170,12 @@ class SubjectDataTable extends DataTable
       Column::make('course_credit')
         ->addClass('text-center')
         ->title('SKS'),
+      Column::make('note')
+        ->addClass('text-center')
+        ->title('K. Mat'),
       Column::make('recommendation_note')
         ->addClass('text-center')
-        ->title('Keterangan'),
+        ->title('K. Rek'),
       Column::make('status')
         ->addClass('text-center')
         ->title('Status'),

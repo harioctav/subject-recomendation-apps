@@ -19,7 +19,7 @@
 <div class="block block-rounded">
   <div class="block-header block-header-default">
     <h3 class="block-title">
-      {{ trans('page.students.index') }}
+      {{ trans('page.students.index', ['students' => trans('page.students.title')]) }}
     </h3>
     <div class="block-options d-flex flex-column flex-sm-row justify-content-between align-items-center">
       <div class="mb-1 mb-sm-0">
@@ -40,7 +40,7 @@
     <div class="mb-4">
       <a href="{{ route('students.create') }}" class="btn btn-sm btn-primary">
         <i class="fa fa-plus fa-sm me-1"></i>
-        {{ trans('page.students.create') }}
+        {{ trans('page.students.create', ['students' => trans('page.students.title')]) }}
       </a>
 
       @can('students.import')

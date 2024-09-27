@@ -33,8 +33,8 @@ class SubjectDataTable extends DataTable
   {
     return (new EloquentDataTable($query))
       ->addIndexColumn()
-      ->addColumn('exam_time', fn($row) => $row->exam_time ?: '--')
-      ->addColumn('course_credit', fn($row) => $row->course_credit ?: '--')
+      ->addColumn('exam_time', fn($row) => $row->exam_time ?: '-')
+      ->addColumn('course_credit', fn($row) => $row->course_credit ?: '-')
       ->addColumn('action', 'academics.subjects.action')
       ->rawColumns([
         'action'

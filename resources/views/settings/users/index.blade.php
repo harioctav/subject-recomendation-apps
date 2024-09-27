@@ -14,7 +14,9 @@
 <div class="block block-rounded">
   <div class="block-header block-header-default">
     <h3 class="block-title">
-      {{ trans('page.users.index') }}
+      {{ trans('page.users.index', [
+        'users' => trans('page.users.title')
+      ]) }}
     </h3>
   </div>
   <div class="block-content">
@@ -23,7 +25,9 @@
     <div class="mb-4">
       <a href="{{ route('users.create') }}" class="btn btn-sm btn-primary">
         <i class="fa fa-plus fa-sm me-1"></i>
-        {{ trans('page.users.create') }}
+        {{ trans('page.users.create', [
+          'users' => trans('page.users.title')
+        ]) }}
       </a>
     </div>
     @endcan

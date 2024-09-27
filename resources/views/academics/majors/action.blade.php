@@ -1,11 +1,25 @@
-@can('majors.edit')
-<a href="{{ route('majors.edit', $uuid) }}" class="text-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ trans('page.majors.edit') }}"><i class="fa fa-sm fa-pencil"></i></a>
-@endcan
-@can('majors.show')
-<a href="{{ route('majors.show', $uuid) }}" class="text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ trans('page.majors.show') }}"><i class="fa fa-sm fa-eye"></i></a>
-@endcan
-@can('majors.destroy')
-<a href="javascript:void(0)" data-uuid="{{ $uuid }}" class="text-danger delete-majors" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ trans('page.majors.delete') }}"><i class="fa fa-sm fa-trash"></i></a>
-@endcan
-
-@vite('resources/js/utils/tooltip.js')
+<div class="dropdown">
+  <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" id="dropdown-actions" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <i class="fa fa-fw fa-ellipsis-v"></i>
+  </button>
+  <div class="dropdown-menu fs-sm" aria-labelledby="dropdown-actions">
+    @can('majors.edit')
+    <a class="dropdown-item" href="{{ route('majors.edit', $uuid) }}">
+      <i class="fa fa-pencil fa-fw me-2"></i>
+      {{ trans('page.majors.edit', ['majors' => '']) }}
+    </a>
+    @endcan
+    @can('majors.show')
+    <a class="dropdown-item" href="{{ route('majors.show', $uuid) }}">
+      <i class="fa fa-eye fa-fw me-2"></i>
+      {{ trans('page.majors.show', ['majors' => '']) }}
+    </a>
+    @endcan
+    @can('majors.destroy')
+    <a class="dropdown-item delete-majors" href="javascript:void(0)" data-uuid="{{ $uuid }}">
+      <i class="fa fa-trash fa-fw me-2"></i>
+      {{ trans('page.majors.delete', ['majors' => '']) }}
+    </a>
+    @endcan
+  </div>
+</div>

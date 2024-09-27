@@ -14,7 +14,7 @@
 <div class="block block-rounded">
   <div class="block-header block-header-default">
     <h3 class="block-title">
-      {{ trans('page.subjects.index') }}
+      {{ trans('page.subjects.index', ['subjects' => trans('page.subjects.title')]) }}
     </h3>
   </div>
   <div class="block-content">
@@ -23,7 +23,7 @@
       @can('subjects.create')
       <a href="{{ route('subjects.create') }}" class="btn btn-sm btn-primary">
         <i class="fa fa-plus fa-sm me-1"></i>
-        {{ trans('page.subjects.create') }}
+        {{ trans('page.subjects.create', ['subjects' => trans('page.subjects.title')]) }}
       </a>
       @endcan
     </div>

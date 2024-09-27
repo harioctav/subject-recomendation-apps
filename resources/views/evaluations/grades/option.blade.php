@@ -6,16 +6,27 @@ $model->grade === GradeType::A->value ||
 )
 @endphp
 
-@if($showEditButton)
-@can('grades.edit')
-<a href="{{ route('grades.edit', ['grade' => $uuid, 'student' => $model->student]) }}" class="text-warning me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ trans('page.grades.edit') }}">
-  <i class="fa fa-sm fa-pencil"></i>
-</a>
-@endcan
-@else
-@can('grades.destroy')
-<a href="javascript:void(0)" data-uuid="{{ $uuid }}" class="text-danger me-1 delete-grades" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ trans('page.grades.delete') }}">
-  <i class="fa fa-sm fa-trash"></i>
-</a>
-@endcan
-@endif
+<div class="dropdown">
+  <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" id="dropdown-grade-options" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <i class="fa fa-fw fa-ellipsis-v"></i>
+  </button>
+  <div class="dropdown-menu fs-sm" aria-labelledby="dropdown-grade-options">
+    @if($showEditButton)
+    @can('grades.edit')
+    <a class="dropdown-item" href="{{ route('grades.edit', ['grade' => $uuid, 'student' => $model->student]) }}">
+      <i class="fa fa-pencil fa-fw me-2"></i>
+      {{ trans('Ubah') }}
+    </a>
+    @endcan
+    @else
+    @can('grades.destroy')
+    <a class="dropdown-item delete-grades" href="javascript:void(0)" data-uuid="{{ $uuid }}">
+      <i class="fa fa-trash fa-fw me-2"></i>
+      {{ trans('Hapus') }}
+    </a>
+    @endcan
+    @endif
+
+    {{-- Add more dropdown items here as needed --}}
+  </div>
+</div>

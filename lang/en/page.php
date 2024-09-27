@@ -14,29 +14,29 @@ return [
 
   'users' => [
     'title' => 'Pengguna',
-    'index' => 'Daftar Data Pengguna',
-    'create' => 'Tambah Data Pengguna',
-    'edit' => 'Ubah Data Pengguna',
-    'show' => 'Detail Data Pengguna',
-    'delete' => 'Hapus Pengguna',
+    'index' => 'Daftar :users',
+    'create' => 'Tambah :users',
+    'edit' => 'Ubah :users',
+    'show' => 'Detail :users',
+    'delete' => 'Hapus :users',
   ],
 
   'roles' => [
     'title' => 'Role & Permission',
-    'index' => 'Daftar Role & Permission',
-    'create' => 'Tambah Role & Permission',
-    'edit' => 'Ubah Role & Permission',
-    'show' => 'Detail Role & Permission',
-    'delete' => 'Hapus Role & Permission',
+    'index' => 'Daftar :roles',
+    'create' => 'Tambah :roles',
+    'edit' => 'Ubah :roles',
+    'show' => 'Detail :roles',
+    'delete' => 'Hapus :roles',
   ],
 
   'majors' => [
     'title' => 'Program Studi',
-    'index' => 'Daftar Program Studi',
-    'create' => 'Tambah Program Studi',
-    'edit' => 'Ubah Program Studi',
-    'show' => 'Detail Program Studi',
-    'delete' => 'Hapus Program Studi',
+    'index' => 'Daftar :majors',
+    'create' => 'Tambah :majors',
+    'edit' => 'Ubah :majors',
+    'show' => 'Detail :majors',
+    'delete' => 'Hapus :majors',
     'subjects' => [
       'create' => 'Tambah Matakuliah ke Program Studi',
       'destroy' => 'Hapus Matakuliah di Program Studi',
@@ -45,20 +45,22 @@ return [
 
   'subjects' => [
     'title' => 'Matakuliah',
-    'index' => 'Daftar Matakuliah',
-    'create' => 'Tambah Matakuliah',
-    'edit' => 'Ubah Matakuliah',
-    'show' => 'Detail Matakuliah',
-    'delete' => 'Hapus Matakuliah',
+    'index' => 'Daftar :subjects',
+    'create' => 'Tambah :subjects',
+    'edit' => 'Ubah :subjects',
+    'show' => 'Detail :subjects',
+    'delete' => 'Hapus :subjects',
   ],
 
   'students' => [
     'title' => 'Mahasiswa',
-    'index' => 'Daftar Mahasiswa',
-    'create' => 'Tambah Mahasiswa',
-    'edit' => 'Ubah Mahasiswa',
-    'show' => 'Detail Mahasiswa',
-    'delete' => 'Hapus Mahasiswa',
+    'index' => 'Daftar :students',
+    'create' => 'Tambah :students',
+    'edit' => 'Ubah :students',
+    'show' => 'Detail :students',
+    'delete' => 'Hapus :students',
+    'restore' => 'Pulihkan :students',
+    'force' => 'Hapus Permanen :students'
   ],
 
   'major-subjects' => [

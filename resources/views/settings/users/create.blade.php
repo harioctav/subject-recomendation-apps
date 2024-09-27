@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title') {{ trans('page.users.create') }} @endsection
+@section('title') {{ trans('page.users.title') }} @endsection
 @section('hero')
 <div class="content content-full">
   <div class="content-heading">
@@ -20,7 +20,9 @@
 <div class="block block-rounded">
   <div class="block-header block-header-default">
     <h3 class="block-title">
-      {{ trans('page.users.create') }}
+      {{ trans('page.users.create', [
+        'users' => trans('page.users.title')
+      ]) }}
     </h3>
   </div>
   <div class="block-content block-content-full">
