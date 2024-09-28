@@ -16,6 +16,7 @@
   <div class="loading-spinner"></div>
   <p>Loading...</p>
 </div>
+
 @if (session('status'))
 <div class="row items-push">
   <div class="col-6 col-xl-6">

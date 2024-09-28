@@ -272,31 +272,45 @@ class GradeServiceImplement extends Service implements GradeService
     DB::beginTransaction();
     try {
       if ($request->hasFile('file') && $request->file('file')->isValid()) :
+
         // Get data imports
         $import = new GradeImport();
         Excel::import($import, $request->file('file'));
 
+        $validates = $import->validateSheets();
+        $errors = $import->getErrors();
+
+        if (!$validates) {
+          return redirect()->back()->with('flashError', $errors);
+        }
+
         $result = [
           'nim' => $import->getStudent()['nim'],
-          'student' => $import->getStudent()['student'],
-          'major' => $import->getStudent()['major'],
+          'student' => $import->getStudent()['mahasiswa'],
+          'major' => $import->getStudent()['program_studi'],
           'subjects' => $import->getSubjects()
         ];
 
+        if (empty($result['nim']) || empty($result['major'])) {
+          return redirect()->back()->with('flashError', 'Kolom nim dan program studi tidak boleh dikosongkan');
+        }
+
         // Cek apakah NIM sama
         if ((string) $result['nim'] !== $student->nim) {
-          $error = "Data <strong>NIM</strong> yang ada pada Excel di <strong>Sheet2</strong> tidak sama dengan <strong>NIM Mahasiswa</strong> dengan nama <strong>{$student->name}</strong> pada halaman ini. Silahkan melakukan pengecekan ulang dan pastikan NIM nya sudah sesuai dengan data mahasiswa yang akan di importkan Nilainya.";
-          return redirect(route('grades.show', $student))->with('flashError', $error);
+          $error = "Data <strong>NIM</strong> tidak sama dengan <strong>NIM Mahasiswa</strong> dengan nama <strong>{$student->name}</strong>.";
+          return redirect()->back()->with('flashError', $error);
+        }
+
+        // cek apakah jurusannya sama
+        if ($result['major'] !== $student->major->name) {
+          $error = "Data <strong>Program Studi</strong> tidak sama dengan Program Studi atas nama <strong>{$student->name}</strong> sedang tempuh.";
+          return redirect()->back()->with('flashError', $error);
         }
 
         $major = $this->majorRepository->findOrFail($student->major->id);
 
         // Ambil semua matakuliah yang ada di jurusan menggunakan tabel pivot
-        $majorSubjects = DB::table('subjects')
-          ->join('major_subject', 'subjects.id', '=', 'major_subject.subject_id')
-          ->where('major_subject.major_id', $major->id)
-          ->pluck('subjects.id', 'subjects.code')
-          ->toArray();
+        $majorSubjects = $major->subjects->pluck('id', 'code')->toArray();
 
         // Ambil semua nilai yang sudah ada untuk mahasiswa ini
         $existingGrades = $student->grades()->pluck('subject_id')->toArray();
@@ -308,21 +322,26 @@ class GradeServiceImplement extends Service implements GradeService
         // Process grouped data
         foreach ($result['subjects'] as $semester => $courses) {
           foreach ($courses as $course) {
+
+            $code = trim($course['kode_matakuliah']);
+            $grade = trim($course['nilai']);
+            $examPeriod = trim($course['masa_ujian']);
+
             // Cek apakah matakuliah ada di jurusan mahasiswa
-            if (!isset($majorSubjects[$course['code']])) {
-              $error = "Matakuliah dengan kode <strong>{$course['code']}</strong> tidak ditemukan dalam daftar matakuliah jurusan <strong>{$major->name}</strong>. Silahkan periksa kembali data yang diimpor.";
+            if (!isset($majorSubjects[$code])) {
+              $error = "Matakuliah dengan kode <strong>{$code}</strong> tidak ditemukan dalam daftar matakuliah jurusan <strong>{$major->name}</strong>. Silahkan periksa kembali data yang diimpor.";
               return redirect(route('grades.show', $student))->with('flashError', $error);
             }
 
-            $subjectId = $majorSubjects[$course['code']];
+            $subjectId = $majorSubjects[$code];
 
             // Cek apakah matakuliah sudah ada di tabel grades untuk mahasiswa ini
             if (in_array($subjectId, $existingGrades)) {
-              $duplicateSubjects[] = $course['code'];
+              $duplicateSubjects[] = $code;
               continue;
             }
 
-            if ($course['grade'] === GradeType::E->value || $course['grade'] === GradeType::D->value) {
+            if ($grade === GradeType::E->value) {
               $recommendationNote = RecommendationStatusType::PERLU_PERBAIKAN->value;
               $gradeNote = "Nilai perlu dilakukan direkomendasikan ulang dan diperbaiki";
             } else {
@@ -336,7 +355,7 @@ class GradeServiceImplement extends Service implements GradeService
               'student_id' => $student->id,
               'subject_id' => $subjectId,
               'semester' => $semester,
-              'exam_period' => $course['exam_period'],
+              'exam_period' => $examPeriod,
               'note' => $recommendationNote,
               'created_at' => now(),
               'updated_at' => now(),
@@ -347,10 +366,10 @@ class GradeServiceImplement extends Service implements GradeService
               'uuid' => Str::uuid(),
               'student_id' => $student->id,
               'subject_id' => $subjectId,
-              'grade' => $course['grade'] ?? null,
-              'quality' => Helper::generateQuality($course['grade']),
-              'mutu' => $course['mutu'] ?? null,
-              'exam_period' => $course['exam_period'] ?? null,
+              'grade' => $grade ?? null,
+              'quality' => Helper::generateQuality($grade),
+              'mutu' => $course['nilai_mutu'] ?? null,
+              'exam_period' => $examPeriod ?? null,
               'note' => $gradeNote,
               'created_at' => now(),
               'updated_at' => now(),
