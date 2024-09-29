@@ -3,6 +3,7 @@
 namespace App\Services\Grade;
 
 use App\Helpers\Helper;
+use App\Imports\GradesImport;
 use InvalidArgumentException;
 use Illuminate\Support\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -11,9 +12,7 @@ use Illuminate\Support\Facades\DB;
 use LaravelEasyRepository\Service;
 use Illuminate\Support\Facades\Log;
 use App\Repositories\Grade\GradeRepository;
-use App\Helpers\Enums\RecommendationNoteType;
 use App\Helpers\Enums\RecommendationStatusType;
-use App\Imports\Grades\GradeImport;
 use App\Repositories\Major\MajorRepository;
 use App\Repositories\Student\StudentRepository;
 use App\Repositories\Subject\SubjectRepository;
@@ -269,144 +268,123 @@ class GradeServiceImplement extends Service implements GradeService
 
   public function handleImportData($student, $request)
   {
-    DB::beginTransaction();
-    try {
-      if ($request->hasFile('file') && $request->file('file')->isValid()) :
+    // get file
+    if ($request->hasFile('file') && $request->file('file')->isValid()) {
+      $import = new GradesImport;
+      Excel::import($import, $request->file('file'));
 
-        // Get data imports
-        $import = new GradeImport();
-        Excel::import($import, $request->file('file'));
+      $errors = $import->getErrors();
+      $result = $this->getResult($import);
 
-        $validates = $import->validateSheets();
-        $errors = $import->getErrors();
+      // Find major
+      $major = $this->majorRepository->findOrFail($student->major->id);
 
-        if (!$validates) {
-          return redirect()->back()->with('flashError', $errors);
-        }
+      // cek apakah nim dan jurusannya sama atau tidak
+      if ($result['nim'] !== $student->nim || strtolower($result['major']) !== strtolower($major->name)) {
+        return back()->with('flashError', "Nim atau Program Studi tidak sama dengan data {$student->name}.");
+      }
 
-        $result = [
-          'nim' => $import->getStudent()['nim'],
-          'student' => $import->getStudent()['mahasiswa'],
-          'major' => $import->getStudent()['program_studi'],
-          'subjects' => $import->getSubjects()
-        ];
+      // Ambil semua matakuliah yang ada di jurusan menggunakan tabel pivot
+      $majorSubjects = $major->subjects->pluck('id', 'code')->toArray();
 
-        if (empty($result['nim']) || empty($result['major'])) {
-          return redirect()->back()->with('flashError', 'Kolom nim dan program studi tidak boleh dikosongkan');
-        }
+      // Ambil semua nilai yang sudah ada untuk mahasiswa ini
+      $existingGrades = $student->grades()->pluck('subject_id')->toArray();
 
-        // Cek apakah NIM sama
-        if ((string) $result['nim'] !== $student->nim) {
-          $error = "Data <strong>NIM</strong> tidak sama dengan <strong>NIM Mahasiswa</strong> dengan nama <strong>{$student->name}</strong>.";
-          return redirect()->back()->with('flashError', $error);
-        }
+      $duplicateSubjects = [];
+      $newGrades = [];
+      $newRecommendations = [];
 
-        // cek apakah jurusannya sama
-        if ($result['major'] !== $student->major->name) {
-          $error = "Data <strong>Program Studi</strong> tidak sama dengan Program Studi atas nama <strong>{$student->name}</strong> sedang tempuh.";
-          return redirect()->back()->with('flashError', $error);
-        }
+      foreach ($result['subjects'] as $semester => $courses) {
+        foreach ($courses as $course) {
 
-        $major = $this->majorRepository->findOrFail($student->major->id);
+          $code = trim($course['kode_matakuliah']);
+          $grade = trim($course['nilai']);
+          $examPeriod = trim($course['masa_ujian']);
 
-        // Ambil semua matakuliah yang ada di jurusan menggunakan tabel pivot
-        $majorSubjects = $major->subjects->pluck('id', 'code')->toArray();
-
-        // Ambil semua nilai yang sudah ada untuk mahasiswa ini
-        $existingGrades = $student->grades()->pluck('subject_id')->toArray();
-
-        $duplicateSubjects = [];
-        $newGrades = [];
-        $newRecommendations = [];
-
-        // Process grouped data
-        foreach ($result['subjects'] as $semester => $courses) {
-          foreach ($courses as $course) {
-
-            $code = trim($course['kode_matakuliah']);
-            $grade = trim($course['nilai']);
-            $examPeriod = trim($course['masa_ujian']);
-
-            // Cek apakah matakuliah ada di jurusan mahasiswa
-            if (!isset($majorSubjects[$code])) {
-              $error = "Matakuliah dengan kode <strong>{$code}</strong> tidak ditemukan dalam daftar matakuliah jurusan <strong>{$major->name}</strong>. Silahkan periksa kembali data yang diimpor.";
-              return redirect(route('grades.show', $student))->with('flashError', $error);
-            }
-
-            $subjectId = $majorSubjects[$code];
-
-            // Cek apakah matakuliah sudah ada di tabel grades untuk mahasiswa ini
-            if (in_array($subjectId, $existingGrades)) {
-              $duplicateSubjects[] = $code;
-              continue;
-            }
-
-            if ($grade === GradeType::E->value) {
-              $recommendationNote = RecommendationStatusType::PERLU_PERBAIKAN->value;
-              $gradeNote = "Nilai perlu dilakukan direkomendasikan ulang dan diperbaiki";
-            } else {
-              $recommendationNote = RecommendationStatusType::LULUS->value;
-              $gradeNote = "Nilai sudah memenuhi standar kelulusan matakuliah";
-            }
-
-            // Tambahkan ke tabel Rekomendasi
-            $newRecommendations[] = [
-              'uuid' => Str::uuid(),
-              'student_id' => $student->id,
-              'subject_id' => $subjectId,
-              'semester' => $semester,
-              'exam_period' => $examPeriod,
-              'note' => $recommendationNote,
-              'created_at' => now(),
-              'updated_at' => now(),
-            ];
-
-            // Tambahkan ke array untuk penyimpanan batch
-            $newGrades[] = [
-              'uuid' => Str::uuid(),
-              'student_id' => $student->id,
-              'subject_id' => $subjectId,
-              'grade' => $grade ?? null,
-              'quality' => Helper::generateQuality($grade),
-              'mutu' => $course['nilai_mutu'] ?? null,
-              'exam_period' => $examPeriod ?? null,
-              'note' => $gradeNote,
-              'created_at' => now(),
-              'updated_at' => now(),
-            ];
+          // Cek apakah matakuliah ada di jurusan mahasiswa
+          if (!isset($majorSubjects[$code])) {
+            $error = "Matakuliah dengan kode <strong>{$code}</strong> tidak ditemukan dalam daftar matakuliah jurusan <strong>{$major->name}</strong>. Silahkan periksa kembali data yang diimpor.";
+            return redirect(route('grades.show', $student))->with('flashError', $error);
           }
+
+          $subjectId = $majorSubjects[$code];
+
+          // Cek apakah matakuliah sudah ada di tabel grades untuk mahasiswa ini
+          if (in_array($subjectId, $existingGrades)) {
+            $duplicateSubjects[] = $code;
+            continue;
+          }
+
+          if ($grade === GradeType::E->value) {
+            $recommendationNote = RecommendationStatusType::PERLU_PERBAIKAN->value;
+            $gradeNote = "Nilai perlu dilakukan direkomendasikan ulang dan diperbaiki";
+          } else {
+            $recommendationNote = RecommendationStatusType::LULUS->value;
+            $gradeNote = "Nilai sudah memenuhi standar kelulusan matakuliah";
+          }
+
+          // Tambahkan ke tabel Rekomendasi
+          $newRecommendations[] = [
+            'uuid' => Str::uuid(),
+            'student_id' => $student->id,
+            'subject_id' => $subjectId,
+            'semester' => $semester,
+            'exam_period' => $examPeriod,
+            'note' => $recommendationNote,
+            'created_at' => now(),
+            'updated_at' => now(),
+          ];
+
+          // Tambahkan ke array untuk penyimpanan batch
+          $newGrades[] = [
+            'uuid' => Str::uuid(),
+            'student_id' => $student->id,
+            'subject_id' => $subjectId,
+            'grade' => $grade ?? null,
+            'quality' => Helper::generateQuality($grade),
+            'mutu' => $course['nilai_mutu'] ?? null,
+            'exam_period' => $examPeriod ?? null,
+            'note' => $gradeNote,
+            'created_at' => now(),
+            'updated_at' => now(),
+          ];
         }
+      }
 
-        // Simpan nilai baru secara batch
-        if (!empty($newGrades)) {
-          DB::table('recommendations')->insert($newRecommendations);
-          DB::table('grades')->insert($newGrades);
-        }
+      // Simpan nilai baru secara batch
+      if (!empty($newGrades)) {
+        DB::table('recommendations')->insert($newRecommendations);
+        DB::table('grades')->insert($newGrades);
+      }
 
-        if (!empty($duplicateSubjects)) {
-          $duplicateList = implode(', ', $duplicateSubjects);
-          $warningMessage = "Beberapa matakuliah sudah ada dan tidak diimpor ulang: <strong>{$duplicateList}</strong>. Matakuliah lainnya berhasil diimpor.";
-          DB::commit();
-          return redirect(route('grades.show', $student))->with('flashError', $warningMessage);
-        }
-
-      endif;
-
-      // Activity Log
-      Helper::log(
-        trans('activity.grades.import'),
-        me()->id,
-        'grade_activity_import'
-      );
-
-      DB::commit();
-
-      return redirect(route('grades.show', $student))->withSuccess(trans('session.create'));
-    } catch (\Exception $e) {
-      DB::rollBack();
-      Log::info($e->getMessage());
-      throw new InvalidArgumentException(trans('session.log.error'));
+      if (!empty($duplicateSubjects)) {
+        $duplicateList = implode(', ', $duplicateSubjects);
+        $warningMessage = "Beberapa matakuliah sudah ada dan tidak diimpor ulang: <strong>{$duplicateList}</strong>. Matakuliah lainnya berhasil diimpor.";
+        DB::commit();
+        return redirect(route('grades.show', $student))->with('flashError', $warningMessage);
+      }
     }
+
+    // Activity Log
+    Helper::log(
+      trans('activity.grades.import'),
+      me()->id,
+      'grade_activity_import'
+    );
+
+    DB::commit();
+
+    return redirect(route('grades.show', $student))->withSuccess(trans('session.create'));
+  }
+
+  protected function getResult($import)
+  {
+    return [
+      'errors' => $import->getErrors(),
+      'nim' => $import->getNim(),
+      'major' => $import->getMajor(),
+      'subjects' => $import->getCourses()
+    ];
   }
 
   /**
