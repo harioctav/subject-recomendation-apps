@@ -10,6 +10,7 @@ use App\Services\Subject\SubjectService;
 use App\DataTables\Academics\MajorDataTable;
 use App\Http\Requests\Academics\MajorRequest;
 use App\DataTables\Academics\MajorSubjectDataTable;
+use Illuminate\Http\Request;
 
 class MajorController extends Controller
 {
@@ -57,8 +58,9 @@ class MajorController extends Controller
   public function show(Major $major)
   {
     $dataTable = new MajorSubjectDataTable($major->id);
+    $electiveSubjectsInfo = $major->getElectiveSubjectsInfo();
 
-    return $dataTable->render('academics.majors.show', compact('major', 'dataTable'));
+    return $dataTable->render('academics.majors.show', compact('major', 'dataTable', 'electiveSubjectsInfo'));
   }
 
   /**

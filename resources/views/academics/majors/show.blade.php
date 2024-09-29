@@ -25,59 +25,29 @@
   </div>
   <div class="block-content">
     <div class="row items-push">
-      <div class="col-lg-7">
-        <h6 class="mb-3">{{ trans('Program Studi') }}</h6>
-        <ul class="list-group push">
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ trans('Kode') }}
-            <span class="fw-semibold">{{ $major->code }}</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ trans('Program Studi') }}
-            <span class="fw-semibold flex-grow-1 text-end">{{ $major->name }}</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ trans('Tingkatan') }}
-            <span class="fw-semibold">{{ $major->degree }} ({{ $major->formatted_degree }})</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ trans('Total SKS Yang WAJIB Ditempuh') }}
-            <span class="fw-semibold">{{ $major->total_course_credit ?: '---' }}</span>
-          </li>
-        </ul>
-      </div>
-      <div class="col-lg-5">
-        <h6 class="mb-3">{{ trans('Matakuliah Pilihan') }}</h6>
-        <div class="table-responsive text-center">
-          <table class="table table-striped table-vcenter table-bordered">
-            <thead>
-              <tr>
-                <th>Semester</th>
-                <th>Jumlah</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach($major->getElectiveSubjectsBySemester() as $elective)
-              <tr>
-                <td>Semester {{ $elective['semester'] }}</td>
-                <td>{{ $elective['count'] }} Matakuliah</td>
-              </tr>
-              @endforeach
-
-              @forelse ($major->getElectiveSubjectsBySemester() as $elective)
-              <tr>
-                <td>Semester {{ $elective['semester'] }}</td>
-                <td>{{ $elective['count'] }} Matakuliah</td>
-              </tr>
-              @empty
-              <tr>
-                <td colspan="2">Data Kosong</td>
-              </tr>
-              @endforelse
-            </tbody>
-          </table>
+      <div class="col-md-6 col-xl-3">
+        <div class="block block-rounded text-center">
+          <div class="block-content block-content-full bg-gd-emerald">
+            <div class="fs-sm text-muted text-white">Program Studi</div>
+            <div class="fw-semibold text-white">{{ $major->name }}</div>
+          </div>
+          <div class="block-content block-content-full">
+            <div class="mb-3">
+              <div class="fs-sm text-muted">Jenjang</div>
+              <div class="fw-semibold">{{ $major->degree }} ({{ $major->formatted_degree }})</div>
+            </div>
+            <div class="">
+              <div class="fs-sm text-muted">SKS Wajib Tempuh</div>
+              <div class="fw-semibold">{{ $major->total_course_credit ?: '-' }}</div>
+            </div>
+          </div>
+          <div class="block-content block-content-full block-content-sm bg-body-light">
+            <span class="fw-semibold fs-sm text-corporate">Kode Prodi: {{ $major->code }}</span>
+          </div>
         </div>
-
+      </div>
+      <div class="col-md-6 col-xl-9">
+        @includeIf('academics.majors.elective-table')
       </div>
     </div>
   </div>
@@ -109,8 +79,6 @@
 @endsection
 @push('javascript')
 {{ $dataTable->scripts(attributes: ['type' => 'module']) }}
-
 @vite('resources/js/academics/major_subjects/index.js')
-
 
 @endpush

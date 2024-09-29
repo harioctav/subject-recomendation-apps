@@ -11,8 +11,10 @@ export default defineConfig({
 
                 // Academics
                 "resources/js/academics/major_subjects/index.js",
+
                 // Major
                 "resources/js/academics/majors/index.js",
+                "resources/js/academics/majors/elective.js",
 
                 // Studennt
                 "resources/js/academics/students/index.js",

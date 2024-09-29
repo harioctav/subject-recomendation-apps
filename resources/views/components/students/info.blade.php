@@ -76,7 +76,7 @@
       </div>
     </div>
 
-    <div class="row items-push text-center">
+    <div class="row text-center mb-0">
       <div class="col-6 col-md-8">
         <ul class="list-group push">
           <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -106,6 +106,32 @@
         </a>
       </div>
     </div>
+
+    <div class="py-1 my-0 mb-3">
+      <p class="fs-sm text-uppercase text-primary fw-bold mb-1">
+        {{ trans('Matakuliah Pilihan Untuk Prodi ') . $detail['student']->major->name }}
+      </p>
+    </div>
+
+    <ul class="list-group push">
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ trans('Jumlah Matakuliah') }}
+        <span class="fw-semibold">{{ $student->major->getFormattedElectiveSemesters()['total'] }}</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ trans('Berada di Semester') }}
+        <span class="fw-semibold">{{ $student->major->getFormattedElectiveSemesters()['semester'] }}</span>
+      </li>
+      @can('majors.show')
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ trans('Info Lebih Lanjut') }}
+        <span class="fw-semibold">
+          Detail
+          <a href="{{ route('majors.show', $student->major) }}">{{ $student->major->name }}</a>
+        </span>
+      </li>
+      @endcan
+    </ul>
 
   </div>
 </div>
