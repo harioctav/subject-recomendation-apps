@@ -38,8 +38,9 @@ return [
     'show' => 'Detail :majors',
     'delete' => 'Hapus :majors',
     'subjects' => [
-      'create' => 'Tambah Matakuliah ke Program Studi',
-      'destroy' => 'Hapus Matakuliah di Program Studi',
+      'create' => 'Tambah Matakuliah',
+      'edit' => 'Ubah Matakuliah',
+      'destroy' => 'Hapus Matakuliah',
     ],
   ],
 

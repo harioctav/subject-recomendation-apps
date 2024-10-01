@@ -71,6 +71,7 @@ Route::middleware([
         ->group(function () {
           Route::post('/', 'store')->name('store');
           Route::get('create', 'create')->name('create');
+          Route::put('{subject}', 'update')->name('update');
           Route::delete('{subject}', 'destroy')->name('destroy');
         });
     });

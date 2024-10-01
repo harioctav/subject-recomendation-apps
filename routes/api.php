@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\MajorController;
+use App\Http\Controllers\Api\MajorSubjectController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\SubjectController;
 use Illuminate\Http\Request;
@@ -43,8 +44,20 @@ Route::name('api.')->group(function () {
     Route::get('{student}', [SubjectController::class, 'index'])->name('subjects.index');
   });
 
-  Route::prefix('majors')->controller(MajorController::class)
+
+  Route::prefix('majors')
+    ->name('majors.')
     ->group(function () {
-      Route::get('{major}/show', 'show')->name('major.show');
+      // Majors
+      Route::controller(MajorController::class)
+        ->group(function () {
+          Route::get('{major}/show', 'show')->name('show');
+        });
+
+      // Major Subject
+      Route::controller(MajorSubjectController::class)
+        ->group(function () {
+          Route::get('major-subjects/{major}', 'index')->name('major_subjects.index');
+        });
     });
 });

@@ -54,6 +54,7 @@ class PermissionSeeder extends Seeder
       // Halaman Menambahkan Data Matakuliah ke Jurusan
       'majors.subjects.create',
       'majors.subjects.store',
+      'majors.subjects.update',
       'majors.subjects.destroy',
 
       // Halaman Student

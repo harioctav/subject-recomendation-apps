@@ -10,8 +10,7 @@ use App\Services\Major\MajorService;
 use App\Helpers\Enums\SemesterLevelType;
 use App\Services\Subject\SubjectService;
 use App\Http\Requests\Academics\MajorSubjectRequest;
-use App\Http\Requests\Imports\ImportRequest;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\Request;
 
 class MajorSubjectController extends Controller
 {
@@ -55,6 +54,23 @@ class MajorSubjectController extends Controller
   {
     $this->majorService->handleStoreSubjectToMajorData($request, $major);
     return redirect(route('majors.show', $major))->withSuccess(trans('session.create'));
+  }
+
+  public function update(Request $request, Major $major, Subject $subject)
+  {
+    $validatedData = $request->validate([
+      'semester' => 'required|integer|min:1|max:8',
+    ]);
+
+    try {
+      $major->subjects()->updateExistingPivot($subject->id, $validatedData);
+
+      return response()->json([
+        'success' => true
+      ]);
+    } catch (\Exception $e) {
+      return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    }
   }
 
   /**

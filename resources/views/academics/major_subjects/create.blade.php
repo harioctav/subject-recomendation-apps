@@ -1,5 +1,17 @@
 @extends('layouts.app')
 @section('title', trans('page.majors.title'))
+@push('css')
+<style>
+  .select2-container {
+    width: 100% !important;
+  }
+
+  #subjects {
+    display: none;
+  }
+
+</style>
+@endpush
 @section('hero')
 <div class="content content-full">
   <div class="content-heading">
@@ -43,14 +55,15 @@
           <div class="mb-4">
             <label for="subjects" class="form-label">{{ trans('Matakuliah') }}</label>
             <span class="text-danger">*</span>
-            <select class="js-select2 form-select @error('subjects.*') is-invalid @enderror" id="subjects" name="subjects[]" style="width: 100%;" data-placeholder="{{ trans('Pilih Matakuliah..') }}" multiple>
-              <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
-              @foreach ($subjects as $item)
-              <option value="{{ $item->id }}" {{ (is_array(old('subjects')) && in_array($item->id, old('subjects'))) ? 'selected' : '' }}>
-                {{ $item->name }}
-              </option>
-              @endforeach
-            </select>
+            <div class="select2-wrapper" style="width: 100%;">
+              <select class="form-select @error('subjects.*') is-invalid @enderror" id="subjects" name="subjects[]" multiple>
+                @if(old('subjects'))
+                @foreach(old('subjects') as $subjectId)
+                <option value="{{ $subjectId }}" selected>{{ App\Models\Subject::find($subjectId)->name }}</option>
+                @endforeach
+                @endif
+              </select>
+            </div>
             @error('subjects.*')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -81,3 +94,10 @@
 
 
 @endsection
+@push('javascript')
+<script>
+  const urlMajorSubjects = "{{ route('api.majors.major_subjects.index', ['major' => $major]) }}"
+
+</script>
+@endpush
+@vite('resources/js/academics/major_subjects/input.js')

@@ -5,6 +5,10 @@ let table;
 $(() => {
     table = $("#major-subject-table").DataTable();
 
+    $("#semester").on("change", function () {
+        table.draw();
+    });
+
     initializeDeleteButtons();
 });
 

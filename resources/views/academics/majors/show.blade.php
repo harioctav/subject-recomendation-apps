@@ -69,6 +69,20 @@
       @endcan
     </div>
 
+    <div class="row">
+      <div class="col-md-4">
+        <div class="">
+          <label for="semester" class="form-label">{{ trans('Filter Berdasarkan Semester') }}</label>
+          <select type="text" class="form-select" name="semester" id="semester">
+            <option value="{{ Helper::ALL }}">{{ Helper::ALL }}</option>
+            @foreach (range(1, 8) as $semester)
+            <option value="{{ $semester }}">Semester {{ $semester }}</option>
+            @endforeach
+          </select>
+        </div>
+      </div>
+    </div>
+
     <div class="my-3">
       {{ $dataTable->table() }}
     </div>
@@ -76,9 +90,14 @@
 </div>
 
 @includeIf('academics.major_subjects.import')
+@includeIf('academics.major_subjects.edit')
 @endsection
 @push('javascript')
 {{ $dataTable->scripts(attributes: ['type' => 'module']) }}
-@vite('resources/js/academics/major_subjects/index.js')
+
+@vite([
+'resources/js/academics/major_subjects/index.js',
+'resources/js/academics/major_subjects/edit.js'
+])
 
 @endpush

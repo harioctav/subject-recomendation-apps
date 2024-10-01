@@ -74,7 +74,10 @@ class SubjectDataTable extends DataTable
       ->autoWidth(false)
       ->pageLength(5)
       ->responsive(true)
-      ->lengthMenu([5, 10, 20, 100])
+      ->lengthMenu([
+        [5, 10, 25, -1],
+        [5, 10, 25, "All"],
+      ])
       ->orderBy(1);
   }
 

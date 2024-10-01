@@ -2,6 +2,7 @@
 
 namespace App\DataTables\Academics;
 
+use App\DataTables\Scopes\GlobalFilter;
 use App\Helpers\Helper;
 use App\Models\MajorSubject;
 use Illuminate\Support\Facades\Log;
@@ -39,11 +40,7 @@ class MajorSubjectDataTable extends DataTable
 
   public function query(MajorSubject $model): QueryBuilder
   {
-    if (!$this->majorId) {
-      throw new \Exception('Major ID is not set for MajorSubjectDataTable');
-    }
-
-    return $model->newQuery()
+    $query = $model->newQuery()
       ->join('subjects', 'major_subject.subject_id', '=', 'subjects.id')
       ->where('major_subject.major_id', $this->majorId)
       ->select([
@@ -52,9 +49,17 @@ class MajorSubjectDataTable extends DataTable
         'major_subject.subject_id',
         'major_subject.semester',
         'subjects.name as subject_name',
-        'subjects.code as subject_code'
+        'subjects.code as subject_code',
+        'subjects.course_credit as subjects_course_credit'
       ])
       ->orderBy('major_subject.semester');
+
+    if ($this->request()->has('semester')) {
+      $filter = new GlobalFilter($this->request());
+      $filter->apply($query);
+    }
+
+    return $query;
   }
 
   public function html(): HtmlBuilder
@@ -63,6 +68,11 @@ class MajorSubjectDataTable extends DataTable
       ->setTableId('major-subject-table')
       ->columns($this->getColumns())
       ->minifiedAjax()
+      ->ajax([
+        'data' => 'function(d) {
+          d.semester = $("#semester").val(); 
+        }'
+      ])
       ->addTableClass([
         'table',
         'table-striped',
@@ -78,7 +88,10 @@ class MajorSubjectDataTable extends DataTable
       ->autoWidth(false)
       ->pageLength(5)
       ->responsive(true)
-      ->lengthMenu([5, 10, 20, 100])
+      ->lengthMenu([
+        [5, 10, 25, -1],
+        [5, 10, 25, "All"],
+      ])
       ->orderBy(1);
   }
 
@@ -100,6 +113,9 @@ class MajorSubjectDataTable extends DataTable
         ->addClass('text-center'),
       Column::make('subject_name')
         ->title(trans('Matakuliah'))
+        ->addClass('text-center'),
+      Column::make('subjects_course_credit')
+        ->title(trans('SKS'))
         ->addClass('text-center'),
       Column::make('semester')
         ->title(trans('Semester'))

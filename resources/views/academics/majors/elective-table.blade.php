@@ -17,7 +17,7 @@
 </div>
 
 <script>
-  const urlElectiveTable = "{{ route('api.major.show', ['major' => $major]) }}"
+  const urlElectiveTable = "{{ route('api.majors.show', ['major' => $major]) }}"
 
 </script>
 
